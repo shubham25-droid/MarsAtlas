@@ -1,0 +1,123 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "title": "MRO CRISM Targeted Spectral Observations (MTRDR)",
+    "cubes": [
+      "FRT000047A3",
+      "FRT00005C5E",
+      "HRL000040FF"
+    ],
+    "parameters": [
+      "D2300 (Hydrated Clays/Carbonates)",
+      "BD2500 (Mg-Carbonate)",
+      "BD1900 (Hydration)"
+    ]
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SCI-01",
+        "name": "Lac de Charmes Carbonate Outcrop",
+        "category": "Astrobiology & Mineralogy",
+        "spectral_signature": "Mg-Rich Carbonate (2.30 & 2.51 um band depths > 0.045)",
+        "geological_unit": "Margin Unit",
+        "rover_sol_reference": "Sol 1240-1285 (Perseverance Margin Campaign)",
+        "scientific_value": 0.95,
+        "priority": "Critical",
+        "recommended_eva_activity": "Raman and Luminescence spectroscopy, core sample acquisition for paleolake biomarker detection."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.3482,
+          18.4591
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SCI-02",
+        "name": "Kodiak Butte Delta Front Contact",
+        "category": "Stratigraphy & Sedimentology",
+        "spectral_signature": "Fe/Mg Smectite Clay & Nontronite (1.9 um & 2.29 um)",
+        "geological_unit": "Western Fan Delta Lower",
+        "rover_sol_reference": "Sol 70-120 (Remote SuperCam RMI campaign)",
+        "scientific_value": 0.88,
+        "priority": "High",
+        "recommended_eva_activity": "Examine delta foreset-to-bottomset stratigraphic transition; assess paleo-water discharge velocity."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.4125,
+          18.4388
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SCI-03",
+        "name": "S\u00e9\u00edtah Olivine Cumulate / Dourbes Ridge",
+        "category": "Petrology & Early Mars Magmatism",
+        "spectral_signature": "Olivine (Broad 1.05 um absorption) with partial carbonate veining",
+        "geological_unit": "S\u00e9\u00edtah Formation",
+        "rover_sol_reference": "Sol 260-310 (First subsurface core abraded)",
+        "scientific_value": 0.82,
+        "priority": "High",
+        "recommended_eva_activity": "Investigate magma chamber crystallization and subsequent groundwater serpentinization."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.4439,
+          18.4412
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SCI-04",
+        "name": "Cape Flatley Lacustrine Siltstone",
+        "category": "Paleoenvironment & Biosignatures",
+        "spectral_signature": "Hydrated Silica and Smectite clays (BD1900 > 0.038)",
+        "geological_unit": "Western Fan Delta Upper",
+        "rover_sol_reference": "Sol 420-465 (Perseverance Delta Front Campaign)",
+        "scientific_value": 0.9,
+        "priority": "Critical",
+        "recommended_eva_activity": "Inspect finely laminated lacustrine mudstone beds for sub-millimeter organic matter laminations."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.4018,
+          18.4532
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "SCI-05",
+        "name": "Neretva Vallis Inflow Gorge",
+        "category": "Geomorphology & Hydrology",
+        "spectral_signature": "Polymict mega-conglomerates and fluvial boulders",
+        "geological_unit": "Western Delta Breach / Channel",
+        "rover_sol_reference": "Sol 1100-1180 (Neretva crossing)",
+        "scientific_value": 0.85,
+        "priority": "High",
+        "recommended_eva_activity": "Measure imbricated boulder dimensions to calculate flood regime peak discharge."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.3621,
+          18.4725
+        ]
+      }
+    }
+  ]
+}

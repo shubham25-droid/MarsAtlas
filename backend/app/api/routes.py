@@ -10,8 +10,16 @@ from app.services.rover_pov import find_nearest_rover_observation, query_live_na
 
 router = APIRouter(prefix="/api")
 
-# Load persistent datasets
-DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "data", "processed"))
+# Multi-path discovery for robust local and cloud deployments (Render, Railway, Docker)
+possible_dirs = [
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "processed")),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "data", "processed")),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "processed")),
+    os.path.abspath(os.path.join(os.getcwd(), "data", "processed")),
+    os.path.abspath(os.path.join(os.getcwd(), "backend", "data", "processed")),
+]
+DATA_DIR = next((d for d in possible_dirs if os.path.exists(os.path.join(d, "jezero_eva_sector.npz"))), possible_dirs[0])
+
 NPZ_PATH = os.path.join(DATA_DIR, "jezero_eva_sector.npz")
 CRISM_PATH = os.path.join(DATA_DIR, "jezero_crism_hotspots.json")
 ENV_PATH = os.path.join(DATA_DIR, "environmental_telemetry.json")

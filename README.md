@@ -204,6 +204,15 @@ All 8 test suites pass with analytical precision in $< 1.0\text{ second}$.
 
 ---
 
+## 🌐 Cloud Deployment (Render + Vercel)
+
+MarsAtlas is production-ready for zero-cost cloud deployment:
+- **Backend (FastAPI)**: Deploy to [Render](https://render.com) using the included [`render.yaml`](render.yaml).
+- **Frontend (Next.js 16)**: Deploy to [Vercel](https://vercel.com) with root directory set to `frontend`.
+- For complete step-by-step instructions, see the **[Deployment Guide](docs/DEPLOYMENT.md)**.
+
+---
+
 ## ⚠️ Scientific Limitations & Epistemic Tiers
 
 MarsAtlas strictly classifies information across four epistemic tiers:

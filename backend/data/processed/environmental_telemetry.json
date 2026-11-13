@@ -1,0 +1,138 @@
+{
+  "mission_context": "Mars 2020 MEDA Diurnal Climatology & MSL RAD Surface Ionizing Dosimetry",
+  "coordinates_origin": {
+    "lat": 18.4446,
+    "lon": 77.4508,
+    "elevation_m": -2569.9
+  },
+  "atmospheric": {
+    "diurnal_temperature_k": {
+      "min": 182.1,
+      "max": 257.8,
+      "mean": 214.3,
+      "min_time_ltst": "05:20",
+      "max_time_ltst": "13:45"
+    },
+    "diurnal_temperature_c": {
+      "min": -91.0,
+      "max": -15.3,
+      "mean": -58.8
+    },
+    "surface_pressure_pa": {
+      "min": 715.0,
+      "max": 782.0,
+      "mean": 752.4
+    },
+    "relative_humidity_pct": {
+      "min": 0.1,
+      "max": 7.6,
+      "mean": 2.4
+    },
+    "wind_speed_ms": {
+      "min": 1.8,
+      "max": 14.2,
+      "mean": 5.6
+    },
+    "dust_optical_depth_tau": 0.42
+  },
+  "radiation": {
+    "instrument": "MSL Radiation Assessment Detector (RAD, Hassler et al. 2014)",
+    "baseline_surface_dose_rate_mSv_day": 0.56,
+    "baseline_surface_dose_rate_uSv_hr": 23.33,
+    "galactic_cosmic_ray_fraction": 0.87,
+    "solar_energetic_particle_fraction": 0.13,
+    "surface_shielding_model": {
+      "canyon_or_crater_floor_factor": 0.68,
+      "flat_plain_factor": 0.82,
+      "elevated_ridge_factor": 0.98
+    },
+    "eva_cumulative_safety_limit_mSv": 50.0,
+    "permissible_single_eva_dose_uSv": 250.0
+  },
+  "hourly_curve": [
+    {
+      "hour": "00:00",
+      "temp_c": -78,
+      "pressure_pa": 765,
+      "wind_ms": 3.1,
+      "rad_uSv_hr": 20.8
+    },
+    {
+      "hour": "02:00",
+      "temp_c": -84,
+      "pressure_pa": 774,
+      "wind_ms": 2.4,
+      "rad_uSv_hr": 20.6
+    },
+    {
+      "hour": "04:00",
+      "temp_c": -89,
+      "pressure_pa": 780,
+      "wind_ms": 2.0,
+      "rad_uSv_hr": 20.5
+    },
+    {
+      "hour": "06:00",
+      "temp_c": -90,
+      "pressure_pa": 776,
+      "wind_ms": 2.5,
+      "rad_uSv_hr": 21.0
+    },
+    {
+      "hour": "08:00",
+      "temp_c": -65,
+      "pressure_pa": 760,
+      "wind_ms": 4.2,
+      "rad_uSv_hr": 22.8
+    },
+    {
+      "hour": "10:00",
+      "temp_c": -38,
+      "pressure_pa": 742,
+      "wind_ms": 7.5,
+      "rad_uSv_hr": 24.1
+    },
+    {
+      "hour": "12:00",
+      "temp_c": -21,
+      "pressure_pa": 725,
+      "wind_ms": 10.2,
+      "rad_uSv_hr": 25.0
+    },
+    {
+      "hour": "14:00",
+      "temp_c": -15,
+      "pressure_pa": 718,
+      "wind_ms": 12.8,
+      "rad_uSv_hr": 25.2
+    },
+    {
+      "hour": "16:00",
+      "temp_c": -28,
+      "pressure_pa": 726,
+      "wind_ms": 11.4,
+      "rad_uSv_hr": 24.6
+    },
+    {
+      "hour": "18:00",
+      "temp_c": -48,
+      "pressure_pa": 738,
+      "wind_ms": 7.8,
+      "rad_uSv_hr": 23.2
+    },
+    {
+      "hour": "20:00",
+      "temp_c": -64,
+      "pressure_pa": 750,
+      "wind_ms": 5.2,
+      "rad_uSv_hr": 21.9
+    },
+    {
+      "hour": "22:00",
+      "temp_c": -72,
+      "pressure_pa": 760,
+      "wind_ms": 3.8,
+      "rad_uSv_hr": 21.2
+    }
+  ]
+}

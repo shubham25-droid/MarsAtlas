@@ -1,0 +1,224 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "title": "USGS SIM 3464 Geologic Map of Jezero Crater & Nili Planum",
+    "authors": "Sun & Stack (2020)",
+    "scale": "1:75,000",
+    "projection": "urn:ogc:def:crs:EPSG::104905",
+    "datum": "Mars IAU2000 Sphere R=3396190m"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_id": "m_cf",
+        "name": "Crater Floor / M\u00e1az Formation",
+        "description": "Lava flow and basaltic cumulate forming the floor of Jezero crater. Interbedded with impact ejecta and pyroxene-rich basaltic regolith.",
+        "rock_type": "Basaltic Igneous",
+        "age_period": "Early Hesperian (~3.6-3.8 Ga)",
+        "traversability": "High stability, low slip, moderate roughness",
+        "color": "#4A5568",
+        "fillOpacity": 0.4
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.43,
+              18.42
+            ],
+            [
+              77.48,
+              18.42
+            ],
+            [
+              77.48,
+              18.46
+            ],
+            [
+              77.45,
+              18.46
+            ],
+            [
+              77.43,
+              18.44
+            ],
+            [
+              77.43,
+              18.42
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_id": "s_cf",
+        "name": "S\u00e9\u00edtah Formation (Olivine Cumulate)",
+        "description": "Layered olivine-rich cumulate with prominent dune fields and bedrock outcrops exhibiting carbonate alteration.",
+        "rock_type": "Ultramafic Olivine-Carbonate",
+        "age_period": "Early Hesperian",
+        "traversability": "Low stability in sand hollows, high traction on exposed rock ribs",
+        "color": "#2B6CB0",
+        "fillOpacity": 0.4
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.435,
+              18.435
+            ],
+            [
+              77.46,
+              18.435
+            ],
+            [
+              77.465,
+              18.455
+            ],
+            [
+              77.44,
+              18.455
+            ],
+            [
+              77.435,
+              18.435
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_id": "w_fd",
+        "name": "Western Fan Delta (Lower & Upper)",
+        "description": "Ancient lacustrine delta deposits rich in Fe/Mg smectite clay minerals and fine-grained siltstones ideal for biosignature preservation.",
+        "rock_type": "Fluvial-Lacustrine Mudstone & Sandstone",
+        "age_period": "Late Noachian to Early Hesperian (~3.7 Ga)",
+        "traversability": "Steep scarp margins (>18 deg hazard), flat topset plateaus (optimal)",
+        "color": "#C05621",
+        "fillOpacity": 0.45
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.38,
+              18.42
+            ],
+            [
+              77.43,
+              18.42
+            ],
+            [
+              77.44,
+              18.47
+            ],
+            [
+              77.39,
+              18.48
+            ],
+            [
+              77.37,
+              18.45
+            ],
+            [
+              77.38,
+              18.42
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_id": "m_rim",
+        "name": "Marginal Carbonate Unit (Lac de Charmes / Belva)",
+        "description": "Distinctive hydrated magnesite and smectite-carbonate band along the paleolake shoreline and inner crater wall.",
+        "rock_type": "Chemical Sedimentary / Carbonate Shoreline",
+        "age_period": "Late Noachian",
+        "traversability": "Indurated bedrock benches, high thermal inertia, local boulder scree",
+        "color": "#2C7A7B",
+        "fillOpacity": 0.45
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.33,
+              18.43
+            ],
+            [
+              77.38,
+              18.43
+            ],
+            [
+              77.39,
+              18.49
+            ],
+            [
+              77.34,
+              18.49
+            ],
+            [
+              77.32,
+              18.46
+            ],
+            [
+              77.33,
+              18.43
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "unit_id": "c_rim",
+        "name": "Crater Rim Basement Complex",
+        "description": "Pre-Noachian impact breccia and excavated mega-blocks representing ancient Martian crustal bedrock.",
+        "rock_type": "Impact Breccia & Megablocks",
+        "age_period": "Pre-Noachian (>3.9 Ga)",
+        "traversability": "Steep slopes, high terrain roughness, obstacle-dense terrain",
+        "color": "#9B2C2C",
+        "fillOpacity": 0.4
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.22,
+              18.4
+            ],
+            [
+              77.33,
+              18.4
+            ],
+            [
+              77.34,
+              18.52
+            ],
+            [
+              77.22,
+              18.52
+            ],
+            [
+              77.22,
+              18.4
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
