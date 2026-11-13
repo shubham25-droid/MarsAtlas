@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@import "ol/ol.css";
+
+:root {
+  --background: #070A10;
+  --secondary-bg: #0D121B;
+  --surface: #131B26;
+  --surface-border: #1E293B;
+  --text-primary: #F3F5F7;
+  --text-secondary: #A0ACB9;
+  --mars-orange: #E46A43;
+  --mars-red: #A94332;
+  --sci-cyan: #5CC8D7;
+  --sci-green: #62C99B;
+  --sci-amber: #E8B65A;
+  --sci-danger: #E16A6A;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbars for telemetry sidebars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #070A10;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #E46A43;
+}
+
+/* OpenLayers map container overrides */
+.ol-viewport {
+  border-radius: 0.5rem;
+}
+
+.ol-control button {
+  background-color: #131B26 !important;
+  color: #5CC8D7 !important;
+  border: 1px solid #1E293B !important;
+  border-radius: 4px;
+}
+.ol-control button:hover {
+  background-color: #1E293B !important;
+  color: #E46A43 !important;
+}

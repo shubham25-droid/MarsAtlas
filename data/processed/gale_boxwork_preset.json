@@ -1,0 +1,51 @@
+{
+  "mission_name": "Mount Sharp Boxwork Foothills Traverse",
+  "rover": "MSL Curiosity",
+  "location": "Gale Crater (-4.67\u00b0S to -4.92\u00b0S, 137.35\u00b0E to 137.46\u00b0E)",
+  "phenomenon": "Mineral-hardened Boxwork Ridges (spiderweb structure) vs. loose aeolian sand hollows",
+  "curiosity_sols": "Sol 4800 to Sol 5073+ (Chocolatal campaign)",
+  "elevation_range_m": [
+    -4500.9,
+    -3472.0
+  ],
+  "base_coordinates": [
+    137.4416,
+    -4.5894
+  ],
+  "target_coordinates": [
+    137.3888,
+    -4.826
+  ],
+  "science_targets": [
+    {
+      "name": "Chocolatal Boxwork Ribs",
+      "coords": [
+        137.3892,
+        -4.8255
+      ],
+      "type": "Sulfate Boxwork Ridges",
+      "TI": 410,
+      "stability": "Very High (Solid Bedrock)"
+    },
+    {
+      "name": "Wind-Eroded Sand Moat",
+      "coords": [
+        137.401,
+        -4.782
+      ],
+      "type": "Aeolian Drift Hollow",
+      "TI": 115,
+      "stability": "Extreme Slip Hazard (<100 TI)"
+    },
+    {
+      "name": "Gediz Vallis Ridge Contact",
+      "coords": [
+        137.415,
+        -4.712
+      ],
+      "type": "Debris Flow Deposit",
+      "TI": 340,
+      "stability": "Moderate Scree"
+    }
+  ]
+}
