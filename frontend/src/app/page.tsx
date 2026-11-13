@@ -121,28 +121,28 @@ export default function Home() {
         />
       ) : (
         /* View 2: Main Application Workspace */
-        <main className="flex-1 flex flex-col p-3 sm:p-4 gap-4 max-w-[1800px] w-full mx-auto">
+        <main className="flex-1 flex flex-col p-3 sm:p-4 gap-3.5 max-w-[1850px] w-full mx-auto">
           {/* Workspace Subheader */}
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-[#0D121B] border border-[#1E293B] px-4 py-2.5 rounded-xl text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 hud-panel px-4 py-2.5 rounded-xl text-xs">
             <div className="flex items-center gap-3">
-              <span className="font-bold text-white uppercase tracking-wider text-xs flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#E46A43]" />
-                {activeSite === "jezero" ? "Site A: Jezero Crater (Perseverance)" : "Site B: Gale Crater (Curiosity Boxwork)"}
+              <span className="font-bold text-white uppercase tracking-wider text-xs flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#F36C3D] animate-pulse" />
+                {activeSite === "jezero" ? "Site 01: Jezero Crater (NASA Mars 2020 Perseverance)" : "Site 02: Gale Crater (NASA MSL Curiosity Boxwork)"}
               </span>
-              <span className="text-[#A0ACB9] hidden md:inline">|</span>
-              <span className="text-[#A0ACB9] hidden md:inline font-mono">
-                Projection: EPSG:104905 Equirectangular (R=3,396,190m)
+              <span className="text-white/20 hidden md:inline">|</span>
+              <span className="text-slate-400 hidden md:inline font-mono text-[11px]">
+                Planetary Projection: EPSG:104905 Equirectangular (R_Mars = 3,396,190.0m)
               </span>
             </div>
 
             {/* Workspace Tool Tabs */}
-            <div className="flex items-center gap-1 bg-[#131B26] p-1 rounded-lg border border-[#1E293B]">
+            <div className="flex items-center gap-1 bg-[#04070D]/80 p-1 rounded-lg border border-white/[0.08]">
               <button
                 onClick={() => setSidebarTab("planner")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-mono text-xs font-semibold transition-all ${
                   sidebarTab === "planner"
-                    ? "bg-[#E46A43] text-white font-bold"
-                    : "text-[#A0ACB9] hover:text-white"
+                    ? "bg-[#F36C3D] text-white shadow-md shadow-[#F36C3D]/25"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 <RouteIcon className="w-3.5 h-3.5" />
@@ -151,10 +151,10 @@ export default function Home() {
 
               <button
                 onClick={() => setSidebarTab("science")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-mono text-xs font-semibold transition-all ${
                   sidebarTab === "science"
-                    ? "bg-[#5CC8D7] text-[#070A10] font-bold"
-                    : "text-[#A0ACB9] hover:text-white"
+                    ? "bg-[#38BDF8] text-[#04070D] font-bold shadow-md shadow-[#38BDF8]/25"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5" />
@@ -163,10 +163,10 @@ export default function Home() {
 
               <button
                 onClick={() => setSidebarTab("hud")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-mono text-xs font-semibold transition-all ${
                   sidebarTab === "hud"
-                    ? "bg-[#62C99B] text-[#070A10] font-bold"
-                    : "text-[#A0ACB9] hover:text-white"
+                    ? "bg-[#34D399] text-[#04070D] font-bold shadow-md shadow-[#34D399]/25"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 <Thermometer className="w-3.5 h-3.5" />

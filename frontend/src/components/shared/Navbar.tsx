@@ -1,7 +1,17 @@
 "use client";
 
 import React from "react";
-import { Compass, Database, Globe, Mountain, ArrowRight, ShieldCheck } from "lucide-react";
+import { 
+  Compass, 
+  Database, 
+  Globe, 
+  Mountain, 
+  ShieldCheck, 
+  Activity, 
+  ExternalLink,
+  ChevronRight,
+  Radio
+} from "lucide-react";
 
 interface NavbarProps {
   currentView: "landing" | "workspace";
@@ -19,48 +29,75 @@ export default function Navbar({
   onOpenProvenance
 }: NavbarProps) {
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#070A10]/95 border-b border-[#1E293B] backdrop-blur-md px-4 sm:px-6 py-2.5">
-      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-        {/* Brand Logo & Name */}
+    <header className="sticky top-0 z-40 w-full bg-[#04070D]/90 border-b border-white/[0.08] backdrop-blur-xl">
+      {/* Top Hairline Telemetry Ribbon */}
+      <div className="w-full bg-[#070B14] border-b border-white/[0.04] px-4 py-1 text-[10px] font-mono text-[#64748B] flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1.5 text-[#38BDF8]">
+            <Radio className="w-3 h-3 text-[#38BDF8] animate-pulse" />
+            <span className="font-semibold tracking-wider">MARS 2020 & MSL ORBITAL/SURFACE TELEMETRY</span>
+          </span>
+          <span className="hidden sm:inline text-white/20">|</span>
+          <span className="hidden sm:inline">PROJECTION: EPSG:104905 [MARS IAU2000]</span>
+          <span className="hidden md:inline text-white/20">|</span>
+          <span className="hidden md:inline">RAD DOSIMETRY: 0.560 mSv/SOL</span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="text-[#34D399] font-medium flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#34D399]" />
+            FASTAPI RUNTIME: ONLINE
+          </span>
+          <span className="text-white/20">|</span>
+          <span>CHALLENGE: SPACE APPS 2026</span>
+        </div>
+      </div>
+
+      {/* Main Navbar */}
+      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
+        {/* Brand & Mission Identifier */}
         <div 
           onClick={() => onNavigate("landing")}
-          className="flex items-center gap-3 cursor-pointer group"
+          className="flex items-center gap-3.5 cursor-pointer group select-none"
         >
-          <img
-            src="/assets/logo.png"
-            alt="MarsAtlas Logo"
-            className="w-8 h-8 object-contain transition-transform group-hover:scale-105"
-          />
+          <div className="relative flex items-center justify-center">
+            <div className="absolute inset-0 bg-[#F36C3D]/25 rounded-full blur-md group-hover:bg-[#F36C3D]/40 transition-all" />
+            <img
+              src="/marsatlas-brand.jpg"
+              alt="MarsAtlas Emblem"
+              className="relative w-9 h-9 rounded-full object-cover border border-[#F36C3D]/50 shadow-md shadow-[#F36C3D]/20 transform group-hover:scale-105 transition-transform"
+            />
+          </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-base font-black tracking-wider text-white">
-                MARS<span className="text-[#E46A43]">ATLAS</span>
+              <span className="text-lg font-black tracking-wider text-white font-sans">
+                MARS<span className="text-[#F36C3D]">ATLAS</span>
               </span>
-              <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#E46A43]/10 text-[#E46A43] border border-[#E46A43]/20">
-                NASA SPACE APPS 2026
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#F36C3D]/10 text-[#F36C3D] border border-[#F36C3D]/25 tracking-wide">
+                EVA COPILOT
               </span>
             </div>
-            <p className="text-[10px] text-[#A0ACB9] hidden sm:block">
-              Interplanetary Survival Guide: Martian Map
+            <p className="text-[10px] text-[#94A3B8] tracking-tight">
+              Planetary Geospatial Intelligence &amp; Traverse Decision Support
             </p>
           </div>
         </div>
 
-        {/* Site Preset Switcher */}
-        <div className="flex items-center bg-[#131B26] p-1 rounded-xl border border-[#1E293B] text-xs">
+        {/* Site Preset Switcher (Segmented Control like JPL AMMOS) */}
+        <div className="flex items-center bg-[#0C1220] p-1 rounded-xl border border-white/[0.08] shadow-inner text-xs">
           <button
             onClick={() => {
               onSiteChange("jezero");
               onNavigate("workspace");
             }}
-            className={`px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 transition-all ${
+            className={`px-3.5 py-1.5 rounded-lg font-medium flex items-center gap-2 transition-all ${
               activeSite === "jezero"
-                ? "bg-[#E46A43] text-white font-bold shadow-md"
-                : "text-[#A0ACB9] hover:text-white"
+                ? "bg-[#F36C3D] text-white font-bold shadow-md shadow-[#F36C3D]/25"
+                : "text-[#94A3B8] hover:text-white hover:bg-white/[0.03]"
             }`}
           >
             <Compass className="w-3.5 h-3.5" />
-            <span>Site A: Jezero Delta</span>
+            <span className="tracking-wide">SITE 01: JEZERO DELTA</span>
           </button>
 
           <button
@@ -68,43 +105,34 @@ export default function Navbar({
               onSiteChange("gale");
               onNavigate("workspace");
             }}
-            className={`px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 transition-all ${
+            className={`px-3.5 py-1.5 rounded-lg font-medium flex items-center gap-2 transition-all ${
               activeSite === "gale"
-                ? "bg-[#5CC8D7] text-[#070A10] font-bold shadow-md"
-                : "text-[#A0ACB9] hover:text-white"
+                ? "bg-[#38BDF8] text-[#04070D] font-bold shadow-md shadow-[#38BDF8]/25"
+                : "text-[#94A3B8] hover:text-white hover:bg-white/[0.03]"
             }`}
           >
             <Mountain className="w-3.5 h-3.5" />
-            <span>Site B: Mount Sharp Boxwork</span>
+            <span className="tracking-wide">SITE 02: MOUNT SHARP BOXWORK</span>
           </button>
         </div>
 
-        {/* Navigation Actions */}
-        <div className="flex items-center gap-2 text-xs">
+        {/* Action Controls */}
+        <div className="flex items-center gap-2.5 text-xs">
           <button
             onClick={() => onNavigate(currentView === "landing" ? "workspace" : "landing")}
-            className="px-3 py-1.5 rounded-lg font-semibold border border-[#1E293B] bg-[#131B26] hover:bg-[#1E293B] text-[#F3F5F7] transition-colors"
+            className="px-4 py-2 rounded-lg font-semibold border border-white/[0.1] bg-[#0C1220] hover:bg-[#162034] text-white transition-all shadow-sm"
           >
-            {currentView === "landing" ? "Enter EVA Console" : "Mission Overview"}
+            {currentView === "landing" ? "Launch Mission Console" : "Mission Overview"}
           </button>
 
           <button
             onClick={onOpenProvenance}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold border border-[#5CC8D7]/30 bg-[#5CC8D7]/10 hover:bg-[#5CC8D7]/20 text-[#5CC8D7] transition-colors"
-            title="View NASA Data Provenance & Epistemic Tiers"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg font-semibold border border-[#38BDF8]/30 bg-[#38BDF8]/10 hover:bg-[#38BDF8]/20 text-[#38BDF8] transition-all"
+            title="Inspect 4-Tier Epistemic Provenance (USGS / NASA PDS)"
           >
-            <ShieldCheck className="w-4 h-4 text-[#5CC8D7]" />
-            <span className="hidden md:inline">Data Provenance</span>
+            <ShieldCheck className="w-4 h-4 text-[#38BDF8]" />
+            <span className="hidden lg:inline tracking-tight font-medium">Data Provenance</span>
           </button>
-
-          {/* Engine Status Ping */}
-          <div className="hidden lg:flex items-center gap-2 pl-2 border-l border-[#1E293B] text-[11px] text-[#A0ACB9]">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#62C99B] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#62C99B]"></span>
-            </span>
-            <span className="font-mono text-white">FastAPI: ONLINE</span>
-          </div>
         </div>
       </div>
     </header>

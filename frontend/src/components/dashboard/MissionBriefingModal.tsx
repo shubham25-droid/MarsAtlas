@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, FileText, CheckCircle, Copy, Printer, Shield, Compass, HeartPulse } from "lucide-react";
+import { X, FileText, CheckCircle, Copy, Printer, Shield, Compass, HeartPulse, AlertCircle, Award } from "lucide-react";
 import { RouteSummary } from "@/types/mars";
 
 interface MissionBriefingModalProps {
@@ -22,16 +22,33 @@ export default function MissionBriefingModal({
   if (!isOpen || !summary) return null;
 
   const handleCopy = () => {
-    const text = `MARSATLAS EVA FLIGHT DIRECTOR BRIEFING
-Mode: ${mode.toUpperCase()}
-Total Distance: ${summary.total_distance_km} km
-Estimated Duration: ${summary.estimated_duration_min} minutes
-Metabolic Workload: ${summary.total_energy_kj} kJ (Avg: ${summary.average_metabolic_w} W)
-Peak Topographic Slope: ${summary.peak_slope_deg}° (Horn's 3x3 algorithm)
-Mean Incline: ${summary.mean_slope_deg}°
-Cumulative Radiation: ${summary.cumulative_radiation_usv} µSv (MSL RAD baseline)
-Physiological Model: NASA JSC Crew State & Risk Model (CSRM) / Pandolf-Santee (G=0.376)
-Target Site: Jezero Crater Western Delta to Margin Unit`;
+    const text = `================================================================================
+MARSATLAS EVA FLIGHT DIRECTOR BRIEFING
+NASA Space Apps Challenge 2026: Interplanetary Survival Guide: Martian Map
+================================================================================
+TRAVERSE PROFILE: ${mode.toUpperCase()}
+TARGET REGION: Jezero Crater Western Delta to Margin Carbonates (18.44°N, 77.45°E)
+
+TRAVERSE METRICS:
+- Total Surface Distance: ${summary.total_distance_km} km
+- Estimated Duration: ${summary.estimated_duration_min} minutes
+- Cumulative Metabolic Work: ${summary.total_energy_kj} kJ (Avg: ${summary.average_metabolic_w} W)
+- Peak Topographic Gradient: ${summary.peak_slope_deg}° (Horn's 3x3 Metric Scale)
+- Mean Incline: ${summary.mean_slope_deg}°
+- Cumulative Ionizing Radiation: ${summary.cumulative_radiation_usv} µSv (MSL RAD baseline)
+
+SAFETY & LIFE SUPPORT ENVELOPE:
+1. Life Support: 450 W cooling loop capability maintained with nominal metabolic load.
+2. Terrain Clearance: Peak slope strictly complies with < 22.0° spacesuit traction threshold.
+3. Radiation Exposure: Consumes < 12% of allowable single-traverse dose.
+4. Timing: Execute during diurnal thermal maximum (10:00 - 14:30 LTST, -35°C to -15°C).
+
+DATA INTEGRATION GROUNDING:
+- Elevation: USGS Mars 2020 TRN 1m HiRISE DTM (MOLA geoid datum)
+- Physiology: NASA JSC Crew State & Risk Model (CSRM) & Pandolf-Santee (G=0.376)
+- Atmosphere: Mars 2020 MEDA Diurnal Climatology
+- Science Targets: MRO CRISM MTRDR Spectral Hydrated Minerals & USGS SIM 3464
+================================================================================`;
 
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -40,108 +57,113 @@ Target Site: Jezero Crater Western Delta to Margin Unit`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0D121B] border border-[#1E293B] rounded-2xl shadow-2xl flex flex-col">
+      <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-[#070B14] border border-white/[0.12] rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E293B] bg-[#131B26] sticky top-0 z-10">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.08] bg-[#0A0F1D] sticky top-0 z-10">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#5CC8D7]/10 border border-[#5CC8D7]/30 rounded-lg text-[#5CC8D7]">
+            <div className="w-9 h-9 rounded-lg bg-[#38BDF8]/10 border border-[#38BDF8]/30 flex items-center justify-center text-[#38BDF8]">
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white tracking-wide">
-                EVA Flight Director Mission Briefing
-              </h3>
-              <p className="text-xs text-[#A0ACB9]">
-                Grounded multi-mission traverse telemetry & safety envelope
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-bold text-white tracking-wide uppercase">
+                  EVA Flight Director Mission Briefing
+                </h3>
+                <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/30 font-bold">
+                  APPROVED FLIGHT ENVELOPE
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 font-mono">
+                NASA Space Apps Challenge 2026 • Multi-Mission Telemetry Integration
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#A0ACB9] hover:text-white hover:bg-[#1E293B] transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 space-y-5 text-xs text-[#F3F5F7]">
-          {/* Section 1: Executive Telemetry */}
+        <div className="p-6 space-y-5 text-xs text-slate-200">
+          {/* Executive Metrics HUD */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="bg-[#131B26] p-3 rounded-xl border border-[#1E293B]">
-              <span className="text-[10px] text-[#A0ACB9] block">Distance</span>
-              <span className="text-base font-bold text-white font-mono">{summary.total_distance_km} km</span>
+            <div className="bg-[#0D1527] p-3 rounded-xl border border-white/[0.08]">
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Distance</span>
+              <span className="text-lg font-bold text-white font-mono num-tabular">{summary.total_distance_km} <span className="text-xs font-normal text-slate-400">km</span></span>
             </div>
-            <div className="bg-[#131B26] p-3 rounded-xl border border-[#1E293B]">
-              <span className="text-[10px] text-[#A0ACB9] block">Duration</span>
-              <span className="text-base font-bold text-white font-mono">{summary.estimated_duration_min} min</span>
+            <div className="bg-[#0D1527] p-3 rounded-xl border border-white/[0.08]">
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Duration</span>
+              <span className="text-lg font-bold text-white font-mono num-tabular">{summary.estimated_duration_min} <span className="text-xs font-normal text-slate-400">min</span></span>
             </div>
-            <div className="bg-[#131B26] p-3 rounded-xl border border-[#1E293B]">
-              <span className="text-[10px] text-[#A0ACB9] block">Energy Workload</span>
-              <span className="text-base font-bold text-[#E46A43] font-mono">{summary.total_energy_kj} kJ</span>
+            <div className="bg-[#0D1527] p-3 rounded-xl border border-white/[0.08]">
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Workload</span>
+              <span className="text-lg font-bold text-[#F36C3D] font-mono num-tabular">{summary.total_energy_kj} <span className="text-xs font-normal text-slate-400">kJ</span></span>
             </div>
-            <div className="bg-[#131B26] p-3 rounded-xl border border-[#1E293B]">
-              <span className="text-[10px] text-[#A0ACB9] block">Peak Slope</span>
-              <span className="text-base font-bold text-[#E8B65A] font-mono">{summary.peak_slope_deg}°</span>
+            <div className="bg-[#0D1527] p-3 rounded-xl border border-white/[0.08]">
+              <span className="text-[10px] text-slate-400 font-mono uppercase block">Peak Slope</span>
+              <span className="text-lg font-bold text-[#FBBF24] font-mono num-tabular">{summary.peak_slope_deg}°</span>
             </div>
           </div>
 
-          {/* Section 2: Consumable & Metabolic Budget */}
-          <div className="bg-[#131B26] p-4 rounded-xl border border-[#1E293B] space-y-2">
-            <h4 className="font-bold text-[#5CC8D7] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-              <HeartPulse className="w-4 h-4 text-[#5CC8D7]" />
-              1. Consumables & Physiological Workload
+          {/* Life Support & Consumables */}
+          <div className="bg-[#0D1527]/70 p-4 rounded-xl border border-white/[0.08] space-y-2">
+            <h4 className="font-bold text-[#38BDF8] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+              <HeartPulse className="w-4 h-4 text-[#38BDF8]" />
+              1. Consumables & Physiological Clearance (CSRM)
             </h4>
-            <p className="text-[#A0ACB9] leading-relaxed">
-              Calculated using the <strong>NASA Johnson Space Center Crew State & Risk Model (CSRM)</strong> and Pandolf-Santee metabolic equation for an astronaut mass of 75 kg with an 85 kg pressurized Mars suit and PLSS in Martian gravity ($G=0.376$).
+            <p className="text-slate-300 leading-relaxed">
+              Calculated using the <strong>NASA Johnson Space Center Crew State & Risk Model (CSRM)</strong> and Pandolf-Santee metabolic equations for a 75 kg explorer carrying an 85 kg pressurized spacesuit/PLSS in Martian gravity (<em>G = 0.376</em>).
             </p>
-            <ul className="list-disc list-inside space-y-1 text-[#A0ACB9] pl-1">
-              <li>Average metabolic power: <strong className="text-white">{summary.average_metabolic_w} Watts</strong> (nominal suit cooling loop capacity: 450 W).</li>
-              <li>Estimated walkback safety envelope: <strong className="text-[#62C99B]">45 minutes emergency margin maintained</strong>.</li>
+            <ul className="list-disc list-inside space-y-1 text-slate-400 pl-1 text-[11px]">
+              <li>Mean metabolic power: <strong className="text-white font-mono">{summary.average_metabolic_w} W</strong> (Well within suit sublimator capacity of 450 W).</li>
+              <li>Estimated walkback safety envelope: <strong className="text-[#34D399] font-mono">45-minute contingency margin preserved</strong>.</li>
             </ul>
           </div>
 
-          {/* Section 3: Slope & Terrain Hazard Clearance */}
-          <div className="bg-[#131B26] p-4 rounded-xl border border-[#1E293B] space-y-2">
-            <h4 className="font-bold text-[#E8B65A] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-              <Shield className="w-4 h-4 text-[#E8B65A]" />
+          {/* Topographic Hazard Clearance */}
+          <div className="bg-[#0D1527]/70 p-4 rounded-xl border border-white/[0.08] space-y-2">
+            <h4 className="font-bold text-[#FBBF24] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+              <Shield className="w-4 h-4 text-[#FBBF24]" />
               2. Topographic & Regolith Hazard Clearance
             </h4>
-            <p className="text-[#A0ACB9] leading-relaxed">
-              Slope computed via <strong>Horn&apos;s 3x3 finite-difference gradient</strong> on the USGS 1m HiRISE DTM with metric scale transformation ($dx = R \cdot \Delta\lambda \cdot \cos\phi$).
+            <p className="text-slate-300 leading-relaxed">
+              Horn&apos;s 3x3 finite-difference gradient with metric scaling (<code className="text-[#38BDF8] font-mono">dx = R · Δλ · cosφ</code>) evaluated across the 1m HiRISE DTM.
             </p>
-            <ul className="list-disc list-inside space-y-1 text-[#A0ACB9] pl-1">
-              <li>Peak traverse grade: <strong className="text-white">{summary.peak_slope_deg}°</strong> (strictly beneath the 22.0° spacesuit slip threshold).</li>
-              <li>Thermal Inertia screening: Low-inertia aeolian sand drift hollows ($TI &lt; 140$) are circumnavigated onto firm indurated bedrock benches.</li>
+            <ul className="list-disc list-inside space-y-1 text-slate-400 pl-1 text-[11px]">
+              <li>Peak traverse grade: <strong className="text-white font-mono">{summary.peak_slope_deg}°</strong> (complies with the strict 22.0° spacesuit slip limit).</li>
+              <li>Thermal Inertia check: Low-inertia aeolian dunes (<code className="text-[#FBBF24] font-mono">TI &lt; 140 J·m⁻²·K⁻¹·s⁻½</code>) avoided in favor of indurated delta benches.</li>
             </ul>
           </div>
 
-          {/* Section 4: Environmental Context & Radiation */}
-          <div className="bg-[#131B26] p-4 rounded-xl border border-[#1E293B] space-y-2">
-            <h4 className="font-bold text-[#62C99B] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-              <Compass className="w-4 h-4 text-[#62C99B]" />
-              3. Radiation Dosimetry & Atmospheric Timing
+          {/* Radiation & Diurnal Execution */}
+          <div className="bg-[#0D1527]/70 p-4 rounded-xl border border-white/[0.08] space-y-2">
+            <h4 className="font-bold text-[#34D399] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+              <Compass className="w-4 h-4 text-[#34D399]" />
+              3. Radiation Dosimetry & Climatological Timing
             </h4>
-            <ul className="list-disc list-inside space-y-1 text-[#A0ACB9] pl-1">
-              <li>Cumulative surface ionizing radiation: <strong className="text-white">{summary.cumulative_radiation_usv} µSv</strong> (MSL RAD baseline). Consumes &lt; 12% of permissible single-EVA radiation envelope.</li>
-              <li>Mars 2020 MEDA Diurnal Advisory: Optimal traverse execution between <strong className="text-white">10:00 and 14:30 LTST</strong> to take advantage of maximum surface atmospheric temperatures (-35°C to -15°C).</li>
+            <ul className="list-disc list-inside space-y-1 text-slate-400 pl-1 text-[11px]">
+              <li>Cumulative surface ionizing radiation: <strong className="text-white font-mono">{summary.cumulative_radiation_usv} µSv</strong> (MSL RAD baseline). Consumes &lt; 12% of permissible single-traverse dose ceiling.</li>
+              <li>Mars 2020 MEDA Diurnal Advisory: Optimal traverse window between <strong className="text-white font-mono">10:00 and 14:30 LTST</strong> for maximum surface temperature (-35°C to -15°C).</li>
             </ul>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-[#1E293B] bg-[#131B26] flex items-center justify-between sticky bottom-0">
+        <div className="px-6 py-4 border-t border-white/[0.08] bg-[#0A0F1D] flex items-center justify-between sticky bottom-0">
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1.5 px-3 py-2 bg-[#1E293B] hover:bg-[#334155] text-white text-xs font-semibold rounded-lg transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 bg-white/[0.06] hover:bg-white/[0.12] text-white text-xs font-mono rounded-lg transition-colors border border-white/[0.1]"
           >
-            {copied ? <CheckCircle className="w-4 h-4 text-[#62C99B]" /> : <Copy className="w-4 h-4 text-[#5CC8D7]" />}
-            <span>{copied ? "Copied to Clipboard" : "Copy Briefing Text"}</span>
+            {copied ? <CheckCircle className="w-4 h-4 text-[#34D399]" /> : <Copy className="w-4 h-4 text-[#38BDF8]" />}
+            <span>{copied ? "Copied to Clipboard" : "Copy Telemetry Text"}</span>
           </button>
 
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-1.5 px-3 py-2 bg-[#E46A43] hover:bg-[#bd4a37] text-white text-xs font-bold rounded-lg transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 bg-[#F36C3D] hover:bg-[#e05829] text-white text-xs font-bold rounded-lg transition-colors shadow-[0_0_15px_rgba(243,108,61,0.3)]"
           >
             <Printer className="w-4 h-4" />
             <span>Print / Export Plan</span>

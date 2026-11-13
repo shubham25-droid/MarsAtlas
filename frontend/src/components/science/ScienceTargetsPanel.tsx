@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sparkles, Layers, MapPin, Compass, ArrowRight, ExternalLink } from "lucide-react";
+import { Sparkles, Layers, MapPin, Compass, ArrowRight, ExternalLink, Flame } from "lucide-react";
 import { ScienceTargetFeature, GeologicUnitFeature } from "@/types/mars";
 
 interface ScienceTargetsPanelProps {
@@ -18,7 +18,6 @@ export default function ScienceTargetsPanel({
   const [geologicUnits, setGeologicUnits] = useState<GeologicUnitFeature[]>([]);
 
   useEffect(() => {
-    // Load local processed GeoJSON targets
     fetch("/data/jezero_crism_hotspots.json")
       .then((res) => res.json())
       .then((data) => setCrismTargets(data.features || []))
@@ -31,77 +30,96 @@ export default function ScienceTargetsPanel({
   }, []);
 
   return (
-    <div className="bg-[#0D121B] border border-[#1E293B] rounded-xl p-4 shadow-xl flex flex-col gap-3">
+    <div className="hud-panel rounded-xl p-4 shadow-2xl flex flex-col gap-3">
       {/* Header and Toggle */}
-      <div className="flex items-center justify-between border-b border-[#1E293B] pb-2.5">
-        <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-[#5CC8D7]" />
-          Science Along The Route
-        </h3>
+      <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-md bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center">
+            <Sparkles className="w-3.5 h-3.5 text-[#38BDF8]" />
+          </div>
+          <div>
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+              Science Along The Route
+            </h3>
+            <p className="text-[10px] text-slate-400 font-mono">
+              CRISM MTRDR Spectral & USGS SIM 3464
+            </p>
+          </div>
+        </div>
 
-        <div className="flex items-center gap-1 bg-[#131B26] p-0.5 rounded-lg border border-[#1E293B] text-[11px]">
+        <div className="flex items-center gap-1 bg-[#04070D]/80 p-1 rounded-lg border border-white/[0.06] text-[11px]">
           <button
             onClick={() => setTab("crism")}
-            className={`px-2.5 py-1 rounded font-medium transition-all ${
+            className={`px-2.5 py-1 rounded font-mono text-[10px] transition-all ${
               tab === "crism"
-                ? "bg-[#5CC8D7] text-[#070A10] font-bold"
-                : "text-[#A0ACB9] hover:text-white"
+                ? "bg-[#38BDF8] text-[#04070D] font-bold shadow-[0_0_10px_rgba(56,189,248,0.3)]"
+                : "text-slate-400 hover:text-white"
             }`}
           >
-            CRISM Targets
+            CRISM Targets ({crismTargets.length})
           </button>
           <button
             onClick={() => setTab("geology")}
-            className={`px-2.5 py-1 rounded font-medium transition-all ${
+            className={`px-2.5 py-1 rounded font-mono text-[10px] transition-all ${
               tab === "geology"
-                ? "bg-[#8B5CF6] text-white font-bold"
-                : "text-[#A0ACB9] hover:text-white"
+                ? "bg-[#A855F7] text-white font-bold shadow-[0_0_10px_rgba(168,85,247,0.3)]"
+                : "text-slate-400 hover:text-white"
             }`}
           >
-            USGS SIM 3464
+            USGS Units ({geologicUnits.length})
           </button>
         </div>
       </div>
 
       {/* CRISM Targets List */}
       {tab === "crism" && (
-        <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+        <div className="space-y-2.5 max-h-[400px] overflow-y-auto pr-1">
           {crismTargets.map((target) => {
             const isSelected = activeTargetId === target.properties.id;
             return (
               <div
                 key={target.properties.id}
-                className={`p-3 rounded-xl border transition-all bg-[#131B26] ${
-                  isSelected ? "border-[#5CC8D7] shadow-lg shadow-[#5CC8D7]/10" : "border-[#1E293B] hover:border-[#334155]"
+                className={`p-3 rounded-lg border transition-all bg-[#0A0F1D]/80 ${
+                  isSelected
+                    ? "border-[#38BDF8] ring-1 ring-[#38BDF8]/40 shadow-[0_0_15px_rgba(56,189,248,0.15)]"
+                    : "border-white/[0.06] hover:border-white/[0.15]"
                 }`}
               >
-                <div className="flex items-start justify-between gap-2 mb-1.5">
-                  <div>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#5CC8D7]/10 text-[#5CC8D7] border border-[#5CC8D7]/20 font-bold mr-1.5">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/30 font-bold">
                       {target.properties.id}
                     </span>
                     <span className="text-xs font-bold text-white">
                       {target.properties.name}
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono text-[#E46A43] font-bold">
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#F36C3D]/10 text-[#F36C3D] border border-[#F36C3D]/30 font-bold uppercase">
                     {target.properties.priority}
                   </span>
                 </div>
 
-                <div className="text-[11px] text-[#A0ACB9] space-y-1 mb-2.5">
-                  <p><span className="text-white font-semibold">Spectral:</span> {target.properties.spectral_signature}</p>
-                  <p><span className="text-white font-semibold">Geology:</span> {target.properties.geological_unit}</p>
-                  <p className="text-[10px] text-[#A0ACB9]/80 italic">{target.properties.recommended_eva_activity}</p>
+                <div className="text-[11px] text-slate-300 space-y-1 mb-2.5">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-[10px] uppercase font-mono text-slate-400">Mineralogy:</span>
+                    <span className="text-white font-medium">{target.properties.spectral_signature}</span>
+                  </div>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-[10px] uppercase font-mono text-slate-400">Unit:</span>
+                    <span className="text-slate-300">{target.properties.geological_unit}</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 bg-black/40 p-1.5 rounded border border-white/[0.04] italic">
+                    {target.properties.recommended_eva_activity}
+                  </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-[#1E293B]/70">
-                  <span className="text-[10px] text-[#A0ACB9] font-mono">
+                <div className="flex items-center justify-between pt-2 border-t border-white/[0.06]">
+                  <span className="text-[10px] text-slate-400 font-mono num-tabular">
                     {target.geometry.coordinates[0].toFixed(4)}°E, {target.geometry.coordinates[1].toFixed(4)}°N
                   </span>
                   <button
                     onClick={() => onSetTarget(target.geometry.coordinates, target.properties.name)}
-                    className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-[#5CC8D7] hover:text-white bg-[#5CC8D7]/10 hover:bg-[#5CC8D7] rounded-md transition-all"
+                    className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-mono font-semibold text-[#38BDF8] hover:text-[#04070D] bg-[#38BDF8]/10 hover:bg-[#38BDF8] rounded-md transition-all border border-[#38BDF8]/30 hover:border-[#38BDF8]"
                   >
                     <span>Route Here</span>
                     <ArrowRight className="w-3 h-3" />
@@ -115,32 +133,35 @@ export default function ScienceTargetsPanel({
 
       {/* USGS SIM 3464 Geologic Units List */}
       {tab === "geology" && (
-        <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+        <div className="space-y-2.5 max-h-[400px] overflow-y-auto pr-1">
           {geologicUnits.map((unit) => (
             <div
               key={unit.properties.unit_id}
-              className="p-3 rounded-xl border border-[#1E293B] bg-[#131B26] hover:border-[#334155] transition-all"
+              className="p-3 rounded-lg border border-white/[0.06] bg-[#0A0F1D]/80 hover:border-white/[0.15] transition-all"
             >
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xs font-bold text-white flex items-center gap-2">
                   <span
-                    className="w-2.5 h-2.5 rounded-full"
+                    className="w-2.5 h-2.5 rounded-full ring-1 ring-white/20"
                     style={{ backgroundColor: unit.properties.color }}
                   />
                   {unit.properties.name}
                 </span>
-                <span className="text-[10px] font-mono text-[#A0ACB9]">
+                <span className="text-[10px] font-mono text-slate-400">
                   {unit.properties.age_period.split(" ")[0]}
                 </span>
               </div>
 
-              <p className="text-[11px] text-[#A0ACB9] mb-2 leading-relaxed">
+              <p className="text-[11px] text-slate-300 mb-2 leading-relaxed">
                 {unit.properties.description}
               </p>
 
-              <div className="pt-2 border-t border-[#1E293B]/70 flex items-center justify-between text-[10px]">
-                <span className="text-[#A0ACB9]">
-                  <strong className="text-white">Traversability:</strong> {unit.properties.traversability}
+              <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px]">
+                <span className="text-slate-400">
+                  <strong className="text-slate-200">Traversability:</strong> {unit.properties.traversability}
+                </span>
+                <span className="font-mono text-slate-400 text-[9px] bg-white/[0.04] px-1.5 py-0.5 rounded">
+                  USGS SIM 3464
                 </span>
               </div>
             </div>
