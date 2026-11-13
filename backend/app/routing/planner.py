@@ -48,13 +48,13 @@ class EVARoutePlanner:
             (-1, -1, math.sqrt(dx_m**2 + dy_m**2)),
         ]
 
-        # Weights per mode
+        # Differentiated mode weights based on NASA JSC CSRM trade-offs
         if mode == "safe":
-            w_energy, w_time, w_slope, w_slip, w_sci = 2.0, 0.5, 4.0, 3.0, 0.0
+            w_energy, w_time, w_slope, w_slip, w_sci = 2.5, 0.2, 8.0, 5.0, 0.0
         elif mode == "science":
-            w_energy, w_time, w_slope, w_slip, w_sci = 1.0, 1.0, 1.2, 1.0, 3.5
-        else:  # balanced
-            w_energy, w_time, w_slope, w_slip, w_sci = 1.2, 1.2, 1.8, 1.5, 0.5
+            w_energy, w_time, w_slope, w_slip, w_sci = 0.8, 0.5, 1.2, 1.0, 8.0
+        else:  # balanced / fast
+            w_energy, w_time, w_slope, w_slip, w_sci = 0.4, 3.0, 1.5, 1.0, 0.0
 
         # Precompute science bonus distance field if science mode
         science_grid = np.zeros((ny, nx), dtype=np.float32)
@@ -62,21 +62,22 @@ class EVARoutePlanner:
             for target in self.crism_targets:
                 t_lon, t_lat = target['geometry']['coordinates']
                 tr, tc = self.terrain.lonlat_to_grid(t_lon, t_lat)
-                # Apply 20-cell Gaussian proximity bonus
+                # Apply 25-cell Gaussian proximity bonus
                 rr, cc = np.ogrid[:ny, :nx]
                 dist_sq = (rr - tr)**2 + (cc - tc)**2
-                science_grid += np.exp(-dist_sq / (2 * 15**2)) * float(target['properties'].get('scientific_value', 1.0))
+                science_grid += np.exp(-dist_sq / (2 * 25**2)) * float(target['properties'].get('scientific_value', 1.0))
 
         # A* priority queue: (f_score, cost_so_far, r, c)
         start_node = (start_r, start_c)
         dest_node = (dest_r, dest_c)
 
-        # Baseline flat-ground distance heuristic
+        # Admissible lower-bound heuristic scaled to match dimensionless unit cost per meter
+        min_cost_per_m = 0.005
         def heuristic(r: int, c: int) -> float:
             d_col = abs(c - dest_c) * dx_m
             d_row = abs(r - dest_r) * dy_m
-            # Octile distance
-            return max(d_col, d_row) + (math.sqrt(2) - 1) * min(d_col, d_row)
+            octile = max(d_col, d_row) + (math.sqrt(2) - 1) * min(d_col, d_row)
+            return octile * min_cost_per_m
 
         open_set = []
         heapq.heappush(open_set, (heuristic(start_r, start_c), 0.0, start_r, start_c))

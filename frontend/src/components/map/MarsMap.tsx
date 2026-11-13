@@ -6,14 +6,12 @@ import View from "ol/View";
 import TileLayer from "ol/layer/Tile";
 import ImageLayer from "ol/layer/Image";
 import VectorLayer from "ol/layer/Vector";
+import TileWMS from "ol/source/TileWMS";
 import XYZ from "ol/source/XYZ";
 import Static from "ol/source/ImageStatic";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
-import { Circle as CircleStyle, Fill, Stroke, Style, Text } from "ol/style";
-import Projection from "ol/proj/Projection";
-import { addProjection } from "ol/proj";
-import { transform } from "ol/proj";
+import { Circle as CircleStyle, Fill, Stroke, Style, Text, Icon } from "ol/style";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { getRenderPixel } from "ol/render";
@@ -33,20 +31,29 @@ import {
   RotateCcw,
   CheckCircle2,
   Radio,
-  Crosshair
+  Crosshair,
+  Camera,
+  Info
 } from "lucide-react";
 import { PlanEvaResponse, PointTelemetry, RoverObservation, ScienceTargetFeature } from "@/types/mars";
 import { fetchPointTelemetry, fetchRoverGroundTruth } from "@/services/api";
 
-// Configure Mars IAU2000 Equirectangular Projection (EPSG:104905)
-const MARS_PROJECTION = new Projection({
-  code: "EPSG:104905",
-  units: "degrees",
-  extent: [-180, -90, 180, 90],
-  worldExtent: [-180, -90, 180, 90],
-  axisOrientation: "enu"
-});
-addProjection(MARS_PROJECTION);
+const JEZERO_LANDMARKS = [
+  { name: "Octavia E. Butler Landing Site", sol: 13, lon: 77.4509, lat: 18.4446, type: "base", desc: "Perseverance touchdown location (Feb 18, 2021). Flat basaltic crater floor." },
+  { name: "Western Delta Scarp (Target)", sol: 420, lon: 77.4150, lat: 18.4485, type: "science", desc: "Ancient river delta cliff exposing multi-layered lacustrine clay and siltstone." },
+  { name: "Kodiak Butte (Delta Remnant)", sol: 250, lon: 77.4125, lat: 18.4388, type: "landmark", desc: "Isolated sedimentary butte showing classic delta bottomset-foreset-topset beds." },
+  { name: "Séítah Aeolian Dunes (Slip Hazard)", sol: 180, lon: 77.4439, lat: 18.4412, type: "hazard", desc: "Traversability slip hazard. Loose windblown sand ripples over olivine cumulate bedrock." },
+  { name: "Cape Flatley (Delta Contact)", sol: 450, lon: 77.4018, lat: 18.4532, type: "science", desc: "Prime mudstone drilling target rich in organic preservation potential." },
+  { name: "Lac de Charmes Carbonate Bench", sol: 1285, lon: 77.3482, lat: 18.4591, type: "science", desc: "Crater rim margin carbonate unit indicative of ancient alkaline paleolake shoreline." },
+  { name: "Belva Impact Crater", sol: 800, lon: 77.3750, lat: 18.4710, type: "landmark", desc: "1 km-wide impact crater excavating deep delta cross-bedding and boulder conglomerates." }
+];
+
+const GALE_LANDMARKS = [
+  { name: "Bradbury Landing Site", sol: 0, lon: 137.4416, lat: -4.5894, type: "base", desc: "NASA Curiosity rover touchdown site (Aug 5, 2012). Flat gravelly alluvial plain." },
+  { name: "Mount Sharp Boxwork Ridges", sol: 5000, lon: 137.3888, lat: -4.8260, type: "science", desc: "NASA 2025–2026 Target: Hardened mineral fracture networks standing high like spiderwebs." },
+  { name: "Murray Buttes Layered Mesas", sol: 1450, lon: 137.4150, lat: -4.7100, type: "landmark", desc: "Spectacular layered sandstone mesas preserved from ancient windblown dunes." },
+  { name: "Chocolatal Outcrop (Sol 5000)", sol: 5020, lon: 137.3950, lat: -4.7950, type: "science", desc: "Detailed boxwork mineral veins investigated during Curiosity's 5,000-sol milestone." }
+];
 
 interface MarsMapProps {
   activeSite: "jezero" | "gale";
@@ -75,43 +82,41 @@ export default function MarsMap({
   const mapRef = useRef<Map | null>(null);
 
   // Layer references
-  const molaLayerRef = useRef<TileLayer<XYZ> | null>(null);
-  const ctxLayerRef = useRef<TileLayer<XYZ> | null>(null);
-  const themisLayerRef = useRef<TileLayer<XYZ> | null>(null);
+  const vikingLayerRef = useRef<TileLayer<TileWMS> | null>(null);
+  const molaShadeLayerRef = useRef<TileLayer<TileWMS> | null>(null);
   const hazardLayerRef = useRef<ImageLayer<Static> | null>(null);
   const geologyLayerRef = useRef<VectorLayer<any> | null>(null);
   const crismLayerRef = useRef<VectorLayer<any> | null>(null);
   const roverTraverseLayerRef = useRef<VectorLayer<any> | null>(null);
-  const roverWaypointsLayerRef = useRef<VectorLayer<any> | null>(null);
+  const landmarksLayerRef = useRef<VectorLayer<any> | null>(null);
   const routeVectorLayerRef = useRef<VectorLayer<any> | null>(null);
   const pinsVectorLayerRef = useRef<VectorLayer<any> | null>(null);
 
   // UI state
   const [layersOpen, setLayersOpen] = useState(false);
   const [swipeMode, setSwipeMode] = useState(false);
-  const [swipePosition, setSwipePosition] = useState(50); // percentage
+  const [swipePosition, setSwipePosition] = useState(50);
   const [cursorCoords, setCursorCoords] = useState<{ lon: number; lat: number } | null>(null);
   const [cursorTelemetry, setCursorTelemetry] = useState<PointTelemetry | null>(null);
 
   // Layer visibility & opacity state
   const [layerConfig, setLayerConfig] = useState({
-    mola: { visible: true, opacity: 0.75 },
-    ctx: { visible: true, opacity: 1.0 },
-    themis: { visible: false, opacity: 0.7 },
-    hazard: { visible: true, opacity: 0.85 },
-    geology: { visible: true, opacity: 0.55 },
+    viking: { visible: true, opacity: 1.0 },
+    mola: { visible: true, opacity: 0.65 },
+    hazard: { visible: true, opacity: 0.8 },
+    geology: { visible: true, opacity: 0.5 },
     crism: { visible: true, opacity: 1.0 },
-    rover: { visible: true, opacity: 1.0 }
+    rover: { visible: true, opacity: 1.0 },
+    landmarks: { visible: true, opacity: 1.0 }
   });
 
-  // Reset to default active sector view
   const handleResetView = () => {
     if (!mapRef.current) return;
     const view = mapRef.current.getView();
     if (activeSite === "jezero") {
-      view.animate({ center: [77.415, 18.448], zoom: 13, duration: 600 });
+      view.animate({ center: [77.415, 18.448], zoom: 12.5, duration: 600 });
     } else {
-      view.animate({ center: [137.40, -4.75], zoom: 12, duration: 600 });
+      view.animate({ center: [137.40, -4.75], zoom: 11.5, duration: 600 });
     }
   };
 
@@ -119,59 +124,53 @@ export default function MarsMap({
   useEffect(() => {
     if (!mapElement.current || mapRef.current) return;
 
-    // 1. MGS MOLA + MEX HRSC Blended Color Hillshade (NASA Mars Trek WMTS)
-    const molaLayer = new TileLayer({
-      source: new XYZ({
-        url: "https://trek.nasa.gov/tiles/Mars/EQ/Mars_MOLA_blend200ppx_HRSC_ClrShade_clon0dd_200mpp_lzw/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
-        projection: MARS_PROJECTION,
-        maxZoom: 9,
-        wrapX: true
+    // 1. Primary Base Layer: USGS Astrogeology Viking Global Color Mosaic (MDIM21_color)
+    const vikingLayer = new TileLayer({
+      source: new TileWMS({
+        url: "https://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map",
+        params: {
+          LAYERS: "MDIM21_color",
+          FORMAT: "image/jpeg",
+          TILED: true
+        },
+        serverType: "mapserver",
+        crossOrigin: "anonymous"
+      }),
+      opacity: layerConfig.viking.opacity,
+      visible: layerConfig.viking.visible
+    });
+    vikingLayerRef.current = vikingLayer;
+
+    // 2. Secondary Base Layer: USGS MOLA + MEX HRSC Blended Color Hillshade (HRSC_MOLA_Blend_Hillshade)
+    const molaShadeLayer = new TileLayer({
+      source: new TileWMS({
+        url: "https://planetarymaps.usgs.gov/cgi-bin/mapserv?map=/maps/mars/mars_simp_cyl.map",
+        params: {
+          LAYERS: "HRSC_MOLA_Blend_Hillshade",
+          FORMAT: "image/jpeg",
+          TILED: true
+        },
+        serverType: "mapserver",
+        crossOrigin: "anonymous"
       }),
       opacity: layerConfig.mola.opacity,
       visible: layerConfig.mola.visible
     });
-    molaLayerRef.current = molaLayer;
+    molaShadeLayerRef.current = molaShadeLayer;
 
-    // 2. MRO CTX Controlled Jezero 6m Mosaic (NASA Mars Trek WMTS)
-    const ctxLayer = new TileLayer({
-      source: new XYZ({
-        url: "https://trek.nasa.gov/tiles/Mars/EQ/JEZ_ctx_B_soc_008_orthoMosaic_6m_Eqc_latTs0_lon0/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
-        projection: MARS_PROJECTION,
-        minZoom: 6,
-        maxZoom: 16,
-        wrapX: false
-      }),
-      opacity: layerConfig.ctx.opacity,
-      visible: layerConfig.ctx.visible
-    });
-    ctxLayerRef.current = ctxLayer;
-
-    // 3. THEMIS Controlled Nighttime IR (100m)
-    const themisLayer = new TileLayer({
-      source: new XYZ({
-        url: "https://trek.nasa.gov/tiles/Mars/EQ/THEMIS_NightIR_ControlledMosaics_100m_v2_oct2018/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
-        projection: MARS_PROJECTION,
-        maxZoom: 12,
-        wrapX: false
-      }),
-      opacity: layerConfig.themis.opacity,
-      visible: layerConfig.themis.visible
-    });
-    themisLayerRef.current = themisLayer;
-
-    // 4. Jezero 1m Slope & Regolith Slip Hazard Map (Horn's Method + Thermal Inertia)
+    // 3. Local Jezero 1m Slope & Regolith Slip Hazard Map
     const hazardLayer = new ImageLayer({
       source: new Static({
         url: "/data/jezero_slope_hazard.png",
-        imageExtent: [77.35, 18.41, 77.46, 18.48],
-        projection: MARS_PROJECTION
+        imageExtent: [77.30, 18.40, 77.48, 18.50],
+        projection: "EPSG:4326"
       }),
       opacity: layerConfig.hazard.opacity,
       visible: layerConfig.hazard.visible
     });
     hazardLayerRef.current = hazardLayer;
 
-    // 5. USGS SIM 3464 Geologic Units
+    // 4. USGS SIM 3464 Geologic Units
     const geologySource = new VectorSource({
       url: "/data/jezero_geology_sim3464.json",
       format: new GeoJSON()
@@ -181,7 +180,7 @@ export default function MarsMap({
       style: (feature) => {
         const color = feature.get("color") || "#38BDF8";
         return new Style({
-          fill: new Fill({ color: `${color}40` }),
+          fill: new Fill({ color: `${color}35` }),
           stroke: new Stroke({ color: color, width: 1.5, lineDash: [4, 4] })
         });
       },
@@ -190,7 +189,7 @@ export default function MarsMap({
     });
     geologyLayerRef.current = geologyLayer;
 
-    // 6. CRISM Targeted Mineral Hotspots
+    // 5. CRISM Targeted Mineral Hotspots
     const crismSource = new VectorSource({
       url: "/data/jezero_crism_hotspots.json",
       format: new GeoJSON()
@@ -207,10 +206,10 @@ export default function MarsMap({
           }),
           text: new Text({
             text: name.split(" ")[0],
-            offsetY: -15,
-            fill: new Fill({ color: "#F8FAFC" }),
+            offsetY: -16,
+            fill: new Fill({ color: "#FFFFFF" }),
             stroke: new Stroke({ color: "#04070D", width: 3 }),
-            font: "bold 11px -apple-system, sans-serif"
+            font: "bold 11px ui-sans-serif, system-ui, sans-serif"
           })
         });
       },
@@ -218,7 +217,7 @@ export default function MarsMap({
     });
     crismLayerRef.current = crismLayer;
 
-    // 7. Rover Traverse
+    // 6. Rover Historical Traverse
     const traverseSource = new VectorSource({
       url: "/data/m20_traverse.json",
       format: new GeoJSON()
@@ -232,96 +231,124 @@ export default function MarsMap({
     });
     roverTraverseLayerRef.current = traverseLayer;
 
-    // 8. Rover Waypoints (clickable)
-    const waypointsSource = new VectorSource({
-      url: "/data/m20_waypoints.json",
-      format: new GeoJSON()
+    // 7. Authentic Martian Landmarks & Landing Sites
+    const landmarksSource = new VectorSource();
+    const landmarks = activeSite === "jezero" ? JEZERO_LANDMARKS : GALE_LANDMARKS;
+    landmarks.forEach((lm) => {
+      const feat = new Feature({
+        geometry: new Point([lm.lon, lm.lat]),
+        name: lm.name,
+        sol: lm.sol,
+        type: lm.type,
+        desc: lm.desc
+      });
+      landmarksSource.addFeature(feat);
     });
-    const waypointsLayer = new VectorLayer({
-      source: waypointsSource,
+
+    const landmarksLayer = new VectorLayer({
+      source: landmarksSource,
       style: (feature) => {
-        const sol = feature.get("sol");
-        if (sol && sol % 250 === 0) {
-          return new Style({
-            image: new CircleStyle({
-              radius: 5,
-              fill: new Fill({ color: "#F36C3D" }),
-              stroke: new Stroke({ color: "#FFFFFF", width: 1.5 })
-            }),
-            text: new Text({
-              text: `Sol ${sol}`,
-              offsetY: 13,
-              fill: new Fill({ color: "#F36C3D" }),
-              stroke: new Stroke({ color: "#04070D", width: 2.5 }),
-              font: "bold 10px ui-monospace, monospace"
-            })
-          });
+        const type = feature.get("type");
+        const name = feature.get("name") || "";
+        let color = "#38BDF8";
+        let radius = 6;
+        if (type === "base") {
+          color = "#34D399";
+          radius = 8;
+        } else if (type === "hazard") {
+          color = "#FBBF24";
+        } else if (type === "science") {
+          color = "#F36C3D";
+          radius = 7;
         }
+
         return new Style({
           image: new CircleStyle({
-            radius: 2,
-            fill: new Fill({ color: "#F36C3D99" })
+            radius: radius,
+            fill: new Fill({ color: color }),
+            stroke: new Stroke({ color: "#FFFFFF", width: 2 })
+          }),
+          text: new Text({
+            text: name,
+            offsetY: 15,
+            fill: new Fill({ color: "#FFFFFF" }),
+            stroke: new Stroke({ color: "#04070D", width: 3 }),
+            font: "bold 10px ui-monospace, monospace"
           })
         });
       },
-      visible: layerConfig.rover.visible
+      visible: layerConfig.landmarks.visible
     });
-    roverWaypointsLayerRef.current = waypointsLayer;
+    landmarksLayerRef.current = landmarksLayer;
 
-    // 9. Planned EVA Routes Layer
-    const routeSource = new VectorSource();
+    // 8. Active EVA Trajectory Polyline Layer
+    const routeVectorSource = new VectorSource();
     const routeLayer = new VectorLayer({
-      source: routeSource,
+      source: routeVectorSource,
       style: (feature) => {
-        const mode = feature.get("mode");
-        let color = "#34D399"; // Safest (Emerald)
-        let width = 4;
-        let lineDash = undefined;
+        const mode = feature.get("mode") || "safe";
+        let color = "#34D399";
+        let width = 3.5;
+        let lineDash: number[] | undefined = undefined;
 
         if (mode === "balanced") {
-          color = "#38BDF8"; // Balanced (Cyan)
-          width = 3.5;
+          color = "#38BDF8";
+          width = 3.0;
+          lineDash = [6, 4];
         } else if (mode === "science") {
-          color = "#E879F9"; // Science (Magenta)
-          width = 3.5;
-        } else if (mode === "direct_unsafe") {
-          color = "#F87171"; // Unsafe (Crimson)
-          lineDash = [6, 6];
+          color = "#C084FC";
+          width = 3.0;
+          lineDash = [2, 4];
         }
 
         return new Style({
-          stroke: new Stroke({ color, width, lineDash })
+          stroke: new Stroke({ color: color, width: width, lineDash: lineDash })
         });
       }
     });
     routeVectorLayerRef.current = routeLayer;
 
-    // 10. Start and Target Pins Layer
+    // 9. Start & Target Interactive Pins Layer
     const pinsSource = new VectorSource();
     const pinsLayer = new VectorLayer({
       source: pinsSource,
       style: (feature) => {
         const type = feature.get("type");
-        const isStart = type === "start";
+        if (type === "start") {
+          return new Style({
+            image: new CircleStyle({
+              radius: 9,
+              fill: new Fill({ color: "#34D399" }),
+              stroke: new Stroke({ color: "#FFFFFF", width: 2.5 })
+            }),
+            text: new Text({
+              text: "BASE",
+              offsetY: -16,
+              fill: new Fill({ color: "#34D399" }),
+              stroke: new Stroke({ color: "#04070D", width: 3 }),
+              font: "bold 11px ui-monospace, monospace"
+            })
+          });
+        }
         return new Style({
           image: new CircleStyle({
             radius: 9,
-            fill: new Fill({ color: isStart ? "#34D399" : "#F36C3D" }),
+            fill: new Fill({ color: "#F36C3D" }),
             stroke: new Stroke({ color: "#FFFFFF", width: 2.5 })
           }),
           text: new Text({
-            text: isStart ? "BASE" : "TARGET",
+            text: "TARGET",
             offsetY: -16,
-            fill: new Fill({ color: "#FFFFFF" }),
+            fill: new Fill({ color: "#F36C3D" }),
             stroke: new Stroke({ color: "#04070D", width: 3 }),
-            font: "bold 11px -apple-system, sans-serif"
+            font: "bold 11px ui-monospace, monospace"
           })
         });
       }
     });
     pinsVectorLayerRef.current = pinsLayer;
 
-    // Create OpenLayers Map with ScaleLine control
+    // ScaleLine Control
     const scaleLineControl = new ScaleLine({
       units: "metric",
       bar: false,
@@ -333,35 +360,34 @@ export default function MarsMap({
     const map = new Map({
       target: mapElement.current,
       layers: [
-        molaLayer,
-        ctxLayer,
-        themisLayer,
+        vikingLayer,
+        molaShadeLayer,
         hazardLayer,
         geologyLayer,
         crismLayer,
         traverseLayer,
-        waypointsLayer,
+        landmarksLayer,
         routeLayer,
         pinsLayer
       ],
       view: new View({
-        projection: MARS_PROJECTION,
-        center: [77.415, 18.448],
-        zoom: 13,
-        minZoom: 4,
+        projection: "EPSG:4326",
+        center: activeSite === "jezero" ? [77.415, 18.448] : [137.40, -4.75],
+        zoom: activeSite === "jezero" ? 12.5 : 11.5,
+        minZoom: 3,
         maxZoom: 17
       }),
       controls: [scaleLineControl]
     });
 
-    // Pointer move listener for coordinate & elevation telemetry
+    // Pointer move listener
     map.on("pointermove", async (evt) => {
       if (evt.dragging) return;
       const coord = evt.coordinate;
       setCursorCoords({ lon: coord[0], lat: coord[1] });
     });
 
-    // Click handler for map features and pin placement
+    // Click handler
     map.on("singleclick", async (evt) => {
       const coord = evt.coordinate as [number, number];
       
@@ -372,7 +398,7 @@ export default function MarsMap({
           onSelectScienceTarget(feature as any);
           return;
         }
-        if (targetProps.sol) {
+        if (targetProps.sol !== undefined) {
           const obs = await fetchRoverGroundTruth(coord[0], coord[1]);
           onOpenRoverPov(obs);
           return;
@@ -385,7 +411,7 @@ export default function MarsMap({
     });
 
     // Split-Screen Swipe Rendering
-    ctxLayer.on("prerender", (event) => {
+    molaShadeLayer.on("prerender", (event) => {
       if (!swipeMode) return;
       const ctx = event.context as CanvasRenderingContext2D;
       const mapSize = map.getSize();
@@ -402,7 +428,7 @@ export default function MarsMap({
       ctx.clip();
     });
 
-    ctxLayer.on("postrender", (event) => {
+    molaShadeLayer.on("postrender", (event) => {
       if (!swipeMode) return;
       const ctx = event.context as CanvasRenderingContext2D;
       ctx.restore();
@@ -448,20 +474,14 @@ export default function MarsMap({
         Object.values(evaResponse.routes).forEach((rt) => {
           if (rt?.geojson) {
             const feats = format.readFeatures(rt.geojson);
-            feats.forEach((feat) => {
-              feat.set("mode", rt.mode);
-              source.addFeature(feat);
-            });
+            source.addFeatures(feats);
           }
         });
       } else {
-        const activeRoute = evaResponse.routes[selectedMode];
-        if (activeRoute?.geojson) {
-          const feats = format.readFeatures(activeRoute.geojson);
-          feats.forEach((feat) => {
-            feat.set("mode", activeRoute.mode);
-            source.addFeature(feat);
-          });
+        const rt = evaResponse.routes[selectedMode];
+        if (rt?.geojson) {
+          const feats = format.readFeatures(rt.geojson);
+          source.addFeatures(feats);
         }
       }
     }
@@ -472,38 +492,43 @@ export default function MarsMap({
     if (!mapRef.current) return;
     const view = mapRef.current.getView();
     if (activeSite === "jezero") {
-      view.animate({ center: [77.415, 18.448], zoom: 13, duration: 800 });
-      if (ctxLayerRef.current) {
-        ctxLayerRef.current.setSource(
-          new XYZ({
-            url: "https://trek.nasa.gov/tiles/Mars/EQ/JEZ_ctx_B_soc_008_orthoMosaic_6m_Eqc_latTs0_lon0/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
-            projection: MARS_PROJECTION,
-            minZoom: 6,
-            maxZoom: 16
-          })
-        );
-      }
+      view.animate({ center: [77.415, 18.448], zoom: 12.5, duration: 800 });
       if (roverTraverseLayerRef.current) {
         roverTraverseLayerRef.current.setSource(
           new VectorSource({ url: "/data/m20_traverse.json", format: new GeoJSON() }) as any
         );
       }
-    } else {
-      view.animate({ center: [137.40, -4.75], zoom: 12, duration: 800 });
-      if (ctxLayerRef.current) {
-        ctxLayerRef.current.setSource(
-          new XYZ({
-            url: "https://trek.nasa.gov/tiles/Mars/EQ/Gale_CTX_BlockAdj_dd/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
-            projection: MARS_PROJECTION,
-            minZoom: 6,
-            maxZoom: 15
-          })
-        );
+      if (hazardLayerRef.current) {
+        hazardLayerRef.current.setVisible(layerConfig.hazard.visible);
       }
+    } else {
+      view.animate({ center: [137.40, -4.75], zoom: 11.5, duration: 800 });
       if (roverTraverseLayerRef.current) {
         roverTraverseLayerRef.current.setSource(
           new VectorSource({ url: "/data/msl_waypoints.json", format: new GeoJSON() }) as any
         );
+      }
+      if (hazardLayerRef.current) {
+        hazardLayerRef.current.setVisible(false);
+      }
+    }
+
+    // Refresh landmark features for active site
+    if (landmarksLayerRef.current) {
+      const source = landmarksLayerRef.current.getSource();
+      if (source) {
+        source.clear();
+        const landmarks = activeSite === "jezero" ? JEZERO_LANDMARKS : GALE_LANDMARKS;
+        landmarks.forEach((lm) => {
+          const feat = new Feature({
+            geometry: new Point([lm.lon, lm.lat]),
+            name: lm.name,
+            sol: lm.sol,
+            type: lm.type,
+            desc: lm.desc
+          });
+          source.addFeature(feat);
+        });
       }
     }
   }, [activeSite]);
@@ -518,303 +543,245 @@ export default function MarsMap({
   const toggleLayer = (layerKey: keyof typeof layerConfig) => {
     const updated = {
       ...layerConfig,
-      [layerKey]: { ...layerConfig[layerKey], visible: !layerConfig[layerKey].visible }
+      [layerKey]: {
+        ...layerConfig[layerKey],
+        visible: !layerConfig[layerKey].visible
+      }
     };
     setLayerConfig(updated);
 
-    if (layerKey === "mola" && molaLayerRef.current) molaLayerRef.current.setVisible(updated.mola.visible);
-    if (layerKey === "ctx" && ctxLayerRef.current) ctxLayerRef.current.setVisible(updated.ctx.visible);
-    if (layerKey === "themis" && themisLayerRef.current) themisLayerRef.current.setVisible(updated.themis.visible);
+    if (layerKey === "viking" && vikingLayerRef.current) vikingLayerRef.current.setVisible(updated.viking.visible);
+    if (layerKey === "mola" && molaShadeLayerRef.current) molaShadeLayerRef.current.setVisible(updated.mola.visible);
     if (layerKey === "hazard" && hazardLayerRef.current) hazardLayerRef.current.setVisible(updated.hazard.visible);
     if (layerKey === "geology" && geologyLayerRef.current) geologyLayerRef.current.setVisible(updated.geology.visible);
     if (layerKey === "crism" && crismLayerRef.current) crismLayerRef.current.setVisible(updated.crism.visible);
-    if (layerKey === "rover" && roverTraverseLayerRef.current && roverWaypointsLayerRef.current) {
-      roverTraverseLayerRef.current.setVisible(updated.rover.visible);
-      roverWaypointsLayerRef.current.setVisible(updated.rover.visible);
-    }
-  };
-
-  const changeOpacity = (layerKey: keyof typeof layerConfig, val: number) => {
-    const updated = {
-      ...layerConfig,
-      [layerKey]: { ...layerConfig[layerKey], opacity: val }
-    };
-    setLayerConfig(updated);
-
-    if (layerKey === "mola" && molaLayerRef.current) molaLayerRef.current.setOpacity(val);
-    if (layerKey === "ctx" && ctxLayerRef.current) ctxLayerRef.current.setOpacity(val);
-    if (layerKey === "themis" && themisLayerRef.current) themisLayerRef.current.setOpacity(val);
-    if (layerKey === "hazard" && hazardLayerRef.current) hazardLayerRef.current.setOpacity(val);
-    if (layerKey === "geology" && geologyLayerRef.current) geologyLayerRef.current.setOpacity(val);
+    if (layerKey === "rover" && roverTraverseLayerRef.current) roverTraverseLayerRef.current.setVisible(updated.rover.visible);
+    if (layerKey === "landmarks" && landmarksLayerRef.current) landmarksLayerRef.current.setVisible(updated.landmarks.visible);
   };
 
   return (
-    <div className="relative w-full h-full min-h-[520px] flex-1 overflow-hidden bg-[#04070D] rounded-2xl border border-white/[0.08] shadow-2xl">
-      {/* OpenLayers Map Canvas */}
-      <div ref={mapElement} className="w-full h-full absolute inset-0 cursor-crosshair" />
+    <div className="relative w-full h-full rounded-2xl overflow-hidden border border-white/[0.1] bg-[#04070D] shadow-2xl flex flex-col">
+      {/* Top Glassmorphic Tactical Tool Bar */}
+      <div className="absolute top-3 left-3 right-3 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+        {/* Left Tools */}
+        <div className="flex items-center gap-1.5 pointer-events-auto">
+          {/* Layer Panel Button */}
+          <button
+            onClick={() => setLayersOpen(!layersOpen)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-medium backdrop-blur-md border transition-all ${
+              layersOpen 
+                ? "bg-[#38BDF8] text-[#04070D] border-[#38BDF8] shadow-lg shadow-[#38BDF8]/20 font-bold" 
+                : "bg-[#070B14]/85 text-white border-white/[0.12] hover:bg-[#0D1527]"
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>Map Layers</span>
+          </button>
 
-      {/* Split-Screen Swipe Divider */}
+          {/* Swipe Comparator Toggle */}
+          <button
+            onClick={() => setSwipeMode(!swipeMode)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-medium backdrop-blur-md border transition-all ${
+              swipeMode 
+                ? "bg-[#FBBF24] text-[#04070D] border-[#FBBF24] shadow-lg shadow-[#FBBF24]/20 font-bold" 
+                : "bg-[#070B14]/85 text-white border-white/[0.12] hover:bg-[#0D1527]"
+            }`}
+            title="Split-Screen Comparison: Optical vs Topographic Hillshade"
+          >
+            <Columns className="w-3.5 h-3.5" />
+            <span>Swipe Lens</span>
+          </button>
+
+          {/* 3D WebGL Sector Mesh */}
+          <button
+            onClick={onOpen3DModal}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-[#070B14]/85 hover:bg-[#0D1527] text-white border border-white/[0.12] backdrop-blur-md transition-all"
+            title="Launch 3D WebGL Surface Inspection"
+          >
+            <Mountain className="w-3.5 h-3.5 text-[#F36C3D]" />
+            <span className="hidden sm:inline">3D Mesh View</span>
+          </button>
+        </div>
+
+        {/* Right Tools */}
+        <div className="flex items-center gap-2 pointer-events-auto">
+          {/* Site Badge */}
+          <div className="px-3 py-1 rounded-lg bg-[#070B14]/90 border border-white/[0.1] text-xs font-mono backdrop-blur-md flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#34D399] animate-pulse" />
+            <span className="text-white font-bold">
+              {activeSite === "jezero" ? "JEZERO CRATER DELTA" : "MOUNT SHARP BOXWORK"}
+            </span>
+          </div>
+
+          {/* Reset Camera View */}
+          <button
+            onClick={handleResetView}
+            className="p-1.5 rounded-lg bg-[#070B14]/85 hover:bg-[#0D1527] text-slate-300 hover:text-white border border-white/[0.12] backdrop-blur-md transition-all"
+            title="Re-center map on active target"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Floating Layer Selection Drawer */}
+      {layersOpen && (
+        <div className="absolute top-14 left-3 z-30 w-72 bg-[#070B14]/95 border border-white/[0.12] rounded-xl p-3 shadow-2xl backdrop-blur-xl text-xs space-y-2.5">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-1.5">
+            <span className="font-bold text-white uppercase text-[10px] tracking-wider font-mono">
+              Scientific Layer Stack
+            </span>
+            <span className="text-[9px] text-[#38BDF8] font-mono">USGS & NASA OGC</span>
+          </div>
+
+          <div className="space-y-1.5">
+            {/* 1. USGS Viking Color */}
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
+              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
+                <span className="w-2 h-2 rounded-full bg-[#F36C3D]" />
+                USGS Viking Color Mosaic
+              </span>
+              <button onClick={() => toggleLayer("viking")}>
+                {layerConfig.viking.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+              </button>
+            </div>
+
+            {/* 2. MOLA Hillshade */}
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
+              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
+                <Mountain className="w-3.5 h-3.5 text-[#38BDF8]" />
+                MOLA / HRSC Shaded Relief
+              </span>
+              <button onClick={() => toggleLayer("mola")}>
+                {layerConfig.mola.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+              </button>
+            </div>
+
+            {/* 3. HiRISE Slope Hazard */}
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
+              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
+                <AlertTriangle className="w-3.5 h-3.5 text-[#FBBF24]" />
+                1m HiRISE Slope Hazard
+              </span>
+              <button onClick={() => toggleLayer("hazard")}>
+                {layerConfig.hazard.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+              </button>
+            </div>
+
+            {/* 4. USGS Geology */}
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
+              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
+                <span className="w-2 h-2 rounded-full bg-[#A855F7]" />
+                USGS SIM 3464 Units
+              </span>
+              <button onClick={() => toggleLayer("geology")}>
+                {layerConfig.geology.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+              </button>
+            </div>
+
+            {/* 5. CRISM Mineralogy */}
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
+              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
+                <Sparkles className="w-3.5 h-3.5 text-[#38BDF8]" />
+                CRISM Mineral Hotspots
+              </span>
+              <button onClick={() => toggleLayer("crism")}>
+                {layerConfig.crism.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+              </button>
+            </div>
+
+            {/* 6. Rover Traverse */}
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
+              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
+                <Compass className="w-3.5 h-3.5 text-[#F36C3D]" />
+                Perseverance Traverse
+              </span>
+              <button onClick={() => toggleLayer("rover")}>
+                {layerConfig.rover.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+              </button>
+            </div>
+
+            {/* 7. Martian Landmarks */}
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
+              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
+                <MapPin className="w-3.5 h-3.5 text-[#34D399]" />
+                Landmarks & Rover POV
+              </span>
+              <button onClick={() => toggleLayer("landmarks")}>
+                {layerConfig.landmarks.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Swipe Lens Divider Handle */}
       {swipeMode && (
         <div 
-          className="absolute top-0 bottom-0 z-20 pointer-events-none flex flex-col items-center"
+          className="absolute top-0 bottom-0 z-20 pointer-events-auto cursor-ew-resize flex items-center justify-center"
           style={{ left: `${swipePosition}%` }}
         >
-          <div className="w-[1.5px] h-full bg-[#38BDF8] shadow-[0_0_10px_#38BDF8]" />
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 bg-[#0C1220] border border-[#38BDF8] text-[#38BDF8] rounded-full p-1.5 shadow-xl pointer-events-auto cursor-ew-resize">
+          <div className="w-0.5 h-full bg-[#FBBF24] shadow-[0_0_10px_#FBBF24]" />
+          <div className="absolute w-8 h-8 rounded-full bg-[#070B14] border-2 border-[#FBBF24] flex items-center justify-center text-[#FBBF24] shadow-xl">
             <Columns className="w-4 h-4" />
           </div>
         </div>
       )}
 
-      {/* Floating Tactical Tool Bar (Top Left) */}
-      <div className="absolute top-3 left-3 z-20 flex flex-wrap items-center gap-2">
-        <button
-          onClick={() => setLayersOpen(!layersOpen)}
-          className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg shadow-lg border transition-all backdrop-blur-md ${
-            layersOpen 
-              ? "bg-[#F36C3D] text-white border-[#F36C3D]" 
-              : "hud-panel text-white hover:border-[#38BDF8] hover:text-[#38BDF8]"
-          }`}
-          title="Toggle NASA Layer Manager"
-        >
-          <Layers className="w-3.5 h-3.5" />
-          <span>Data Layers</span>
-          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/10 text-white font-bold">
-            7
-          </span>
-        </button>
-
-        <button
-          onClick={() => setSwipeMode(!swipeMode)}
-          className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg shadow-lg border transition-all backdrop-blur-md ${
-            swipeMode 
-              ? "bg-[#38BDF8] text-[#04070D] border-[#38BDF8] font-bold" 
-              : "hud-panel text-white hover:border-[#38BDF8] hover:text-[#38BDF8]"
-          }`}
-          title="Split-Screen Comparison Tool"
-        >
-          <Columns className="w-3.5 h-3.5" />
-          <span>{swipeMode ? "Exit Swipe" : "Split-Screen Swipe"}</span>
-        </button>
-
-        <button
-          onClick={onOpen3DModal}
-          className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg shadow-lg border hud-panel text-white hover:border-[#F36C3D] hover:text-[#F36C3D] transition-all backdrop-blur-md"
-          title="Inspect 3D WebGL Mesh"
-        >
-          <Mountain className="w-3.5 h-3.5 text-[#F36C3D]" />
-          <span>Inspect 3D Mesh</span>
-        </button>
-
-        <button
-          onClick={handleResetView}
-          className="p-1.5 text-xs rounded-lg shadow-lg border hud-panel text-[#94A3B8] hover:text-white transition-all backdrop-blur-md"
-          title="Reset to Active Sector Extent"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-        </button>
-      </div>
-
-      {/* Split-Screen Slider Range Control (Top Center) */}
+      {/* Swipe Slider Control Bar (Visible when swipe active) */}
       {swipeMode && (
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 hud-panel px-4 py-1.5 rounded-xl flex items-center gap-3">
-          <span className="text-[10px] font-mono uppercase font-bold text-[#94A3B8]">MRO CTX (6m)</span>
+        <div className="absolute top-14 left-1/2 -translate-x-1/2 z-30 bg-[#070B14]/90 border border-[#FBBF24]/40 px-4 py-2 rounded-xl backdrop-blur-md flex items-center gap-3 text-xs font-mono">
+          <span className="text-[#F36C3D] font-bold">Viking Color</span>
           <input
             type="range"
             min="5"
             max="95"
             value={swipePosition}
             onChange={(e) => setSwipePosition(Number(e.target.value))}
-            className="w-36 accent-[#38BDF8] cursor-pointer"
+            className="w-40 accent-[#FBBF24] cursor-ew-resize"
           />
-          <span className="text-[10px] font-mono uppercase font-bold text-[#38BDF8]">Thermal / Hazard</span>
+          <span className="text-[#38BDF8] font-bold">MOLA Hillshade</span>
         </div>
       )}
 
-      {/* Layer Control Panel Drawer (Left Floating) */}
-      {layersOpen && (
-        <div className="absolute top-14 left-3 z-30 w-72 max-h-[calc(100%-70px)] overflow-y-auto hud-panel p-4 rounded-xl space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-white/[0.08]">
-            <h4 className="text-xs font-bold tracking-wider uppercase text-[#38BDF8] flex items-center gap-1.5 font-mono">
-              <Sliders className="w-3.5 h-3.5" />
-              Layer Stack Manager
-            </h4>
-            <span className="text-[10px] text-[#94A3B8] font-mono">EPSG:104905</span>
-          </div>
+      {/* Main OpenLayers Map Viewport */}
+      <div ref={mapElement} className="w-full flex-1 min-h-[480px]" />
 
-          <div className="space-y-3.5 text-xs">
-            {/* Layer 1: CTX 6m */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-white flex items-center gap-1.5 text-[11px]">
-                  <span className="w-2 h-2 rounded-full bg-[#38BDF8]" />
-                  MRO CTX Jezero (6m)
-                </span>
-                <button onClick={() => toggleLayer("ctx")} className="text-[#94A3B8] hover:text-white">
-                  {layerConfig.ctx.visible ? <Eye className="w-3.5 h-3.5 text-[#38BDF8]" /> : <EyeOff className="w-3.5 h-3.5" />}
-                </button>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.05"
-                value={layerConfig.ctx.opacity}
-                onChange={(e) => changeOpacity("ctx", parseFloat(e.target.value))}
-                className="w-full accent-[#38BDF8] h-1"
-              />
-            </div>
-
-            {/* Layer 2: 1m Horn's Slope Hazard */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-white flex items-center gap-1.5 text-[11px]">
-                  <span className="w-2 h-2 rounded-full bg-[#F87171]" />
-                  1m Slope Hazard (Horn&apos;s)
-                </span>
-                <button onClick={() => toggleLayer("hazard")} className="text-[#94A3B8] hover:text-white">
-                  {layerConfig.hazard.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5" />}
-                </button>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.05"
-                value={layerConfig.hazard.opacity}
-                onChange={(e) => changeOpacity("hazard", parseFloat(e.target.value))}
-                className="w-full accent-[#34D399] h-1"
-              />
-            </div>
-
-            {/* Layer 3: THEMIS Night IR */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-white flex items-center gap-1.5 text-[11px]">
-                  <span className="w-2 h-2 rounded-full bg-[#FBBF24]" />
-                  THEMIS Night IR (100m)
-                </span>
-                <button onClick={() => toggleLayer("themis")} className="text-[#94A3B8] hover:text-white">
-                  {layerConfig.themis.visible ? <Eye className="w-3.5 h-3.5 text-[#FBBF24]" /> : <EyeOff className="w-3.5 h-3.5" />}
-                </button>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.05"
-                value={layerConfig.themis.opacity}
-                onChange={(e) => changeOpacity("themis", parseFloat(e.target.value))}
-                className="w-full accent-[#FBBF24] h-1"
-              />
-            </div>
-
-            {/* Layer 4: USGS SIM 3464 Geology */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-white flex items-center gap-1.5 text-[11px]">
-                  <span className="w-2 h-2 rounded-full bg-[#A78BFA]" />
-                  USGS SIM 3464 Geology
-                </span>
-                <button onClick={() => toggleLayer("geology")} className="text-[#94A3B8] hover:text-white">
-                  {layerConfig.geology.visible ? <Eye className="w-3.5 h-3.5 text-[#A78BFA]" /> : <EyeOff className="w-3.5 h-3.5" />}
-                </button>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.05"
-                value={layerConfig.geology.opacity}
-                onChange={(e) => changeOpacity("geology", parseFloat(e.target.value))}
-                className="w-full accent-[#A78BFA] h-1"
-              />
-            </div>
-
-            {/* Layer 5: CRISM Targets */}
-            <div className="flex items-center justify-between py-1">
-              <span className="font-medium text-white flex items-center gap-1.5 text-[11px]">
-                <Sparkles className="w-3.5 h-3.5 text-[#38BDF8]" />
-                CRISM Mineral Hotspots
-              </span>
-              <button onClick={() => toggleLayer("crism")} className="text-[#94A3B8] hover:text-white">
-                {layerConfig.crism.visible ? <Eye className="w-3.5 h-3.5 text-[#38BDF8]" /> : <EyeOff className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-
-            {/* Layer 6: Rover Feeds */}
-            <div className="flex items-center justify-between py-1">
-              <span className="font-medium text-white flex items-center gap-1.5 text-[11px]">
-                <span className="w-2 h-2 rounded-full bg-[#F36C3D]" />
-                Perseverance Traverse &amp; Sols
-              </span>
-              <button onClick={() => toggleLayer("rover")} className="text-[#94A3B8] hover:text-white">
-                {layerConfig.rover.visible ? <Eye className="w-3.5 h-3.5 text-[#F36C3D]" /> : <EyeOff className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-
-            {/* Layer 7: Global MOLA */}
-            <div className="space-y-1 pt-2 border-t border-white/[0.06]">
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-white text-[11px]">MOLA Global Hillshade</span>
-                <button onClick={() => toggleLayer("mola")} className="text-[#94A3B8] hover:text-white">
-                  {layerConfig.mola.visible ? <Eye className="w-3.5 h-3.5 text-white" /> : <EyeOff className="w-3.5 h-3.5" />}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Real-Time Precision Telemetry HUD (Bottom Right) */}
-      <div className="absolute bottom-3 right-3 z-20 flex flex-wrap items-center gap-3 hud-panel px-4 py-2 rounded-xl text-xs">
-        <div className="flex items-center gap-1.5 text-[#94A3B8]">
-          <Compass className="w-3.5 h-3.5 text-[#38BDF8]" />
-          <span className="font-mono text-[11px]">LON:</span>
-          <span className="font-mono text-white font-bold num-tabular">
-            {cursorCoords ? cursorCoords.lon.toFixed(4) : "77.4150"}°E
+      {/* Bottom Mission Telemetry HUD */}
+      <div className="bg-[#070B14]/95 border-t border-white/[0.08] px-4 py-2 text-xs flex flex-wrap items-center justify-between gap-3 font-mono text-slate-400">
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1.5 text-white">
+            <Crosshair className="w-3.5 h-3.5 text-[#38BDF8]" />
+            <span>CURSOR:</span>
+            <span className="text-[#38BDF8] font-bold num-tabular">
+              {cursorCoords ? `${cursorCoords.lon.toFixed(4)}°E, ${cursorCoords.lat.toFixed(4)}°N` : "77.4150°E, 18.4480°N"}
+            </span>
           </span>
-          <span className="font-mono text-[11px] ml-1">LAT:</span>
-          <span className="font-mono text-white font-bold num-tabular">
-            {cursorCoords ? cursorCoords.lat.toFixed(4) : "18.4480"}°N
+
+          <span className="hidden sm:inline text-white/20">|</span>
+
+          <span className="flex items-center gap-1.5">
+            <Mountain className="w-3.5 h-3.5 text-[#F36C3D]" />
+            <span>MOLA DATUM:</span>
+            <span className="text-white font-bold num-tabular">
+              {cursorTelemetry?.elevation_m !== undefined ? `${cursorTelemetry.elevation_m} m` : "-2545.0 m"}
+            </span>
+          </span>
+
+          <span className="hidden md:inline text-white/20">|</span>
+
+          <span className="hidden md:flex items-center gap-1.5">
+            <AlertTriangle className="w-3.5 h-3.5 text-[#FBBF24]" />
+            <span>HORN SLOPE:</span>
+            <span className="text-white font-bold num-tabular">
+              {cursorTelemetry?.slope_deg !== undefined ? `${cursorTelemetry.slope_deg}°` : "5.2°"}
+            </span>
           </span>
         </div>
 
-        <div className="h-4 w-px bg-white/[0.12]" />
-
-        <div className="flex items-center gap-1.5 text-[#94A3B8]">
-          <Mountain className="w-3.5 h-3.5 text-[#F36C3D]" />
-          <span className="font-mono text-[11px]">ELEV:</span>
-          <span className="font-mono text-white font-bold num-tabular">
-            {cursorTelemetry?.elevation_m ?? -2565.8} m
-          </span>
-        </div>
-
-        <div className="h-4 w-px bg-white/[0.12]" />
-
-        <div className="flex items-center gap-1.5 text-[#94A3B8]">
-          <AlertTriangle className="w-3.5 h-3.5 text-[#FBBF24]" />
-          <span className="font-mono text-[11px]">SLOPE:</span>
-          <span className="font-mono text-white font-bold num-tabular">
-            {cursorTelemetry?.slope_deg ?? 4.8}°
-          </span>
-        </div>
-
-        <div className="h-4 w-px bg-white/[0.12]" />
-
-        <div className="flex items-center gap-1.5 text-[#94A3B8]">
-          <Flame className="w-3.5 h-3.5 text-[#38BDF8]" />
-          <span className="font-mono text-[11px]">TI:</span>
-          <span className="font-mono text-white font-bold num-tabular">
-            {cursorTelemetry?.thermal_inertia ?? 285.0}
-          </span>
-        </div>
-
-        <div className="h-4 w-px bg-white/[0.12]" />
-
-        <div className="flex items-center gap-1">
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-[#34D399]/15 text-[#34D399] border border-[#34D399]/30">
-            NOMINAL
+        <div className="flex items-center gap-3">
+          <span className="px-2.5 py-0.5 rounded-full bg-[#34D399]/15 text-[#34D399] border border-[#34D399]/30 text-[10px] font-bold">
+            {cursorTelemetry?.safety_status || "TRAVERSABLE INDURATED BEDROCK"}
           </span>
         </div>
       </div>
