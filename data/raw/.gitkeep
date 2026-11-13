@@ -1,0 +1,2 @@
+# Raw multi-gigabyte planetary datasets (e.g. 1.8 GB HiRISE DTM GeoTIFFs) should be stored locally here or on external cloud storage.
+# Do not commit raw .tif, .img, or .cub files to git.

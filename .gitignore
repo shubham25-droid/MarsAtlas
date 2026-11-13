@@ -38,3 +38,20 @@ Thumbs.db
 # Local Environment Variables
 .env*.local
 .env
+*.env
+!.env.example
+
+# Large Scientific Datasets & Raw Planetary Archives (Never commit multi-GB rasters)
+data/raw/*
+!data/raw/.gitkeep
+*.tif
+*.tiff
+*.IMG
+*.img
+*.cub
+*.tar
+*.zip
+*.gz
+*.h5
+*.nc
+
