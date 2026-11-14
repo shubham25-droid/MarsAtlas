@@ -448,9 +448,9 @@ def generate_pptx():
 
     add_card(s5, 0.8, 1.65, 5.6, 5.3, title="A* ROUTE OUTPUT & TRAVERSE COMPARISON", title_color=RGB_CYAN, bg_color=RGB_SLATE)
     if os.path.exists(FIG5):
-        s5.shapes.add_picture(FIG5, Inches(0.95), Inches(2.05), width=Inches(5.3))
+        s5.shapes.add_picture(FIG5, Inches(1.4), Inches(2.05), width=Inches(4.4), height=Inches(3.0))
 
-    t_shape5 = s5.shapes.add_table(4, 6, Inches(0.95), Inches(4.6), Inches(5.3), Inches(1.8))
+    t_shape5 = s5.shapes.add_table(4, 6, Inches(0.95), Inches(5.15), Inches(5.3), Inches(1.2))
     t5 = t_shape5.table
     t5.columns[0].width = Inches(1.1)
     t5.columns[1].width = Inches(0.8)
@@ -487,7 +487,7 @@ def generate_pptx():
             p.font.size = Pt(8.5)
             p.font.color.rgb = RGB_ORANGE if j == 0 else RGB_WHITE
 
-    tb5_note = s5.shapes.add_textbox(Inches(0.95), Inches(6.45), Inches(5.3), Inches(0.4))
+    tb5_note = s5.shapes.add_textbox(Inches(0.95), Inches(6.45), Inches(5.3), Inches(0.35))
     p5_n = tb5_note.text_frame.paragraphs[0]
     p5_n.text = "*Model estimate: constant shielding factor × 23.33 µSv/h baseline. Not a dose prediction."
     p5_n.font.name = "Arial"
@@ -918,21 +918,21 @@ def generate_pdf():
 
     draw_card(57.6, 98, 410, 415, "A* ROUTE OUTPUT & TRAVERSE COMPARISON", RL_CYAN, RL_SLATE)
     if os.path.exists(FIG5):
-        c.drawImage(FIG5, 68, to_rl_y(124, 210), width=389, height=210, preserveAspectRatio=True)
+        c.drawImage(FIG5, 105, to_rl_y(122, 215), width=315, height=215, preserveAspectRatio=True)
 
     t_left5 = 68
-    t_top5 = 346
+    t_top5 = 344
     t_w5 = 389
     col_w5 = [85, 55, 60, 60, 64, 65]
 
     c.setFillColor(RL_BORDER)
-    c.rect(t_left5, to_rl_y(t_top5, 20), t_w5, 20, fill=1, stroke=0)
+    c.rect(t_left5, to_rl_y(t_top5, 18), t_w5, 18, fill=1, stroke=0)
     c.setFont('Helvetica-Bold', 7.5)
     c.setFillColor(RL_CYAN)
     th_x5 = t_left5 + 4
     headers5 = ["STRATEGY", "DIST", "TIME", "ENERGY", "PEAK SLOPE", "DOSE*"]
     for j, h in enumerate(headers5):
-        c.drawString(th_x5, to_rl_y(t_top5, 14), h)
+        c.drawString(th_x5, to_rl_y(t_top5, 13), h)
         th_x5 += col_w5[j]
 
     rows5 = [
@@ -940,23 +940,23 @@ def generate_pdf():
         ("Balanced", "2.98 km", "86.6 min", "1,591 kJ", "13.3°", "26.6 µSv"),
         ("Science", "3.80 km", "113.0 min", "2,029 kJ", "13.7°", "35.3 µSv")
     ]
-    r_top5 = t_top5 + 20
+    r_top5 = t_top5 + 18
     for i, r in enumerate(rows5):
         c.setFillColor(RL_SLATE if i % 2 == 0 else RL_NAVY)
-        c.rect(t_left5, to_rl_y(r_top5, 24), t_w5, 24, fill=1, stroke=0)
+        c.rect(t_left5, to_rl_y(r_top5, 18), t_w5, 18, fill=1, stroke=0)
         c.setStrokeColor(RL_BORDER)
-        c.line(t_left5, to_rl_y(r_top5, 24), t_left5 + t_w5, to_rl_y(r_top5, 24))
+        c.line(t_left5, to_rl_y(r_top5, 18), t_left5 + t_w5, to_rl_y(r_top5, 18))
         td_x5 = t_left5 + 4
         for j, val in enumerate(r):
             c.setFont('Helvetica-Bold' if j == 0 else 'Helvetica', 7.5)
             c.setFillColor(RL_ORANGE if j == 0 else RL_WHITE)
-            c.drawString(td_x5, to_rl_y(r_top5, 16), val)
+            c.drawString(td_x5, to_rl_y(r_top5, 13), val)
             td_x5 += col_w5[j]
-        r_top5 += 24
+        r_top5 += 18
 
     c.setFont('Helvetica', 7)
     c.setFillColor(RL_GREY)
-    c.drawString(t_left5, PAGE_H_PT - 495, "*Model estimate: constant shielding factor × 23.33 µSv/h baseline. Not a dose prediction.")
+    c.drawString(t_left5, to_rl_y(425, 8), "*Model estimate: constant shielding factor × 23.33 µSv/h baseline. Not a dose prediction.")
 
     draw_card(485, 98, 417.4, 210, "STEP COST ACTUALLY IMPLEMENTED (PLANNER.PY)", RL_ORANGE, RL_SLATE)
     s5_cost = [
