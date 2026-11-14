@@ -110,6 +110,7 @@ export default function Home() {
         activeSite={activeSite}
         onSiteChange={handleSiteChange}
         onOpenProvenance={() => setIsProvenanceOpen(true)}
+        onOpen3D={() => setIs3DModalOpen(true)}
       />
 
       {/* View 1: Immersive Landing Page */}
@@ -117,6 +118,7 @@ export default function Home() {
         <LandingPage
           onEnterWorkspace={() => setCurrentView("workspace")}
           onOpenProvenance={() => setIsProvenanceOpen(true)}
+          onOpen3D={() => setIs3DModalOpen(true)}
           onSelectSite={handleSiteChange}
         />
       ) : (
