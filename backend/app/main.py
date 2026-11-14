@@ -135,7 +135,7 @@ def root_status():
                 <div><span class="stat-label">RAD DOSIMETRY:</span><span class="stat-val">0.560 mSv/sol (MSL RAD)</span></div>
             </div>
             <div class="links">
-                <a class="btn" href="https://mars-atlas-indol.vercel.app">Launch Frontend Console &rarr;</a>
+                <a class="btn" href="https://mars-atlas-nasa.vercel.app">Launch Frontend Console &rarr;</a>
                 <a class="btn btn-outline" href="/docs">Swagger API Docs &rarr;</a>
                 <a class="btn btn-outline" href="/api/health">Health Check &rarr;</a>
             </div>
