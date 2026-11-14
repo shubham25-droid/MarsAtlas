@@ -27,14 +27,12 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
   const mountRef = useRef<HTMLDivElement>(null);
   const [shadingMode, setShadingMode] = useState<"hazard" | "realistic" | "wireframe">("hazard");
   const [showRoutes, setShowRoutes] = useState(true);
-  const [exaggeration, setExaggeration] = useState(1.8);
   const [sunAzimuth, setSunAzimuth] = useState(65);
-  const [sunElevation, setSunElevation] = useState(48);
   const [autoRotate, setAutoRotate] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activePreset, setActivePreset] = useState<string>("hero");
 
-  // References for live updates
+  // Three.js References
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -42,7 +40,6 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
   const terrainMeshRef = useRef<THREE.Mesh | null>(null);
   const routesGroupRef = useRef<THREE.Group | null>(null);
   const dirLightRef = useRef<THREE.DirectionalLight | null>(null);
-  const rawHeightArrayRef = useRef<Float32Array | null>(null);
   const materialsMapRef = useRef<{
     hazard?: THREE.MeshStandardMaterial;
     realistic?: THREE.MeshStandardMaterial;
@@ -53,114 +50,77 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
     if (!isOpen || !mountRef.current) return;
 
     const container = mountRef.current;
-    const width = container.clientWidth || 920;
-    const height = container.clientHeight || 560;
+    let width = container.clientWidth || 880;
+    let height = container.clientHeight || 540;
 
-    // 1. Scene
+    // 1. Scene Setup
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#030712"); // Deep Space Black
-    scene.fog = new THREE.FogExp2(0x030712, 0.0035);
+    scene.fog = new THREE.FogExp2(0x030712, 0.003);
     sceneRef.current = scene;
 
-    // 2. Camera
-    const camera = new THREE.PerspectiveCamera(42, width / height, 0.5, 2000);
-    // Initial heroic angle looking toward Jezero delta scarp
-    camera.position.set(-25, -78, 52);
+    // 2. Camera Setup (Y is UP in standard Three.js)
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.5, 1000);
+    camera.position.set(-20, 48, 62);
+    camera.lookAt(0, 4, 0);
     cameraRef.current = camera;
 
-    // 3. Renderer
+    // 3. Renderer Setup
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.1;
     container.innerHTML = "";
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // 4. OrbitControls
+    // 4. OrbitControls (Smooth, natural ground-orbiting)
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.06;
-    controls.maxPolarAngle = Math.PI / 2 - 0.04; // Prevent going beneath ground
+    controls.dampingFactor = 0.05;
+    controls.maxPolarAngle = Math.PI / 2 - 0.04; // Never clip beneath terrain
     controls.minDistance = 15;
-    controls.maxDistance = 250;
-    controls.target.set(0, 0, 8);
+    controls.maxDistance = 220;
+    controls.target.set(0, 4, 0);
     controls.autoRotate = autoRotate;
-    controls.autoRotateSpeed = 0.7;
+    controls.autoRotateSpeed = 0.8;
     controlsRef.current = controls;
 
-    // 5. Lighting (Simulating Mars Solar Flux & Atmospheric Scattering)
-    const ambientLight = new THREE.AmbientLight(0x2d1a14, 1.8);
+    // 5. Lighting (Mars Solar Flux)
+    const ambientLight = new THREE.AmbientLight(0x2d1a14, 1.6);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xfff3e6, 3.2);
+    const dirLight = new THREE.DirectionalLight(0xfff5ea, 3.0);
     dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 2048;
-    dirLight.shadow.mapSize.height = 2048;
-    dirLight.shadow.camera.near = 10;
-    dirLight.shadow.camera.far = 300;
-    dirLight.shadow.camera.left = -60;
-    dirLight.shadow.camera.right = 60;
-    dirLight.shadow.camera.top = 60;
-    dirLight.shadow.camera.bottom = -60;
+    dirLight.shadow.mapSize.width = 1024;
+    dirLight.shadow.mapSize.height = 1024;
+    dirLight.position.set(45, 60, 35);
     scene.add(dirLight);
     dirLightRef.current = dirLight;
 
-    // Distant faint celestial fill light
+    // Faint celestial blue rim light
     const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.6);
-    fillLight.position.set(60, 60, 40);
+    fillLight.position.set(-50, 40, -40);
     scene.add(fillLight);
 
-    // 6. Grid plane geometry (550 x 350 aspect ratio ~ 1.57:1)
-    const planeW = 110;
-    const planeH = 70;
-    const segX = 180;
-    const segY = 115;
+    // 6. Terrain Geometry (100 x 65 units, oriented on XZ ground plane where Y is elevation)
+    const planeW = 100;
+    const planeH = 65;
+    const segX = 120;
+    const segY = 80;
     const geometry = new THREE.PlaneGeometry(planeW, planeH, segX, segY);
+    geometry.rotateX(-Math.PI / 2); // Orient so Y is UP (Elevation)
 
-    // Coordinate helper: from UV to 3D world position
-    const uvToWorld = (u: number, v: number, zOffset = 0.6) => {
-      const x = (u - 0.5) * planeW;
-      const y = (v - 0.5) * planeH;
-      // sample height
-      let z = 0;
-      if (rawHeightArrayRef.current) {
-        const rawW = 256;
-        const rawH = 256;
-        const px = Math.min(rawW - 1, Math.max(0, Math.floor(u * rawW)));
-        const py = Math.min(rawH - 1, Math.max(0, Math.floor((1 - v) * rawH)));
-        const normH = rawHeightArrayRef.current[py * rawW + px];
-        z = normH * (14.0 * exaggeration);
-      }
-      return new THREE.Vector3(x, y, z + zOffset);
-    };
-
-    // 7. Textures Loader
+    // Textures & Materials
     const textureLoader = new THREE.TextureLoader();
-    let texturesLoaded = 0;
-    const checkReady = () => {
-      texturesLoaded++;
-      if (texturesLoaded >= 2) {
-        setLoading(false);
-      }
-    };
-
     const slopeHazardTex = textureLoader.load("/data/jezero_slope_hazard.png", () => {
       slopeHazardTex.wrapS = THREE.ClampToEdgeWrapping;
       slopeHazardTex.wrapT = THREE.ClampToEdgeWrapping;
       slopeHazardTex.colorSpace = THREE.SRGBColorSpace;
-      checkReady();
-    });
-
-    // Realistic Mars procedural albedo fallback
-    const realisticMat = new THREE.MeshStandardMaterial({
-      color: 0xba5a2f,
-      roughness: 0.88,
-      metalness: 0.08,
-      flatShading: false,
+      renderer.render(scene, camera);
     });
 
     const hazardMat = new THREE.MeshStandardMaterial({
@@ -170,10 +130,16 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
       flatShading: false,
     });
 
+    const realisticMat = new THREE.MeshStandardMaterial({
+      color: 0xc45a28,
+      roughness: 0.88,
+      metalness: 0.08,
+      flatShading: false,
+    });
+
     const wireframeMat = new THREE.MeshStandardMaterial({
       color: 0x38bdf8,
       wireframe: true,
-      wireframeLinewidth: 1,
     });
 
     materialsMapRef.current = {
@@ -182,73 +148,76 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
       wireframe: wireframeMat
     };
 
-    // Load Heightmap to displace vertices
-    textureLoader.load(
-      "/data/jezero_heightmap.png",
-      (heightmapTex) => {
-        const canvas = document.createElement("canvas");
-        const rw = 256;
-        const rh = 256;
-        canvas.width = rw;
-        canvas.height = rh;
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.drawImage(heightmapTex.image, 0, 0, rw, rh);
-          const imgData = ctx.getImageData(0, 0, rw, rh).data;
-          const floatHeights = new Float32Array(rw * rh);
+    // Heightmap displacement via Canvas (CORS-safe)
+    const heightImg = new Image();
+    heightImg.crossOrigin = "anonymous";
+    heightImg.onload = () => {
+      const cvs = document.createElement("canvas");
+      cvs.width = 128;
+      cvs.height = 128;
+      const ctx = cvs.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(heightImg, 0, 0, 128, 128);
+        const pData = ctx.getImageData(0, 0, 128, 128).data;
+        const pos = geometry.attributes.position;
 
-          for (let p = 0; p < rw * rh; p++) {
-            floatHeights[p] = imgData[p * 4] / 255.0; // Normalized 0..1
-          }
-          rawHeightArrayRef.current = floatHeights;
-
-          // Displace geometry
-          const pos = geometry.attributes.position;
-          for (let i = 0; i < pos.count; i++) {
-            const u = (pos.getX(i) + planeW / 2) / planeW;
-            const v = (pos.getY(i) + planeH / 2) / planeH;
-            const px = Math.min(rw - 1, Math.max(0, Math.floor(u * (rw - 1))));
-            const py = Math.min(rh - 1, Math.max(0, Math.floor((1 - v) * (rh - 1))));
-            const normH = floatHeights[py * rw + px];
-            pos.setZ(i, normH * (14.0 * exaggeration));
-          }
-          geometry.computeVertexNormals();
+        // Displace Y coordinate based on pixel luminance
+        for (let i = 0; i < pos.count; i++) {
+          const x = pos.getX(i);
+          const z = pos.getZ(i);
+          const u = (x + planeW / 2) / planeW;
+          const v = (z + planeH / 2) / planeH;
+          const px = Math.min(127, Math.max(0, Math.floor(u * 127)));
+          const py = Math.min(127, Math.max(0, Math.floor((1 - v) * 127)));
+          const normH = pData[(py * 128 + px) * 4] / 255.0;
+          pos.setY(i, normH * 16.0);
         }
-
-        const initialMat = shadingMode === "hazard" ? hazardMat : shadingMode === "realistic" ? realisticMat : wireframeMat;
-        const mesh = new THREE.Mesh(geometry, initialMat);
-        mesh.receiveShadow = true;
-        mesh.castShadow = true;
-        scene.add(mesh);
-        terrainMeshRef.current = mesh;
-
-        // Build 3D Traverses and Waypoint Markers
-        buildTraverseRoutes(scene, uvToWorld);
-        checkReady();
-      },
-      undefined,
-      () => {
-        // Fallback smooth terrain if heightmap fetch fails
-        const initialMat = shadingMode === "hazard" ? hazardMat : realisticMat;
-        const mesh = new THREE.Mesh(geometry, initialMat);
-        scene.add(mesh);
-        terrainMeshRef.current = mesh;
-        setLoading(false);
+        geometry.computeVertexNormals();
+        pos.needsUpdate = true;
       }
-    );
 
-    // Resize handler
+      const initialMat = shadingMode === "hazard" ? hazardMat : realisticMat;
+      const mesh = new THREE.Mesh(geometry, initialMat);
+      mesh.receiveShadow = true;
+      mesh.castShadow = true;
+      scene.add(mesh);
+      terrainMeshRef.current = mesh;
+
+      // Build 3D Traverses
+      build3DTraverses(scene);
+      setLoading(false);
+    };
+
+    heightImg.onerror = () => {
+      // Fallback if image fails to load
+      const initialMat = shadingMode === "hazard" ? hazardMat : realisticMat;
+      const mesh = new THREE.Mesh(geometry, initialMat);
+      scene.add(mesh);
+      terrainMeshRef.current = mesh;
+      build3DTraverses(scene);
+      setLoading(false);
+    };
+
+    heightImg.src = "/data/jezero_heightmap.png";
+
+    // 7. Resize Handler
     const handleResize = () => {
       if (!mountRef.current || !rendererRef.current || !cameraRef.current) return;
-      const w = mountRef.current.clientWidth;
-      const h = mountRef.current.clientHeight;
+      const w = mountRef.current.clientWidth || 880;
+      const h = mountRef.current.clientHeight || 540;
       cameraRef.current.aspect = w / h;
       cameraRef.current.updateProjectionMatrix();
       rendererRef.current.setSize(w, h);
     };
+
     window.addEventListener("resize", handleResize);
 
-    // Animation Render Loop
+    // Initial resize trigger to avoid zero-dimension glitch
+    const timer = setTimeout(() => {
+      handleResize();
+    }, 60);
+
+    // 8. Render Animation Loop
     let animId: number;
     const animate = () => {
       animId = requestAnimationFrame(animate);
@@ -260,6 +229,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
     animate();
 
     return () => {
+      clearTimeout(timer);
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", handleResize);
       controls.dispose();
@@ -270,67 +240,61 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
     };
   }, [isOpen]);
 
-  // Helper to construct 3D spline routes and pin markers
-  const buildTraverseRoutes = (scene: THREE.Scene, uvToWorld: (u: number, v: number, zOffset?: number) => THREE.Vector3) => {
+  // Construct 3D Curved Traverses and Landmark Pins (In X-Z plane where Y is elevation)
+  const build3DTraverses = (scene: THREE.Scene) => {
     const routesGroup = new THREE.Group();
     routesGroupRef.current = routesGroup;
 
-    // UV coordinates inside modelled EVA Sector:
-    // Sector bounds: Longitude 77.35 to 77.46, Latitude 18.41 to 18.48
-    // Start (Octavia E. Butler Landing Site): ~77.45°E, 18.444°N -> u ~ 0.91, v ~ 0.49
-    // Destination (Cape Flatley Delta Front): ~77.402°E, 18.453°N -> u ~ 0.47, v ~ 0.61
-
-    // 1. Safe Route (Avoids scarp, traverses gentle valley floor)
-    const safeUVs = [
-      [0.91, 0.49],
-      [0.85, 0.58],
-      [0.72, 0.58],
-      [0.58, 0.58],
-      [0.49, 0.53],
-      [0.47, 0.61]
+    // 1. Safe Route (Emerald Green, avoids high gradient scarps)
+    const safeCoords: [number, number, number][] = [
+      [38, 7.5, 0],
+      [28, 8.2, 5],
+      [12, 8.5, 6],
+      [-5, 8.2, 5],
+      [-16, 7.8, 3],
+      [-22, 9.2, 7]
     ];
-    const safePoints = safeUVs.map(([u, v]) => uvToWorld(u, v, 0.7));
+    const safePoints = safeCoords.map(([x, y, z]) => new THREE.Vector3(x, y + 0.6, z));
     const safeCurve = new THREE.CatmullRomCurve3(safePoints);
-    const safeGeo = new THREE.TubeGeometry(safeCurve, 64, 0.32, 8, false);
+    const safeGeo = new THREE.TubeGeometry(safeCurve, 48, 0.32, 8, false);
     const safeMat = new THREE.MeshStandardMaterial({
       color: 0x34d399,
       emissive: 0x34d399,
-      emissiveIntensity: 0.6,
+      emissiveIntensity: 0.7,
       roughness: 0.2
     });
     routesGroup.add(new THREE.Mesh(safeGeo, safeMat));
 
-    // 2. Balanced Route (Direct gradient path)
-    const balUVs = [
-      [0.91, 0.49],
-      [0.84, 0.57],
-      [0.70, 0.57],
-      [0.55, 0.57],
-      [0.47, 0.61]
+    // 2. Balanced Route (Cyan, direct gradient path)
+    const balCoords: [number, number, number][] = [
+      [38, 7.5, 0],
+      [26, 8.2, 4],
+      [8, 8.6, 5],
+      [-10, 8.4, 6],
+      [-22, 9.2, 7]
     ];
-    const balPoints = balUVs.map(([u, v]) => uvToWorld(u, v, 0.8));
+    const balPoints = balCoords.map(([x, y, z]) => new THREE.Vector3(x, y + 0.8, z));
     const balCurve = new THREE.CatmullRomCurve3(balPoints);
-    const balGeo = new THREE.TubeGeometry(balCurve, 64, 0.28, 8, false);
+    const balGeo = new THREE.TubeGeometry(balCurve, 48, 0.28, 8, false);
     const balMat = new THREE.MeshStandardMaterial({
       color: 0x38bdf8,
       emissive: 0x38bdf8,
-      emissiveIntensity: 0.7,
+      emissiveIntensity: 0.8,
       roughness: 0.2
     });
     routesGroup.add(new THREE.Mesh(balGeo, balMat));
 
-    // 3. Science Route (Visits Séítah and Delta contacts)
-    const sciUVs = [
-      [0.91, 0.49],
-      [0.82, 0.48],
-      [0.68, 0.45],
-      [0.62, 0.43], // SCI-02 contact
-      [0.52, 0.49],
-      [0.47, 0.61]
+    // 3. Science Route (Orange, visits Séítah carbonate outcrops)
+    const sciCoords: [number, number, number][] = [
+      [38, 7.5, 0],
+      [24, 7.2, -2],
+      [6, 6.8, -5], // Séítah outcrop
+      [-8, 7.8, 1],
+      [-22, 9.2, 7]
     ];
-    const sciPoints = sciUVs.map(([u, v]) => uvToWorld(u, v, 0.9));
+    const sciPoints = sciCoords.map(([x, y, z]) => new THREE.Vector3(x, y + 0.9, z));
     const sciCurve = new THREE.CatmullRomCurve3(sciPoints);
-    const sciGeo = new THREE.TubeGeometry(sciCurve, 64, 0.35, 8, false);
+    const sciGeo = new THREE.TubeGeometry(sciCurve, 48, 0.35, 8, false);
     const sciMat = new THREE.MeshStandardMaterial({
       color: 0xf36c3d,
       emissive: 0xf36c3d,
@@ -339,33 +303,31 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
     });
     routesGroup.add(new THREE.Mesh(sciGeo, sciMat));
 
-    // Marker helper
-    const addPin = (u: number, v: number, color: number, label: string) => {
-      const pos = uvToWorld(u, v, 0.5);
-      // Stem
-      const stemGeo = new THREE.CylinderGeometry(0.12, 0.12, 4.0, 8);
+    // Marker Pins Helper
+    const addPin = (x: number, y: number, z: number, color: number) => {
+      // Vertical Stem
+      const stemGeo = new THREE.CylinderGeometry(0.12, 0.12, 4.5, 8);
       const stemMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
       const stem = new THREE.Mesh(stemGeo, stemMat);
-      stem.position.set(pos.x, pos.y, pos.z + 2.0);
-      stem.rotation.x = Math.PI / 2;
+      stem.position.set(x, y + 2.25, z);
       routesGroup.add(stem);
 
       // Glowing Beacon Top
-      const headGeo = new THREE.SphereGeometry(0.75, 16, 16);
-      const headMat = new THREE.MeshStandardMaterial({
+      const beaconGeo = new THREE.SphereGeometry(0.8, 16, 16);
+      const beaconMat = new THREE.MeshStandardMaterial({
         color: color,
         emissive: color,
         emissiveIntensity: 1.2
       });
-      const head = new THREE.Mesh(headGeo, headMat);
-      head.position.set(pos.x, pos.y, pos.z + 4.2);
-      routesGroup.add(head);
+      const beacon = new THREE.Mesh(beaconGeo, beaconMat);
+      beacon.position.set(x, y + 4.8, z);
+      routesGroup.add(beacon);
     };
 
-    // Add Key Operational Landmarks
-    addPin(0.91, 0.49, 0xffffff, "Landing Site (Sol 13)");
-    addPin(0.47, 0.61, 0xfbbf24, "Cape Flatley Delta Front");
-    addPin(0.62, 0.43, 0xa78bfa, "Séítah Carbonate Outcrop (SCI-02)");
+    // Add Key Geographic Markers
+    addPin(38, 7.5, 0, 0xffffff); // Octavia E. Butler Landing Site (Sol 13)
+    addPin(-22, 9.2, 7, 0xfbbf24); // Cape Flatley Delta Front
+    addPin(6, 6.8, -5, 0xa78bfa); // Séítah Carbonate Outcrop (SCI-02)
 
     scene.add(routesGroup);
   };
@@ -390,15 +352,10 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
   // Update Sun Direction
   useEffect(() => {
     if (dirLightRef.current) {
-      const azRad = THREE.MathUtils.degToRad(sunAzimuth);
-      const elRad = THREE.MathUtils.degToRad(sunElevation);
-      const dist = 90;
-      const x = dist * Math.cos(elRad) * Math.sin(azRad);
-      const y = -dist * Math.cos(elRad) * Math.cos(azRad);
-      const z = dist * Math.sin(elRad);
-      dirLightRef.current.position.set(x, y, z);
+      const rad = THREE.MathUtils.degToRad(sunAzimuth);
+      dirLightRef.current.position.set(Math.cos(rad) * 60, 60, Math.sin(rad) * 60);
     }
-  }, [sunAzimuth, sunElevation]);
+  }, [sunAzimuth]);
 
   // Update Auto-Rotate
   useEffect(() => {
@@ -415,21 +372,21 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
     const controls = controlsRef.current;
 
     if (preset === "hero") {
-      // Perspective toward delta scarp
-      camera.position.set(-25, -78, 52);
-      controls.target.set(0, 0, 8);
+      // Perspective view looking at delta scarp
+      camera.position.set(-20, 48, 62);
+      controls.target.set(0, 4, 0);
     } else if (preset === "nadir") {
       // Top-Down Map View
-      camera.position.set(0, 0, 115);
+      camera.position.set(0, 95, 0.1);
       controls.target.set(0, 0, 0);
     } else if (preset === "approach") {
       // Looking west from landing site
-      camera.position.set(58, -50, 36);
-      controls.target.set(-5, 5, 6);
+      camera.position.set(45, 26, 12);
+      controls.target.set(-10, 5, 2);
     } else if (preset === "eye") {
-      // Astronaut low traverse view
-      camera.position.set(10, -32, 14);
-      controls.target.set(-15, 12, 9);
+      // Astronaut eye-level perspective
+      camera.position.set(12, 10, 18);
+      controls.target.set(-15, 6, -3);
     }
     controls.update();
   };
@@ -438,8 +395,9 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-6xl h-[92vh] max-h-[820px] bg-[#070B14] border border-white/[0.12] rounded-2xl flex flex-col overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.9)]">
-        {/* Modal Top Header (NASA Style) */}
+      <div className="relative w-full max-w-6xl h-[92vh] max-h-[820px] bg-[#070B14] border border-white/[0.12] rounded-2xl flex flex-col overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.95)]">
+        
+        {/* Modal Top Header */}
         <div className="flex items-center justify-between px-6 py-3.5 border-b border-white/[0.08] bg-[#0A0F1D]">
           <div className="flex items-center gap-3.5">
             <div className="w-9 h-9 rounded-xl bg-[#F36C3D]/15 border border-[#F36C3D]/30 flex items-center justify-center text-[#F36C3D]">
@@ -454,7 +412,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
                   WEBGL 2.0 • USGS 1M DTM
                 </span>
                 <span className="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/30">
-                  CSRM A* TRAVERSES
+                  CSRM 3D TRAVERSES
                 </span>
               </div>
               <p className="text-[11px] text-[#94A3B8]">
@@ -480,7 +438,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#030712]/90 z-20">
               <div className="w-10 h-10 rounded-full border-2 border-[#38BDF8] border-t-transparent animate-spin" />
               <span className="text-xs text-[#38BDF8] font-mono tracking-wider">
-                Reconstructing 3D Terrain &amp; Slope Hazard Overlay...
+                Generating 3D Relief Mesh &amp; Slope Hazard Overlay...
               </span>
             </div>
           )}
@@ -597,26 +555,26 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
                 </div>
                 <div className="flex items-center gap-2 text-white">
                   <span className="w-2.5 h-1 rounded-full bg-[#F36C3D]" />
-                  <span>Max Science (CRISM Hotspots)</span>
+                  <span>Max Science (CRISM Targets)</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Navigation Hint Footer Bar inside canvas */}
+          {/* Navigation Controls Guidance */}
           <div className="absolute bottom-4 left-4 z-10 pointer-events-none">
             <div className="bg-[#070B14]/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/[0.08] text-[10px] font-mono text-[#94A3B8] flex items-center gap-3">
-              <span className="text-white font-semibold">NAVIGATION:</span>
-              <span>Left-Click + Drag: Orbit</span>
+              <span className="text-white font-semibold">CONTROLS:</span>
+              <span>Left-Click + Drag: Orbit Surface</span>
               <span>•</span>
               <span>Right-Click + Drag: Pan</span>
               <span>•</span>
-              <span>Scroll: Zoom</span>
+              <span>Scroll: Zoom In/Out</span>
             </div>
           </div>
         </div>
 
-        {/* Modal Bottom Tactical Controls Bar */}
+        {/* Modal Bottom Controls Bar */}
         <div className="flex flex-wrap items-center justify-between px-6 py-3 border-t border-white/[0.08] bg-[#0A0F1D] text-xs gap-4">
           <div className="flex flex-wrap items-center gap-5">
             {/* Traverses Toggle */}
@@ -627,7 +585,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
                 onChange={(e) => setShowRoutes(e.target.checked)}
                 className="w-3.5 h-3.5 rounded accent-[#F36C3D]"
               />
-              <span className="font-mono text-[11px] font-medium">Show 3D Traverses &amp; Landmarks</span>
+              <span className="font-mono text-[11px] font-medium">Show 3D Traverses &amp; Landmark Pins</span>
             </label>
 
             {/* Auto-Rotate Toggle */}
@@ -640,7 +598,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
               }`}
             >
               <RotateCw className={`w-3.5 h-3.5 ${autoRotate ? "animate-spin text-[#38BDF8]" : ""}`} />
-              <span>{autoRotate ? "Rotating (0.7 RPM)" : "Auto-Orbit"}</span>
+              <span>{autoRotate ? "Rotating (0.8 RPM)" : "Auto-Orbit"}</span>
             </button>
 
             {/* Sun Azimuth Slider */}
@@ -662,7 +620,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
           <div className="flex items-center gap-3 text-[11px] font-mono text-[#64748B]">
             <span>EPSG:104905 [MARS IAU2000]</span>
             <span>•</span>
-            <span className="text-[#34D399]">100% OPERATIONAL</span>
+            <span className="text-[#34D399]">THREE.JS WEBGL READY</span>
           </div>
         </div>
       </div>
