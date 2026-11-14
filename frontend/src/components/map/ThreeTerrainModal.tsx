@@ -115,11 +115,10 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.15;
 
-      // Mount canvas safely
-      while (container.firstChild) {
-        container.removeChild(container.firstChild);
+      // Mount canvas into dedicated empty canvas container
+      if (!container.contains(renderer.domElement)) {
+        container.appendChild(renderer.domElement);
       }
-      container.appendChild(renderer.domElement);
       rendererRef.current = renderer;
 
       // 4. OrbitControls
@@ -528,10 +527,14 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
             </div>
           </div>
         ) : (
-          /* 3D Canvas Viewport */
-          <div ref={mountRef} className="relative flex-1 w-full bg-[#030712] cursor-grab active:cursor-grabbing select-none overflow-hidden">
+          /* 3D Canvas Viewport Container */
+          <div className="relative flex-1 w-full bg-[#030712] cursor-grab active:cursor-grabbing select-none overflow-hidden">
+            {/* Dedicated Three.js canvas container with NO React children */}
+            <div ref={mountRef} className="absolute inset-0 w-full h-full pointer-events-auto" />
+
+            {/* Sibling React HUD components */}
             {loading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#030712]/90 z-20">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#030712]/90 z-20 pointer-events-none">
                 <div className="w-10 h-10 rounded-full border-2 border-[#38BDF8] border-t-transparent animate-spin" />
                 <span className="text-xs text-[#38BDF8] font-mono tracking-wider">
                   Generating 3D Relief Mesh &amp; Slope Hazard Overlay...
