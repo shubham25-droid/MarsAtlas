@@ -17,7 +17,10 @@ import {
   ShieldAlert,
   Info,
   AlertTriangle,
-  ExternalLink
+  ExternalLink,
+  HelpCircle,
+  Flag,
+  CheckCircle2
 } from "lucide-react";
 
 interface ThreeTerrainModalProps {
@@ -48,6 +51,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
   const [loading, setLoading] = useState(true);
   const [activePreset, setActivePreset] = useState<string>("hero");
   const [webglError, setWebglError] = useState<string | null>(null);
+  const [showInfoGuide, setShowInfoGuide] = useState(true);
 
   // Three.js References
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -206,7 +210,6 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
       };
 
       // Displace terrain vertices deterministically based on Jezero Delta morphology
-      // Octavia E. Butler Landing plain on East (high/flat), Delta Scarp drop-off, and Séítah floor (West)
       const pos = geometry.attributes.position;
       for (let i = 0; i < pos.count; i++) {
         const x = pos.getX(i);
@@ -217,17 +220,10 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
         const v = (z + planeH / 2) / planeH;
 
         // Realistic Jezero Delta Elevation Function:
-        // Regional slope drops from East (+X) to West (-X) with the iconic meandering fan lobes
         const regionalSlope = (1.0 - u) * 9.5;
-        
-        // Delta Front Scarp (steep gradient between u = 0.35 and 0.55)
-        const scarpPhase = Math.sin((u - 0.45) * Math.PI);
         const scarp = Math.exp(-Math.pow((u - 0.42) / 0.12, 2)) * 6.2;
-        
-        // Séítah Ridge and Belva Crater undulating relief
         const ridges = Math.sin(u * 9.0 + v * 4.0) * 1.8 + Math.cos(v * 7.0 - u * 3.0) * 1.2;
         
-        // Local crater depressions
         const crater1Dist = Math.hypot(x - 22, z + 8);
         const crater1 = Math.max(0, 1.0 - crater1Dist / 8.0) * -3.2;
 
@@ -326,7 +322,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
     ];
     const safePoints = safeCoords.map(([x, y, z]) => new THREE.Vector3(x, y + 0.6, z));
     const safeCurve = new THREE.CatmullRomCurve3(safePoints);
-    const safeGeo = new THREE.TubeGeometry(safeCurve, 48, 0.32, 8, false);
+    const safeGeo = new THREE.TubeGeometry(safeCurve, 48, 0.35, 8, false);
     const safeMat = new THREE.MeshStandardMaterial({
       color: 0x34d399,
       emissive: 0x34d399,
@@ -345,7 +341,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
     ];
     const balPoints = balCoords.map(([x, y, z]) => new THREE.Vector3(x, y + 0.8, z));
     const balCurve = new THREE.CatmullRomCurve3(balPoints);
-    const balGeo = new THREE.TubeGeometry(balCurve, 48, 0.28, 8, false);
+    const balGeo = new THREE.TubeGeometry(balCurve, 48, 0.32, 8, false);
     const balMat = new THREE.MeshStandardMaterial({
       color: 0x38bdf8,
       emissive: 0x38bdf8,
@@ -364,17 +360,17 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
     ];
     const sciPoints = sciCoords.map(([x, y, z]) => new THREE.Vector3(x, y + 0.9, z));
     const sciCurve = new THREE.CatmullRomCurve3(sciPoints);
-    const sciGeo = new THREE.TubeGeometry(sciCurve, 48, 0.35, 8, false);
+    const sciGeo = new THREE.TubeGeometry(sciCurve, 48, 0.38, 8, false);
     const sciMat = new THREE.MeshStandardMaterial({
-      color: 0xf36c3d,
-      emissive: 0xf36c3d,
-      emissiveIntensity: 0.8,
+      color: 0xfc3d21,
+      emissive: 0xfc3d21,
+      emissiveIntensity: 0.85,
       roughness: 0.2
     });
     routesGroup.add(new THREE.Mesh(sciGeo, sciMat));
 
     // Marker Pins Helper
-    const addPin = (x: number, y: number, z: number, color: number, labelText?: string) => {
+    const addPin = (x: number, y: number, z: number, color: number) => {
       // Vertical Stem
       const stemGeo = new THREE.CylinderGeometry(0.12, 0.12, 4.5, 8);
       const stemMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -383,7 +379,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
       routesGroup.add(stem);
 
       // Glowing Beacon Top
-      const beaconGeo = new THREE.SphereGeometry(0.8, 16, 16);
+      const beaconGeo = new THREE.SphereGeometry(0.9, 16, 16);
       const beaconMat = new THREE.MeshStandardMaterial({
         color: color,
         emissive: color,
@@ -442,19 +438,15 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
     const controls = controlsRef.current;
 
     if (preset === "hero") {
-      // Perspective view looking at delta scarp
       camera.position.set(-20, 48, 62);
       controls.target.set(0, 4, 0);
     } else if (preset === "nadir") {
-      // Top-Down Map View
       camera.position.set(0, 95, 0.1);
       controls.target.set(0, 0, 0);
     } else if (preset === "approach") {
-      // Looking west from landing site
       camera.position.set(45, 26, 12);
       controls.target.set(-10, 5, 2);
     } else if (preset === "eye") {
-      // Astronaut eye-level perspective
       camera.position.set(12, 10, 18);
       controls.target.set(-15, 6, -3);
     }
@@ -465,36 +457,48 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-6 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-6xl h-[92vh] max-h-[820px] bg-[#070B14] border border-white/[0.12] rounded-2xl flex flex-col overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.95)]">
+      <div className="relative w-full max-w-6xl h-[92vh] max-h-[840px] bg-[#070B14] border border-white/15 rounded-2xl flex flex-col overflow-hidden shadow-[0_0_70px_rgba(0,0,0,0.95)]">
         
         {/* Modal Top Header */}
-        <div className="flex items-center justify-between px-6 py-3.5 border-b border-white/[0.08] bg-[#0A0F1D]">
+        <div className="flex items-center justify-between px-6 py-3.5 border-b border-white/10 bg-[#0A0F1D]">
           <div className="flex items-center gap-3.5">
-            <div className="w-9 h-9 rounded-xl bg-[#F36C3D]/15 border border-[#F36C3D]/30 flex items-center justify-center text-[#F36C3D]">
+            <div className="w-9 h-9 rounded-xl bg-[#FC3D21]/15 border border-[#FC3D21]/30 flex items-center justify-center text-[#FC3D21]">
               <Mountain className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-bold text-white tracking-wide uppercase font-sans">
-                  Jezero Crater 3D Tactical Sector Model
+                  Jezero Crater 3D Tactical Sector
                 </h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/30 font-semibold">
-                  WEBGL 2.0 • USGS 1M DTM
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#38BDF8]/15 text-[#38BDF8] border border-[#38BDF8]/30 font-semibold">
+                  USGS 1.0M DTM RELIEF
                 </span>
-                <span className="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/30">
-                  CSRM 3D TRAVERSES
+                <span className="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#34D399]/15 text-[#34D399] border border-[#34D399]/30">
+                  EVA TRAVERSE COPILOT
                 </span>
               </div>
-              <p className="text-[11px] text-[#94A3B8]">
-                Real-time topographic relief mesh derived from USGS Mars 2020 TRN 1.0m DTM with slope hazard overlay.
+              <p className="text-[11px] text-slate-300">
+                Topographic relief model showing slope hazard avoidance from Perseverance landing plain to Cape Flatley delta front.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
+              onClick={() => setShowInfoGuide(!showInfoGuide)}
+              className={`p-2 rounded-xl transition-colors flex items-center gap-1.5 text-xs font-semibold ${
+                showInfoGuide 
+                  ? "bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/40" 
+                  : "text-slate-400 hover:text-white hover:bg-white/10"
+              }`}
+              title="Toggle Interactive Guide"
+            >
+              <HelpCircle className="w-4 h-4" />
+              <span className="hidden sm:inline">Guide</span>
+            </button>
+            <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors"
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
               title="Close 3D Viewer"
             >
               <X className="w-5 h-5" />
@@ -510,17 +514,17 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
             </div>
             <div className="max-w-md space-y-2">
               <h4 className="text-lg font-bold text-white font-sans">WebGL Viewport Fallback</h4>
-              <p className="text-xs text-[#94A3B8]">
+              <p className="text-xs text-slate-400">
                 {webglError}
               </p>
-              <p className="text-xs text-[#CBD5E1]">
+              <p className="text-xs text-slate-300">
                 High-resolution 2D shaded relief and Horn 3x3 slope hazard maps remain operational in the main Mission Console workspace.
               </p>
             </div>
             <div className="pt-2 flex items-center gap-3">
               <button
                 onClick={onClose}
-                className="px-5 py-2.5 bg-[#F36C3D] hover:bg-[#db542a] text-white font-bold text-xs rounded-xl shadow-lg transition-all"
+                className="px-5 py-2.5 bg-[#FC3D21] hover:bg-[#E0341B] text-white font-bold text-xs rounded-xl shadow-lg transition-all"
               >
                 Return to Mission Map
               </button>
@@ -542,30 +546,58 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
               </div>
             )}
 
-            {/* Floating Camera Presets HUD (Top Left) */}
-            <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-              <div className="bg-[#070B14]/85 backdrop-blur-md p-1.5 rounded-xl border border-white/[0.08] shadow-lg flex items-center gap-1 text-xs">
-                <span className="text-[10px] font-mono font-bold text-[#64748B] px-2 uppercase">Camera:</span>
+            {/* Top Quick Explanatory Banner (Immediately clarifies what this is!) */}
+            {showInfoGuide && (
+              <div className="absolute top-3 left-4 right-4 z-20 pointer-events-auto bg-[#070E22]/90 backdrop-blur-md border border-white/15 rounded-xl p-3 shadow-xl animate-in fade-in duration-300 flex items-start justify-between gap-3 text-xs">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded font-bold text-[10px] bg-[#FC3D21] text-white uppercase">
+                      How It Works
+                    </span>
+                    <span className="font-bold text-white">
+                      Topographic Slope Safety &amp; Traverse Comparison
+                    </span>
+                  </div>
+                  <p className="text-slate-300 text-[11px] leading-relaxed">
+                    Astronauts in 160 kg EVA suits cannot safely walk on slopes steeper than <strong>15°–22°</strong>. 
+                    In this 3D view, <span className="text-[#F87171] font-semibold">Red areas</span> indicate dangerous steep cliffs and crater walls. 
+                    The colored lines represent <strong>A* computed traverses</strong> navigating safely around cliff hazards to reach ancient rock formations.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowInfoGuide(false)}
+                  className="text-slate-400 hover:text-white p-1"
+                  title="Dismiss guide banner"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            {/* Floating Camera & Shading Controls (Top Left) */}
+            <div className={`absolute ${showInfoGuide ? "top-24" : "top-4"} left-4 z-10 flex flex-col gap-2 transition-all`}>
+              <div className="bg-[#070B14]/85 backdrop-blur-md p-1.5 rounded-xl border border-white/10 shadow-lg flex items-center gap-1 text-xs">
+                <span className="text-[10px] font-mono font-bold text-slate-400 px-2 uppercase">Camera View:</span>
                 <button
                   onClick={() => applyPreset("hero")}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
-                    activePreset === "hero" ? "bg-[#F36C3D] text-white font-bold" : "text-[#94A3B8] hover:text-white"
+                    activePreset === "hero" ? "bg-[#FC3D21] text-white font-bold" : "text-slate-300 hover:text-white"
                   }`}
                 >
-                  Delta Front
+                  Delta Overview
                 </button>
                 <button
                   onClick={() => applyPreset("nadir")}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
-                    activePreset === "nadir" ? "bg-[#38BDF8] text-[#04070D] font-bold" : "text-[#94A3B8] hover:text-white"
+                    activePreset === "nadir" ? "bg-[#38BDF8] text-[#04070D] font-bold" : "text-slate-300 hover:text-white"
                   }`}
                 >
-                  Nadir (Map)
+                  Top-Down Map
                 </button>
                 <button
                   onClick={() => applyPreset("approach")}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
-                    activePreset === "approach" ? "bg-[#38BDF8] text-[#04070D] font-bold" : "text-[#94A3B8] hover:text-white"
+                    activePreset === "approach" ? "bg-[#38BDF8] text-[#04070D] font-bold" : "text-slate-300 hover:text-white"
                   }`}
                 >
                   Landing Site
@@ -573,33 +605,33 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
                 <button
                   onClick={() => applyPreset("eye")}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
-                    activePreset === "eye" ? "bg-[#34D399] text-[#04070D] font-bold" : "text-[#94A3B8] hover:text-white"
+                    activePreset === "eye" ? "bg-[#34D399] text-[#04070D] font-bold" : "text-slate-300 hover:text-white"
                   }`}
                 >
-                  Astronaut Eye
+                  Astronaut Eye-Level
                 </button>
               </div>
 
-              {/* Tactical Shading Mode Selector */}
-              <div className="bg-[#070B14]/85 backdrop-blur-md p-1.5 rounded-xl border border-white/[0.08] shadow-lg flex items-center gap-1 text-xs">
-                <span className="text-[10px] font-mono font-bold text-[#64748B] px-2 uppercase">Surface:</span>
+              {/* Surface Shader Selection */}
+              <div className="bg-[#070B14]/85 backdrop-blur-md p-1.5 rounded-xl border border-white/10 shadow-lg flex items-center gap-1 text-xs">
+                <span className="text-[10px] font-mono font-bold text-slate-400 px-2 uppercase">Surface Mode:</span>
                 <button
                   onClick={() => setShadingMode("hazard")}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-medium flex items-center gap-1.5 transition-all ${
                     shadingMode === "hazard" 
-                      ? "bg-[#F36C3D]/20 text-[#F36C3D] border border-[#F36C3D]/40 font-bold" 
-                      : "text-[#94A3B8] hover:text-white"
+                      ? "bg-[#FC3D21]/20 text-[#FC3D21] border border-[#FC3D21]/40 font-bold" 
+                      : "text-slate-300 hover:text-white"
                   }`}
                 >
-                  <ShieldAlert className="w-3.5 h-3.5 text-[#F36C3D]" />
-                  <span>Slope Hazard</span>
+                  <ShieldAlert className="w-3.5 h-3.5 text-[#FC3D21]" />
+                  <span>Slope Hazard (Safety)</span>
                 </button>
                 <button
                   onClick={() => setShadingMode("realistic")}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
                     shadingMode === "realistic" 
                       ? "bg-[#E8B85A]/20 text-[#E8B85A] border border-[#E8B85A]/40 font-bold" 
-                      : "text-[#94A3B8] hover:text-white"
+                      : "text-slate-300 hover:text-white"
                   }`}
                 >
                   Mars Albedo
@@ -609,62 +641,91 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
                     shadingMode === "wireframe" 
                       ? "bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/40 font-bold" 
-                      : "text-[#94A3B8] hover:text-white"
+                      : "text-slate-300 hover:text-white"
                   }`}
                 >
-                  Wireframe
+                  Wireframe Mesh
                 </button>
               </div>
             </div>
 
-            {/* Telemetry Legends HUD (Top Right) */}
-            <div className="absolute top-4 right-4 z-10 hidden sm:flex flex-col gap-2">
-              <div className="bg-[#070B14]/85 backdrop-blur-md p-3 rounded-xl border border-white/[0.08] shadow-lg space-y-2 text-[11px] font-mono text-[#94A3B8] w-56">
-                <div className="flex items-center justify-between text-white font-bold pb-1.5 border-b border-white/[0.08]">
-                  <span>SECTOR TELEMETRY</span>
-                  <span className="text-[#38BDF8] text-[10px]">JEZ_EVA_01</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Elevation:</span>
-                  <span className="text-white font-semibold">-2,605 to -2,121 m</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Relief Amplitude:</span>
-                  <span className="text-[#38BDF8] font-semibold">484 m</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Peak Slope:</span>
-                  <span className="text-[#F36C3D] font-semibold">22.7° (Horn 3x3)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Grid Footprint:</span>
-                  <span className="text-white font-semibold">6.2 x 4.2 km</span>
+            {/* Comprehensive Legend & Landmark Key (Top Right) */}
+            <div className={`absolute ${showInfoGuide ? "top-24" : "top-4"} right-4 z-10 hidden sm:flex flex-col gap-2 transition-all`}>
+              <div className="bg-[#070B14]/90 backdrop-blur-md p-3.5 rounded-xl border border-white/10 shadow-2xl space-y-3 text-xs w-64">
+                
+                {/* 3D Routes Explanation */}
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    Traverse Routes (A*):
+                  </span>
+                  
+                  <div className="flex items-center gap-2 text-white">
+                    <span className="w-3 h-1.5 rounded-full bg-[#34D399]" />
+                    <div>
+                      <span className="font-semibold text-[#34D399] block">Safe Route (3.02 km)</span>
+                      <span className="text-[10px] text-slate-400">Minimizes slope gradient &lt;10°</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-white">
+                    <span className="w-3 h-1.5 rounded-full bg-[#38BDF8]" />
+                    <div>
+                      <span className="font-semibold text-[#38BDF8] block">Balanced Route (2.98 km)</span>
+                      <span className="text-[10px] text-slate-400">Fastest direct safe traverse</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-white">
+                    <span className="w-3 h-1.5 rounded-full bg-[#FC3D21]" />
+                    <div>
+                      <span className="font-semibold text-[#FC3D21] block">Science Route (3.80 km)</span>
+                      <span className="text-[10px] text-slate-400">Visits Séítah carbonate rocks</span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* 3D Routes Legend */}
-                <div className="pt-2 border-t border-white/[0.08] space-y-1 text-[10px]">
-                  <div className="text-[#64748B] font-bold uppercase">Traverse Overlays:</div>
-                  <div className="flex items-center gap-2 text-white">
-                    <span className="w-2.5 h-1 rounded-full bg-[#34D399]" />
-                    <span>Safe Mode (Min Slope)</span>
+                {/* 3D Landmark Pins */}
+                <div className="pt-2 border-t border-white/10 space-y-1.5">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    Landmark Pins:
+                  </span>
+                  
+                  <div className="flex items-center gap-2 text-white text-[11px]">
+                    <span className="w-2.5 h-2.5 rounded-full bg-white border border-black shadow" />
+                    <span>Landing Site (Perseverance Sol 13)</span>
                   </div>
-                  <div className="flex items-center gap-2 text-white">
-                    <span className="w-2.5 h-1 rounded-full bg-[#38BDF8]" />
-                    <span>Balanced Time Mode</span>
+
+                  <div className="flex items-center gap-2 text-white text-[11px]">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FBBF24] border border-black shadow" />
+                    <span>Cape Flatley (Delta Front Scarp)</span>
                   </div>
-                  <div className="flex items-center gap-2 text-white">
-                    <span className="w-2.5 h-1 rounded-full bg-[#F36C3D]" />
-                    <span>Max Science (CRISM Targets)</span>
+
+                  <div className="flex items-center gap-2 text-white text-[11px]">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#A78BFA] border border-black shadow" />
+                    <span>Séítah Outcrop (Ancient Clay)</span>
                   </div>
                 </div>
+
+                {/* Slope Hazard Color Bar */}
+                <div className="pt-2 border-t border-white/10 space-y-1 text-[10px]">
+                  <span className="font-bold text-slate-400 uppercase tracking-wider block">
+                    Slope Colors:
+                  </span>
+                  <div className="flex items-center justify-between text-slate-300">
+                    <span className="text-[#34D399]">Green: Safe (&lt;8°)</span>
+                    <span className="text-[#FBBF24]">Amber: 8–14°</span>
+                    <span className="text-[#F87171]">Red: Cliff (&gt;14°)</span>
+                  </div>
+                </div>
+
               </div>
             </div>
 
-            {/* Navigation Controls Guidance */}
+            {/* Navigation Controls Guidance (Bottom Left) */}
             <div className="absolute bottom-4 left-4 z-10 pointer-events-none">
-              <div className="bg-[#070B14]/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/[0.08] text-[10px] font-mono text-[#94A3B8] flex items-center gap-3">
-                <span className="text-white font-semibold">CONTROLS:</span>
-                <span>Left-Click + Drag: Orbit Surface</span>
+              <div className="bg-[#070B14]/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 text-[10px] text-slate-300 flex items-center gap-3">
+                <span className="text-white font-bold">CONTROLS:</span>
+                <span>Left-Click + Drag: Rotate Mars Surface</span>
                 <span>•</span>
                 <span>Right-Click + Drag: Pan</span>
                 <span>•</span>
@@ -675,36 +736,36 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
         )}
 
         {/* Modal Bottom Controls Bar */}
-        <div className="flex flex-wrap items-center justify-between px-6 py-3 border-t border-white/[0.08] bg-[#0A0F1D] text-xs gap-4">
+        <div className="flex flex-wrap items-center justify-between px-6 py-3 border-t border-white/10 bg-[#0A0F1D] text-xs gap-4">
           <div className="flex flex-wrap items-center gap-5">
             {/* Traverses Toggle */}
-            <label className="flex items-center gap-2 cursor-pointer text-[#94A3B8] hover:text-white transition-colors">
+            <label className="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white transition-colors">
               <input
                 type="checkbox"
                 checked={showRoutes}
                 onChange={(e) => setShowRoutes(e.target.checked)}
-                className="w-3.5 h-3.5 rounded accent-[#F36C3D]"
+                className="w-3.5 h-3.5 rounded accent-[#FC3D21]"
               />
-              <span className="font-mono text-[11px] font-medium">Show 3D Traverses &amp; Landmark Pins</span>
+              <span className="text-[11px] font-semibold">Show 3D Traverse Paths &amp; Landmark Pins</span>
             </label>
 
             {/* Auto-Rotate Toggle */}
             <button
               onClick={() => setAutoRotate(!autoRotate)}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-mono text-[11px] border transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] border transition-all ${
                 autoRotate
                   ? "bg-[#38BDF8]/20 text-[#38BDF8] border-[#38BDF8]/40 font-bold"
-                  : "bg-white/[0.03] text-[#94A3B8] border-white/[0.08] hover:text-white"
+                  : "bg-white/5 text-slate-300 border-white/10 hover:text-white"
               }`}
             >
               <RotateCw className={`w-3.5 h-3.5 ${autoRotate ? "animate-spin text-[#38BDF8]" : ""}`} />
-              <span>{autoRotate ? "Rotating (0.8 RPM)" : "Auto-Orbit"}</span>
+              <span>{autoRotate ? "Rotating Surface" : "Auto-Rotate"}</span>
             </button>
 
             {/* Sun Azimuth Slider */}
             <div className="hidden md:flex items-center gap-2">
               <Sun className="w-3.5 h-3.5 text-[#FBBF24]" />
-              <span className="text-slate-400 font-mono text-[11px]">Sun Azimuth:</span>
+              <span className="text-slate-400 text-[11px]">Sun Angle:</span>
               <input
                 type="range"
                 min="0"
@@ -713,11 +774,11 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
                 onChange={(e) => setSunAzimuth(Number(e.target.value))}
                 className="w-24 accent-[#FBBF24] cursor-pointer"
               />
-              <span className="font-mono text-white text-[11px] w-8">{sunAzimuth}°</span>
+              <span className="text-white text-[11px] w-8">{sunAzimuth}°</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 text-[11px] font-mono text-[#64748B]">
+          <div className="flex items-center gap-3 text-[11px] font-mono text-slate-400">
             <span>EPSG:104905 [MARS IAU2000]</span>
             <span>•</span>
             <span className="text-[#34D399]">THREE.JS WEBGL READY</span>
