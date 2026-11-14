@@ -11,11 +11,15 @@ import ScienceTargetsPanel from "@/components/science/ScienceTargetsPanel";
 import EnvironmentalHud from "@/components/dashboard/EnvironmentalHud";
 import RoverPovModal from "@/components/science/RoverPovModal";
 import MissionBriefingModal from "@/components/dashboard/MissionBriefingModal";
-import ThreeTerrainModal from "@/components/map/ThreeTerrainModal";
 import DataProvenanceModal from "@/components/shared/DataProvenanceModal";
 import { planEvaTraverse } from "@/services/api";
 import { PlanEvaResponse, RoverObservation, ScienceTargetFeature } from "@/types/mars";
 import { Activity, Sparkles, Thermometer, MapPin, Layers, Route as RouteIcon } from "lucide-react";
+
+// Dynamically import ThreeTerrainModal with SSR disabled
+const ThreeTerrainModal = dynamic(() => import("@/components/map/ThreeTerrainModal"), {
+  ssr: false,
+});
 
 // Dynamically import OpenLayers Mars Map with SSR disabled
 const MarsMap = dynamic(() => import("@/components/map/MarsMap"), {
