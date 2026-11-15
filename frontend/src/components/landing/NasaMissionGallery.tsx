@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import NasaOrbitalBackground from "./NasaOrbitalBackground";
 import { 
   ArrowRight, 
   ExternalLink, 
@@ -169,7 +170,10 @@ export default function NasaMissionGallery() {
     : GALLERY_ITEMS.filter((item) => item.category === selectedCategory);
 
   return (
-    <section className="w-full py-20 px-4 sm:px-6 bg-white border-b border-slate-200 relative">
+    <section className="w-full py-20 px-4 sm:px-6 bg-white border-b border-slate-200 relative overflow-hidden">
+      {/* Authentic NASA Space Apps Orbital Lines Background */}
+      <NasaOrbitalBackground opacity={0.65} />
+
       <div className="max-w-7xl mx-auto space-y-7 relative z-10">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b border-slate-200">

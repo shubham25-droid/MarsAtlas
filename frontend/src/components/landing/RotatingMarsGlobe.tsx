@@ -2,41 +2,69 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { Compass, RotateCw, Sparkles, Navigation, Globe } from "lucide-react";
+import { Compass, RotateCw, Sparkles, Navigation, Globe, Mountain, ShieldCheck, Info } from "lucide-react";
 
 interface TargetSite {
   id: string;
   name: string;
   mission: string;
+  type: string;
   lat: number;
   lon: number;
+  elevation: string;
   color: string;
   desc: string;
 }
 
+// Authentic NASA Planetary Science Landmarks & Study Sites
 const SITES: TargetSite[] = [
   {
     id: "jezero",
     name: "Jezero Crater",
-    mission: "Perseverance (M20)",
+    mission: "Perseverance & Ingenuity (M20)",
+    type: "Ancient Delta & Lacustrine Basin",
     lat: 18.38,
     lon: 77.58,
+    elevation: "-2,500 m (MOLA Datum)",
     color: "#FC3D21",
-    desc: "18.38°N, 77.58°E • Western Delta Biosignature Target"
+    desc: "18.38°N, 77.58°E • Western Delta Biosignature Target & Cape Flatley Mudstones"
   },
   {
     id: "gale",
     name: "Gale Crater",
     mission: "Curiosity (MSL)",
-    lat: -5.4,
-    lon: 137.8,
+    type: "Mount Sharp Sedimentary Strata",
+    lat: -5.37,
+    lon: 137.44,
+    elevation: "-4,500 m (MOLA Datum)",
     color: "#38BDF8",
-    desc: "5.40°S, 137.80°E • Mount Sharp Gediz Vallis Ridge"
+    desc: "5.37°S, 137.44°E • Gediz Vallis Ridge & 5.5 km Mount Sharp Boxwork Ridges"
+  },
+  {
+    id: "olympus",
+    name: "Olympus Mons",
+    mission: "MRO & Mars Express",
+    type: "Shield Volcano (Solar System's Tallest)",
+    lat: 18.65,
+    lon: 226.20,
+    elevation: "+21,287 m (Caldera Summit)",
+    color: "#FBBF24",
+    desc: "18.65°N, 226.20°E • 600 km Diameter Basaltic Shield & 80 km Caldera Complex"
+  },
+  {
+    id: "valles",
+    name: "Valles Marineris",
+    mission: "Viking & Mars Odyssey THEMIS",
+    type: "Grand Canyon Tectonic Rifting",
+    lat: -14.00,
+    lon: 300.80,
+    elevation: "-7,000 m (Chasma Floor)",
+    color: "#34D399",
+    desc: "14.00°S, 300.80°E • 4,000 km Long Tectonic Rift System up to 7 km Deep"
   }
 ];
 
 // Convert Lat/Lon to 3D Cartesian coordinates on sphere surface
-// Mars texture: lon 0 is center (u=0.5), -180 is left (u=0), +180 is right (u=1)
 function latLonToVector3(lat: number, lon: number, radius: number): THREE.Vector3 {
   const phi = (90 - lat) * (Math.PI / 180);
   const theta = (lon + 180) * (Math.PI / 180);
@@ -50,12 +78,11 @@ function latLonToVector3(lat: number, lon: number, radius: number): THREE.Vector
 
 export default function RotatingMarsGlobe() {
   const mountRef = useRef<HTMLDivElement | null>(null);
-  const [activeSite, setActiveSite] = useState<TargetSite | null>(null);
+  const [activeSite, setActiveSite] = useState<TargetSite>(SITES[0]); // Default to Jezero Crater
   const [isHovered, setIsHovered] = useState(false);
   const [isInteracting, setIsInteracting] = useState(false);
-  const [facingLon, setFacingLon] = useState<number>(0);
+  const [facingLon, setFacingLon] = useState<number>(78);
 
-  // Three.js internal state stored in refs to prevent unnecessary re-renders
   const animFrameId = useRef<number | null>(null);
   const marsMeshRef = useRef<THREE.Mesh | null>(null);
   const ringsRef = useRef<THREE.Mesh[]>([]);
@@ -65,18 +92,17 @@ export default function RotatingMarsGlobe() {
     const container = mountRef.current;
     if (!container) return;
 
-    // Dimensions
-    const width = container.clientWidth || 360;
-    const height = container.clientHeight || 360;
+    const width = container.clientWidth || 380;
+    const height = container.clientHeight || 380;
 
     // 1. Scene Setup
     const scene = new THREE.Scene();
 
     // 2. Camera Setup
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-    camera.position.set(0, 0, 6.2);
+    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
+    camera.position.set(0, 0, 6.4);
 
-    // 3. WebGL Renderer
+    // 3. WebGL Renderer with High-Precision ACES Filmic Tone Mapping
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({
@@ -99,11 +125,10 @@ export default function RotatingMarsGlobe() {
     tiltGroup.rotation.z = THREE.MathUtils.degToRad(-25.19);
     scene.add(tiltGroup);
 
-    // 5. Mars Sphere Mesh
+    // 5. Mars Sphere Mesh with Procedural MOLA Relief Bump Mapping
     const sphereRadius = 2.15;
     const sphereGeo = new THREE.SphereGeometry(sphereRadius, 64, 64);
 
-    // Texture Loader
     const textureLoader = new THREE.TextureLoader();
     const marsTexture = textureLoader.load(
       "/assets/mars_texture_2k.jpg",
@@ -113,41 +138,60 @@ export default function RotatingMarsGlobe() {
     );
     marsTexture.colorSpace = THREE.SRGBColorSpace;
 
+    // Standard material with bumpMap deriving relief directly from the 2K texture
     const marsMaterial = new THREE.MeshStandardMaterial({
       map: marsTexture,
-      roughness: 0.88,
-      metalness: 0.04
+      bumpMap: marsTexture,
+      bumpScale: 0.038, // Realistic crater and canyon relief along the terminator
+      roughness: 0.86,
+      metalness: 0.02
     });
 
     const marsMesh = new THREE.Mesh(sphereGeo, marsMaterial);
+    // Initial orientation: face Jezero Crater (Lon 77.58°)
+    const initialTargetRad = -THREE.MathUtils.degToRad(77.58 + 90);
+    marsMesh.rotation.y = initialTargetRad;
     tiltGroup.add(marsMesh);
     marsMeshRef.current = marsMesh;
 
-    // 6. Atmospheric Glow Mesh (Subtle outer rim)
-    const atmoGeo = new THREE.SphereGeometry(sphereRadius * 1.018, 48, 48);
+    // 6. Realistic Mars Atmospheric Limb Scattering (6.1 hPa Dust Aerosol Glow)
+    const atmoGeo = new THREE.SphereGeometry(sphereRadius * 1.022, 64, 64);
     const atmoMat = new THREE.MeshBasicMaterial({
       color: 0xf97316,
       transparent: true,
-      opacity: 0.08,
-      side: THREE.BackSide
+      opacity: 0.09,
+      side: THREE.BackSide,
+      blending: THREE.AdditiveBlending
     });
     const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
     tiltGroup.add(atmoMesh);
 
-    // 7. Landing Site Markers
+    // Outer faint atmospheric haze
+    const outerHazeGeo = new THREE.SphereGeometry(sphereRadius * 1.045, 48, 48);
+    const outerHazeMat = new THREE.MeshBasicMaterial({
+      color: 0xfb923c,
+      transparent: true,
+      opacity: 0.04,
+      side: THREE.BackSide,
+      blending: THREE.AdditiveBlending
+    });
+    const outerHazeMesh = new THREE.Mesh(outerHazeGeo, outerHazeMat);
+    tiltGroup.add(outerHazeMesh);
+
+    // 7. Authentic NASA Landmark Pinpoints & Concentric Radar Rings
     const createdRings: THREE.Mesh[] = [];
     SITES.forEach((site) => {
-      const pos = latLonToVector3(site.lat, site.lon, sphereRadius + 0.02);
+      const pos = latLonToVector3(site.lat, site.lon, sphereRadius + 0.015);
 
-      // Pinpoint core sphere
-      const markerGeo = new THREE.SphereGeometry(0.045, 16, 16);
+      // Core landmark bead
+      const markerGeo = new THREE.SphereGeometry(0.04, 16, 16);
       const markerMat = new THREE.MeshBasicMaterial({ color: site.color });
       const marker = new THREE.Mesh(markerGeo, markerMat);
       marker.position.copy(pos);
       marsMesh.add(marker);
 
-      // Pulse ring around the marker
-      const ringGeo = new THREE.RingGeometry(0.06, 0.09, 32);
+      // Radar telemetry ring
+      const ringGeo = new THREE.RingGeometry(0.06, 0.088, 32);
       const ringMat = new THREE.MeshBasicMaterial({
         color: site.color,
         side: THREE.DoubleSide,
@@ -162,18 +206,18 @@ export default function RotatingMarsGlobe() {
     });
     ringsRef.current = createdRings;
 
-    // 8. Dynamic Lighting
-    // Primary Sunlight (Directional)
-    const sunLight = new THREE.DirectionalLight(0xfff7ed, 3.2);
-    sunLight.position.set(6, 3, 5);
+    // 8. Authentic Sun Lighting (Solar constant at 1.524 AU = 590 W/m²)
+    // Directional Sun light from upper-right
+    const sunLight = new THREE.DirectionalLight(0xfff8ee, 3.4);
+    sunLight.position.set(7, 3.5, 5);
     scene.add(sunLight);
 
-    // Deep Space Ambient Fill
-    const spaceAmbient = new THREE.AmbientLight(0x22130e, 1.2);
+    // Space ambient fill (Mars unlit side is dark but receives subtle cosmic background)
+    const spaceAmbient = new THREE.AmbientLight(0x1a1210, 1.1);
     scene.add(spaceAmbient);
 
-    // Subtle blue-tinted limb light from opposite side
-    const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.45);
+    // Subtle blue-tinted limb light from deep space
+    const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.35);
     rimLight.position.set(-6, -2, -4);
     scene.add(rimLight);
 
@@ -181,7 +225,7 @@ export default function RotatingMarsGlobe() {
     let isDragging = false;
     let previousPointerX = 0;
     let dragVelocity = 0;
-    const baseRotationSpeed = 0.0022;
+    const baseRotationSpeed = 0.0016; // Authentic leisurely planetary sidereal roll
 
     const onPointerDown = (e: PointerEvent) => {
       isDragging = true;
@@ -195,7 +239,7 @@ export default function RotatingMarsGlobe() {
       if (!isDragging || !marsMeshRef.current) return;
       const deltaX = e.clientX - previousPointerX;
       previousPointerX = e.clientX;
-      dragVelocity = deltaX * 0.005;
+      dragVelocity = deltaX * 0.0045;
       marsMeshRef.current.rotation.y += dragVelocity;
     };
 
@@ -215,36 +259,34 @@ export default function RotatingMarsGlobe() {
       animFrameId.current = requestAnimationFrame(animate);
 
       if (marsMeshRef.current) {
-        // If smooth transition to a target site is requested
         if (targetRotationY.current !== null) {
           const diff = targetRotationY.current - marsMeshRef.current.rotation.y;
-          marsMeshRef.current.rotation.y += diff * 0.06;
+          marsMeshRef.current.rotation.y += diff * 0.065;
           if (Math.abs(diff) < 0.001) {
             targetRotationY.current = null;
           }
         } else if (isDragging) {
           // Handled in pointer move
         } else {
-          // Apply residual drag inertia
+          // Apply inertia or continuous sidereal rotation
           if (Math.abs(dragVelocity) > 0.0001) {
             marsMeshRef.current.rotation.y += dragVelocity;
             dragVelocity *= 0.92;
           } else {
-            // Constant smooth planetary spin
             marsMeshRef.current.rotation.y += baseRotationSpeed;
           }
         }
 
-        // Calculate current sub-observer Martian longitude for live HUD
-        const curY = marsMeshRef.current.rotation.y % (Math.PI * 2);
-        const deg = THREE.MathUtils.radToDeg(curY);
-        const normalizedLon = Math.round(((180 - deg) % 360 + 360) % 360);
+        // Live calculation of sub-observer Martian longitude
+        const curY = marsMeshRef.current.rotation.y;
+        const deg = THREE.MathUtils.radToDeg(-curY) - 90;
+        const normalizedLon = Math.round(((deg % 360) + 360) % 360);
         setFacingLon(normalizedLon);
       }
 
-      // Pulse the landing site rings
-      pulseTime += 0.04;
-      const scale = 1 + Math.sin(pulseTime) * 0.25;
+      // Pulse telemetry rings
+      pulseTime += 0.035;
+      const scale = 1 + Math.sin(pulseTime) * 0.22;
       const opacity = 0.5 + Math.sin(pulseTime) * 0.4;
       ringsRef.current.forEach((r) => {
         r.scale.set(scale, scale, scale);
@@ -255,7 +297,7 @@ export default function RotatingMarsGlobe() {
     };
     animate();
 
-    // 11. Resize Observer
+    // 11. Responsive Resize Observer
     const handleResize = () => {
       if (!container) return;
       const newW = container.clientWidth;
@@ -268,7 +310,6 @@ export default function RotatingMarsGlobe() {
     const resizeObserver = new ResizeObserver(handleResize);
     resizeObserver.observe(container);
 
-    // Cleanup
     return () => {
       resizeObserver.disconnect();
       if (animFrameId.current) cancelAnimationFrame(animFrameId.current);
@@ -281,6 +322,8 @@ export default function RotatingMarsGlobe() {
       marsTexture.dispose();
       atmoGeo.dispose();
       atmoMat.dispose();
+      outerHazeGeo.dispose();
+      outerHazeMat.dispose();
       renderer.dispose();
       if (domEl.parentNode) {
         domEl.parentNode.removeChild(domEl);
@@ -293,10 +336,8 @@ export default function RotatingMarsGlobe() {
     if (!marsMeshRef.current) return;
     setActiveSite(site);
 
-    // Target rotation where site.lon faces forward towards camera (theta = 0)
-    const targetRad = (-(site.lon - 90) * Math.PI) / 180;
+    const targetRad = -THREE.MathUtils.degToRad(site.lon + 90);
     const current = marsMeshRef.current.rotation.y;
-    // Find closest modular angle to avoid full 360 spins
     const twoPi = Math.PI * 2;
     const diff = ((targetRad - current) % twoPi + twoPi * 1.5) % twoPi - Math.PI;
     targetRotationY.current = current + diff;
@@ -304,76 +345,76 @@ export default function RotatingMarsGlobe() {
 
   return (
     <div 
-      className="relative w-full max-w-[340px] sm:max-w-[400px] mx-auto flex flex-col items-center select-none"
+      className="relative w-full max-w-[360px] sm:max-w-[420px] mx-auto flex flex-col items-center select-none font-sans"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Outer Glow Halo Ring */}
-      <div className="absolute -inset-2 bg-gradient-to-r from-[#FC3D21]/25 via-[#F97316]/20 to-[#38BDF8]/20 rounded-full blur-2xl opacity-70 pointer-events-none" />
+      {/* Outer Atmospheric Glow Halo */}
+      <div className="absolute -inset-3 bg-gradient-to-r from-[#FC3D21]/20 via-[#F97316]/15 to-[#38BDF8]/15 rounded-full blur-2xl opacity-75 pointer-events-none" />
 
-      {/* Main Glass Sphere Container */}
-      <div className="relative w-full aspect-square rounded-3xl bg-[#030712]/70 backdrop-blur-md border border-white/15 overflow-hidden shadow-[0_12px_48px_rgba(0,0,0,0.8)] flex items-center justify-center cursor-grab active:cursor-grabbing">
+      {/* Main Glass Sphere Viewport */}
+      <div className="relative w-full aspect-square rounded-3xl bg-[#030712]/75 backdrop-blur-md border border-white/15 overflow-hidden shadow-[0_16px_50px_rgba(0,0,0,0.85)] flex items-center justify-center cursor-grab active:cursor-grabbing">
         
-        {/* Top HUD Status Pill */}
-        <div className="absolute top-3 inset-x-3 z-10 flex items-center justify-between pointer-events-none text-[10px] font-mono">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 border border-white/10 backdrop-blur-md text-slate-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FC3D21] animate-ping" />
-            <span className="font-bold text-[#FC3D21]">MARS (JEZERO/GALE)</span>
+        {/* Top Planetary Telemetry Strip */}
+        <div className="absolute top-3 inset-x-3 z-10 flex items-center justify-between pointer-events-none text-xs font-sans">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/75 border border-white/15 backdrop-blur-md text-slate-200">
+            <span className="w-2 h-2 rounded-full bg-[#FC3D21] animate-ping" />
+            <span className="font-bold text-white uppercase tracking-wide">MARS (MOLA RELIEF)</span>
           </div>
 
-          <div className="px-2.5 py-1 rounded-full bg-black/70 border border-white/10 backdrop-blur-md text-slate-400">
+          <div className="px-3 py-1.5 rounded-full bg-black/75 border border-white/15 backdrop-blur-md text-[#38BDF8] font-mono font-semibold">
             <span>{facingLon}° E LON</span>
           </div>
         </div>
 
-        {/* Dedicated Three.js Canvas Mount */}
+        {/* Dedicated Three.js WebGL Canvas Mount */}
         <div ref={mountRef} className="w-full h-full" />
 
-        {/* Center Crosshair Overlay on Hover */}
-        <div className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ${isHovered ? "opacity-30" : "opacity-0"}`}>
+        {/* Center Target Reticle on Hover */}
+        <div className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ${isHovered ? "opacity-35" : "opacity-0"}`}>
           <div className="w-full h-full flex items-center justify-center">
-            <div className="w-48 h-48 rounded-full border border-dashed border-[#FC3D21]/60 animate-[spin_60s_linear_infinite]" />
+            <div className="w-52 h-52 rounded-full border border-dashed border-[#FC3D21]/70 animate-[spin_60s_linear_infinite]" />
           </div>
         </div>
 
-        {/* Bottom Interactive Prompt Pill */}
-        <div className="absolute bottom-3 inset-x-3 z-10 flex items-center justify-between pointer-events-none text-[10px] font-mono">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/80 border border-white/10 backdrop-blur-md text-slate-300">
-            <RotateCw className={`w-3 h-3 text-[#38BDF8] ${isInteracting ? "animate-spin" : ""}`} />
-            <span>{isInteracting ? "ORBITING..." : "DRAG TO ROTATE"}</span>
+        {/* Bottom Interactive Prompt Strip */}
+        <div className="absolute bottom-3 inset-x-3 z-10 flex items-center justify-between pointer-events-none text-xs font-sans">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/80 border border-white/15 backdrop-blur-md text-slate-200">
+            <RotateCw className={`w-3.5 h-3.5 text-[#38BDF8] ${isInteracting ? "animate-spin" : ""}`} />
+            <span className="font-medium">{isInteracting ? "ORBITING..." : "DRAG TO ROTATE"}</span>
           </div>
 
-          <div className="px-2.5 py-1 rounded-full bg-black/80 border border-white/10 backdrop-blur-md text-[#34D399]">
-            <span>AXIAL TILT 25.2°</span>
+          <div className="px-3 py-1.5 rounded-full bg-black/80 border border-white/15 backdrop-blur-md text-[#34D399] font-semibold">
+            <span>AXIAL TILT 25.19°</span>
           </div>
         </div>
       </div>
 
-      {/* Mission Site Quick-Select Bar */}
-      <div className="w-full mt-3 grid grid-cols-2 gap-2 text-xs font-sans">
+      {/* 4 Authentic NASA Landmarks Quick-Focus Selector */}
+      <div className="w-full mt-3.5 grid grid-cols-2 gap-2 text-xs font-sans">
         {SITES.map((site) => {
-          const isSelected = activeSite?.id === site.id;
+          const isSelected = activeSite.id === site.id;
           return (
             <button
               key={site.id}
               onClick={() => focusSite(site)}
-              className={`p-2 rounded-xl border transition-all text-left flex flex-col justify-between ${
+              className={`p-2.5 rounded-xl border transition-all text-left flex flex-col justify-between ${
                 isSelected
-                  ? "bg-[#FC3D21]/15 border-[#FC3D21] text-white shadow-md shadow-[#FC3D21]/20"
-                  : "bg-[#070B14]/80 border-white/10 hover:border-white/25 text-slate-300"
+                  ? "bg-[#FC3D21]/20 border-[#FC3D21] text-white shadow-md shadow-[#FC3D21]/20 ring-1 ring-[#FC3D21]/40"
+                  : "bg-[#070B14]/85 border-white/15 hover:border-white/30 text-slate-300"
               }`}
             >
               <div className="flex items-center justify-between w-full">
-                <span className="font-bold text-[11px] text-white flex items-center gap-1.5">
+                <span className="font-bold text-xs text-white flex items-center gap-1.5 font-sans">
                   <span 
-                    className="w-2 h-2 rounded-full" 
+                    className="w-2.5 h-2.5 rounded-full shrink-0" 
                     style={{ backgroundColor: site.color }} 
                   />
                   {site.name}
                 </span>
-                <Navigation className="w-3 h-3 text-slate-400 transform rotate-45" />
+                <Navigation className="w-3.5 h-3.5 text-slate-400 transform rotate-45 shrink-0" />
               </div>
-              <span className="text-[10px] text-slate-400 font-mono mt-0.5">
+              <span className="text-xs text-slate-400 font-sans mt-1">
                 {site.mission}
               </span>
             </button>
@@ -381,14 +422,19 @@ export default function RotatingMarsGlobe() {
         })}
       </div>
 
-      {/* Active Site Detailed Readout */}
+      {/* Active Landmark Detailed Scientific Telemetry Card */}
       {activeSite && (
-        <div className="w-full mt-2 p-2.5 rounded-xl bg-[#0A0F1D]/90 border border-white/10 text-left text-xs space-y-1 animate-in fade-in duration-200">
-          <div className="flex items-center justify-between">
-            <span className="font-bold text-white text-[11px]">{activeSite.name}</span>
-            <span className="text-[10px] font-mono text-[#38BDF8]">{activeSite.mission}</span>
+        <div className="w-full mt-2.5 p-3 rounded-2xl bg-[#0A0F1D]/95 border border-white/15 text-left text-xs font-sans space-y-1.5 shadow-xl animate-in fade-in duration-200">
+          <div className="flex items-center justify-between border-b border-white/10 pb-1.5">
+            <div>
+              <span className="font-extrabold text-white text-sm block font-sans">{activeSite.name}</span>
+              <span className="text-xs font-semibold text-[#38BDF8] font-sans">{activeSite.type}</span>
+            </div>
+            <span className="px-2 py-0.5 rounded-md text-xs font-semibold bg-[#FC3D21]/20 text-[#FC3D21] border border-[#FC3D21]/30">
+              {activeSite.elevation}
+            </span>
           </div>
-          <p className="text-[10px] text-slate-400 font-mono">{activeSite.desc}</p>
+          <p className="text-xs text-slate-300 font-sans leading-relaxed pt-0.5">{activeSite.desc}</p>
         </div>
       )}
     </div>

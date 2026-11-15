@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: "MarsAtlas | Planetary Geospatial Intelligence & EVA Traverse Copilot",
@@ -25,8 +32,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased min-h-screen bg-[#070A10] text-[#F3F5F7] selection:bg-[#E46A43] selection:text-white">
+    <html lang="en" className={inter.variable}>
+      <body className="antialiased min-h-screen font-sans selection:bg-[#EA580C] selection:text-white">
         {children}
       </body>
     </html>

@@ -28,10 +28,11 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import NasaMissionGallery from "@/components/landing/NasaMissionGallery";
+import NasaOrbitalBackground from "@/components/landing/NasaOrbitalBackground";
 
 const RotatingMarsGlobe = dynamic(
   () => import("@/components/landing/RotatingMarsGlobe"),
-  { ssr: false, loading: () => <div className="w-full max-w-[340px] sm:max-w-[400px] aspect-square rounded-3xl bg-[#030712]/70 border border-white/10 flex items-center justify-center text-xs font-mono text-slate-500 mx-auto">Loading 3D Mars Globe...</div> }
+  { ssr: false, loading: () => <div className="w-full max-w-[360px] sm:max-w-[420px] aspect-square rounded-3xl bg-[#030712]/75 border border-white/10 flex items-center justify-center text-xs font-sans text-slate-400 mx-auto">Loading 3D Mars Globe...</div> }
 );
 
 const SolarSystemBackground = dynamic(
@@ -55,13 +56,13 @@ export default function LandingPage({
   return (
     <div className="w-full bg-[#04070D] text-[#F8FAFC] min-h-screen flex flex-col space-grid-bg selection:bg-[#FC3D21] selection:text-white font-sans">
       
-      {/* 1. CINEMATIC MISSION HERO WITH TRANSLUCENT FROSTED GLASS HUD & VISIBLE VISTA */}
+      {/* 1. CINEMATIC MISSION HERO WITH TRANSLUCENT FROSTED GLASS COCKPIT & SCIENTIFIC CELESTIAL VISTA */}
       <section className="relative w-full min-h-[92vh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 pt-10 pb-20">
         
         {/* Layer A: Pure Cosmic Deep-Space Backdrop */}
         <div className="absolute inset-0 bg-[#030712] pointer-events-none" />
 
-        {/* Layer B: Real-Time 3D Solar System Planetary Orbits & Starfield */}
+        {/* Layer B: Real-Time 3D Solar System Keplerian Orbits, Hohmann Trajectory & Starfield */}
         <SolarSystemBackground />
 
         {/* Layer C: Gentle Warm Planetary Horizon Arc (Atmospheric depth, clean & elegant) */}
@@ -71,22 +72,22 @@ export default function LandingPage({
         <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center space-y-6 pt-2">
           
           {/* Institutional Mission Insignia Pill */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#050C1C]/80 border border-white/15 text-xs font-mono text-[#38BDF8] shadow-2xl backdrop-blur-md">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#050C1C]/85 border border-white/15 text-xs font-sans text-[#38BDF8] shadow-2xl backdrop-blur-md">
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#38BDF8] opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#38BDF8]" />
             </span>
-            <span className="tracking-widest font-bold uppercase text-[11px] text-[#38BDF8]">
+            <span className="tracking-widest font-bold uppercase text-xs text-[#38BDF8]">
               NASA SPACE APPS CHALLENGE 2026
             </span>
             <span className="text-white/20">|</span>
-            <span className="text-slate-300 font-mono text-[11px] hidden sm:inline">
+            <span className="text-slate-200 font-sans text-xs hidden sm:inline">
               INTERPLANETARY SURVIVAL GUIDE: MARTIAN MAP
             </span>
           </div>
 
           {/* Primary High-Impact Headline inside Translucent Aerospace Glass Container */}
-          <div className="w-full max-w-4xl bg-[#040A18]/30 backdrop-blur-md border border-white/10 rounded-3xl p-6 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.7)] space-y-5">
+          <div className="w-full max-w-4xl bg-[#040A18]/35 backdrop-blur-md border border-white/10 rounded-3xl p-6 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.7)] space-y-5">
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white uppercase font-sans leading-[1.03] drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
               EXPLORE MARS. <br />
               <span className="text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
@@ -97,13 +98,13 @@ export default function LandingPage({
               </span>
             </h1>
             
-            <p className="max-w-2xl mx-auto text-sm sm:text-base text-slate-200 font-normal leading-relaxed drop-shadow-md">
+            <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-200 font-normal leading-relaxed drop-shadow-md font-sans">
               MarsAtlas is an experimental planetary exploration platform combining Martian geospatial context, rover observations, and computational A* traverse planning to help users investigate terrain and compare exploration routes.
             </p>
 
             {/* Prototype Disclaimer Pill */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-mono mx-auto">
-              <Info className="w-3.5 h-3.5 flex-shrink-0 text-amber-400" />
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs font-sans mx-auto">
+              <Info className="w-4 h-4 flex-shrink-0 text-amber-400" />
               <span>Experimental research prototype • Not a certified astronaut navigation or safety system</span>
             </div>
 
@@ -111,7 +112,7 @@ export default function LandingPage({
             <div className="flex flex-wrap items-center justify-center gap-3.5 pt-3">
               <button
                 onClick={onEnterWorkspace}
-                className="px-7 py-3.5 bg-[#FC3D21] hover:bg-[#E0341B] text-white font-bold tracking-wider uppercase text-xs sm:text-sm rounded-xl shadow-xl shadow-[#FC3D21]/30 flex items-center gap-2.5 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+                className="px-7 py-3.5 bg-[#FC3D21] hover:bg-[#E0341B] text-white font-bold tracking-wider uppercase text-xs sm:text-sm rounded-xl shadow-xl shadow-[#FC3D21]/30 flex items-center gap-2.5 transition-all transform hover:-translate-y-0.5 active:translate-y-0 font-sans"
               >
                 <Activity className="w-4 h-4 text-white" />
                 <span>Launch Mission Console</span>
@@ -121,7 +122,7 @@ export default function LandingPage({
               {onOpen3D && (
                 <button
                   onClick={onOpen3D}
-                  className="px-6 py-3.5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-[#38BDF8] text-white font-bold text-xs sm:text-sm rounded-xl flex items-center gap-2.5 transition-all shadow-lg backdrop-blur-md"
+                  className="px-6 py-3.5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-[#38BDF8] text-white font-bold text-xs sm:text-sm rounded-xl flex items-center gap-2.5 transition-all shadow-lg backdrop-blur-md font-sans"
                 >
                   <Mountain className="w-4 h-4 text-[#38BDF8]" />
                   <span>Explore 3D Terrain Model</span>
@@ -130,7 +131,7 @@ export default function LandingPage({
 
               <button
                 onClick={onOpenProvenance}
-                className="px-6 py-3.5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-[#34D399] text-white text-xs sm:text-sm font-semibold rounded-xl flex items-center gap-2 transition-all backdrop-blur-md"
+                className="px-6 py-3.5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-[#34D399] text-white text-xs sm:text-sm font-semibold rounded-xl flex items-center gap-2 transition-all backdrop-blur-md font-sans"
               >
                 <ShieldCheck className="w-4 h-4 text-[#34D399]" />
                 <span>Epistemic Data Matrix</span>
@@ -139,43 +140,43 @@ export default function LandingPage({
           </div>
 
           {/* Operational Telemetry Metrics Strip */}
-          <div className="pt-2 w-full max-w-4xl grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
-            <div className="p-4 rounded-2xl bg-[#040A18]/40 backdrop-blur-md border border-white/10 space-y-1 shadow-lg hover:border-white/20 transition-all">
-              <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">559</div>
-              <div className="text-xs font-semibold text-slate-200 uppercase tracking-wider">Drive Legs</div>
-              <div className="text-[11px] text-slate-400">Perseverance Sols 13–2022 (MMGIS)</div>
+          <div className="pt-2 w-full max-w-4xl grid grid-cols-2 sm:grid-cols-4 gap-3.5 text-left font-sans">
+            <div className="p-4 rounded-2xl bg-[#040A18]/50 backdrop-blur-md border border-white/15 space-y-1 shadow-lg hover:border-white/25 transition-all">
+              <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">559</div>
+              <div className="text-xs font-bold text-slate-200 uppercase tracking-wider">Drive Legs</div>
+              <div className="text-xs text-slate-400 font-sans">Perseverance Sols 13–2022 (MMGIS)</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#040A18]/40 backdrop-blur-md border border-white/10 space-y-1 shadow-lg hover:border-white/20 transition-all">
-              <div className="text-2xl sm:text-3xl font-extrabold text-[#38BDF8] tracking-tight">11.3 m</div>
-              <div className="text-xs font-semibold text-slate-200 uppercase tracking-wider">Spatial Cell</div>
-              <div className="text-[11px] text-slate-400">350 × 550 Surrogate Grid</div>
+            <div className="p-4 rounded-2xl bg-[#040A18]/50 backdrop-blur-md border border-white/15 space-y-1 shadow-lg hover:border-white/25 transition-all">
+              <div className="text-3xl sm:text-4xl font-extrabold text-[#38BDF8] tracking-tight">11.3 m</div>
+              <div className="text-xs font-bold text-slate-200 uppercase tracking-wider">Spatial Cell</div>
+              <div className="text-xs text-slate-400 font-sans">350 × 550 Surrogate Grid</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#040A18]/40 backdrop-blur-md border border-white/10 space-y-1 shadow-lg hover:border-white/20 transition-all">
-              <div className="text-2xl sm:text-3xl font-extrabold text-[#FBBF24] tracking-tight">&le; 22.0°</div>
-              <div className="text-xs font-semibold text-slate-200 uppercase tracking-wider">Planner Cutoff</div>
-              <div className="text-[11px] text-slate-400">Algorithmic Slope Constraint</div>
+            <div className="p-4 rounded-2xl bg-[#040A18]/50 backdrop-blur-md border border-white/15 space-y-1 shadow-lg hover:border-white/25 transition-all">
+              <div className="text-3xl sm:text-4xl font-extrabold text-[#FBBF24] tracking-tight">&le; 22.0°</div>
+              <div className="text-xs font-bold text-slate-200 uppercase tracking-wider">Planner Cutoff</div>
+              <div className="text-xs text-slate-400 font-sans">Algorithmic Slope Constraint</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#040A18]/40 backdrop-blur-md border border-white/10 space-y-1 shadow-lg hover:border-white/20 transition-all">
-              <div className="text-2xl sm:text-3xl font-extrabold text-[#34D399] tracking-tight">0.38 g</div>
-              <div className="text-xs font-semibold text-slate-200 uppercase tracking-wider">Mars Gravity</div>
-              <div className="text-[11px] text-slate-400">Pandolf-Santee 160 kg Ensemble</div>
+            <div className="p-4 rounded-2xl bg-[#040A18]/50 backdrop-blur-md border border-white/15 space-y-1 shadow-lg hover:border-white/25 transition-all">
+              <div className="text-3xl sm:text-4xl font-extrabold text-[#34D399] tracking-tight">0.38 g</div>
+              <div className="text-xs font-bold text-slate-200 uppercase tracking-wider">Mars Gravity</div>
+              <div className="text-xs text-slate-400 font-sans">Pandolf-Santee 160 kg Ensemble</div>
             </div>
           </div>
 
           {/* Dual Aerospace Command Showcase: 3D Rotating Mars + Boxed Flight Insignia */}
-          <div className="w-full max-w-5xl mx-auto pt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch text-left">
+          <div className="w-full max-w-5xl mx-auto pt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch text-left font-sans">
             
             {/* Box 1: Interactive 3D Planetary Observatory */}
-            <div className="p-5 rounded-3xl bg-[#050B17]/70 backdrop-blur-xl border border-white/15 shadow-[0_12px_48px_rgba(0,0,0,0.8)] flex flex-col items-center justify-between space-y-4">
+            <div className="p-5 rounded-3xl bg-[#050B17]/75 backdrop-blur-xl border border-white/15 shadow-[0_12px_48px_rgba(0,0,0,0.8)] flex flex-col items-center justify-between space-y-4">
               <div className="w-full flex items-center justify-between border-b border-white/10 pb-3">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#FC3D21] animate-ping" />
-                  <span className="text-xs font-bold text-white font-sans uppercase tracking-wider">3D Planetary Observatory</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#FC3D21] animate-ping" />
+                  <span className="text-sm font-bold text-white font-sans uppercase tracking-wider">3D Planetary Observatory</span>
                 </div>
-                <span className="text-[10px] font-mono text-[#38BDF8] px-2 py-0.5 rounded bg-[#38BDF8]/10 border border-[#38BDF8]/20">
+                <span className="text-xs font-semibold text-[#38BDF8] px-2.5 py-0.5 rounded-full bg-[#38BDF8]/15 border border-[#38BDF8]/30">
                   Mars IAU2000
                 </span>
               </div>
@@ -184,20 +185,20 @@ export default function LandingPage({
                 <RotatingMarsGlobe />
               </div>
 
-              <div className="w-full pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-                <span>Axial Tilt: 25.19°</span>
-                <span className="text-[#34D399]">Drag to Spin Globe</span>
+              <div className="w-full pt-2.5 border-t border-white/10 flex items-center justify-between text-xs text-slate-300 font-sans">
+                <span className="font-semibold">Axial Tilt: 25.19° (MOLA Relief)</span>
+                <span className="text-[#34D399] font-semibold">Drag to Spin Globe</span>
               </div>
             </div>
 
-            {/* Box 2: Official Mission Emblem & Flight Insignia ("logo tha na ek box me wo bhi accha lag raha tha") */}
-            <div className="p-5 rounded-3xl bg-[#050B17]/70 backdrop-blur-xl border border-white/15 shadow-[0_12px_48px_rgba(0,0,0,0.8)] flex flex-col justify-between space-y-4 relative group">
+            {/* Box 2: Official Mission Emblem & Flight Insignia */}
+            <div className="p-5 rounded-3xl bg-[#050B17]/75 backdrop-blur-xl border border-white/15 shadow-[0_12px_48px_rgba(0,0,0,0.8)] flex flex-col justify-between space-y-4 relative group">
               <div className="w-full flex items-center justify-between border-b border-white/10 pb-3">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#38BDF8]" />
-                  <span className="text-xs font-bold text-white font-sans uppercase tracking-wider">Official Flight Insignia</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#38BDF8]" />
+                  <span className="text-sm font-bold text-white font-sans uppercase tracking-wider">Official Flight Insignia</span>
                 </div>
-                <span className="text-[10px] font-mono text-[#FC3D21] px-2 py-0.5 rounded bg-[#FC3D21]/10 border border-[#FC3D21]/20 font-bold uppercase">
+                <span className="text-xs font-bold text-[#FC3D21] px-2.5 py-0.5 rounded-full bg-[#FC3D21]/15 border border-[#FC3D21]/30 uppercase">
                   Space Apps 2026
                 </span>
               </div>
@@ -211,19 +212,19 @@ export default function LandingPage({
                     alt="MarsAtlas Official Mission Emblem"
                     className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-md bg-black/85 border border-white/10 text-[10px] font-mono text-[#38BDF8] backdrop-blur-md flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
+                  <div className="absolute bottom-2.5 right-2.5 px-3 py-1 rounded-lg bg-black/85 border border-white/15 text-xs font-semibold text-[#38BDF8] backdrop-blur-md flex items-center gap-1.5 font-sans">
+                    <span className="w-2 h-2 rounded-full bg-[#38BDF8] animate-pulse" />
                     <span>MISSION EMBLEM</span>
                   </div>
                 </div>
               </div>
 
               {/* Mission Badge Description */}
-              <div className="w-full pt-3 border-t border-white/10 space-y-1 text-left">
-                <span className="text-[10px] font-mono font-bold text-[#FC3D21] tracking-widest uppercase block">
+              <div className="w-full pt-3 border-t border-white/10 space-y-1 text-left font-sans">
+                <span className="text-xs font-bold text-[#FC3D21] tracking-wider uppercase block font-sans">
                   Integrated Terrain Intelligence
                 </span>
-                <p className="text-[11px] text-slate-300 font-sans leading-relaxed">
+                <p className="text-xs text-slate-300 font-sans leading-relaxed">
                   Official mission emblem commemorating Perseverance at Jezero Crater, the human exploration ascent horizon, and autonomous traverse planning.
                 </p>
               </div>
@@ -238,8 +239,11 @@ export default function LandingPage({
       <NasaMissionGallery />
 
       {/* 3. THREE PILLARS (THE SCIENTIFIC PROBLEMS MARSATLAS SOLVES) */}
-      <section id="overview" className="w-full py-20 px-4 sm:px-6 bg-slate-50 border-b border-slate-200">
-        <div className="max-w-6xl mx-auto space-y-12">
+      <section id="overview" className="w-full py-20 px-4 sm:px-6 bg-slate-50 border-b border-slate-200 relative overflow-hidden">
+        {/* Authentic NASA Space Apps Orbital Lines Background */}
+        <NasaOrbitalBackground opacity={0.65} />
+
+        <div className="max-w-6xl mx-auto space-y-12 relative z-10">
           <div className="text-center space-y-3">
             <span className="text-xs font-sans font-bold text-[#EA580C] tracking-wider uppercase">
               OPERATIONAL EVA CAPABILITIES
@@ -305,8 +309,11 @@ export default function LandingPage({
       </section>
 
       {/* 4. DATA SOURCES & IMPLEMENTATION STATUS (HIGH-CONTRAST LIGHT THEME) */}
-      <section className="w-full py-20 px-4 sm:px-6 bg-white border-b border-slate-200">
-        <div className="max-w-6xl mx-auto space-y-10">
+      <section className="w-full py-20 px-4 sm:px-6 bg-white border-b border-slate-200 relative overflow-hidden">
+        {/* Authentic NASA Space Apps Orbital Lines Background */}
+        <NasaOrbitalBackground opacity={0.6} />
+
+        <div className="max-w-6xl mx-auto space-y-10 relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-1.5">
               <span className="text-xs font-sans font-bold text-[#EA580C] tracking-wider uppercase">
@@ -318,7 +325,7 @@ export default function LandingPage({
             </div>
             <button
               onClick={onOpenProvenance}
-              className="px-4 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-lg flex items-center gap-2 transition-all shadow-sm hover:shadow self-start md:self-auto"
+              className="px-4 py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-lg flex items-center gap-2 transition-all shadow-sm hover:shadow self-start md:self-auto font-sans"
             >
               <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
               <span>Inspect Epistemic Matrix</span>
@@ -390,8 +397,11 @@ export default function LandingPage({
       </section>
 
       {/* 5. DUAL STUDY SITES (JEZERO CRATER & GALE BOXWORK) */}
-      <section className="w-full py-20 px-4 sm:px-6 bg-slate-50 border-b border-slate-200">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
+      <section className="w-full py-20 px-4 sm:px-6 bg-slate-50 border-b border-slate-200 relative overflow-hidden">
+        {/* Authentic NASA Space Apps Orbital Lines Background */}
+        <NasaOrbitalBackground opacity={0.65} />
+
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
           <div className="w-full md:w-1/2 space-y-4">
             <span className="text-xs font-sans font-bold text-[#0284C7] tracking-wider uppercase">
               SURFACE OPERATIONAL SANDBOXES
@@ -424,7 +434,7 @@ export default function LandingPage({
                   onSelectSite("jezero");
                   onEnterWorkspace();
                 }}
-                className="px-6 py-3.5 bg-[#EA580C] hover:bg-[#C2410C] text-white font-bold text-xs rounded-xl flex items-center gap-2 transition-all shadow-md shadow-[#EA580C]/25 uppercase tracking-wider font-sans"
+                className="px-6 py-3.5 bg-[#EA580C] hover:bg-[#C2410C] text-white font-bold text-xs sm:text-sm rounded-xl flex items-center gap-2 transition-all shadow-md shadow-[#EA580C]/25 uppercase tracking-wider font-sans"
               >
                 <span>Launch Jezero Mission Map</span>
                 <ArrowRight className="w-4 h-4 text-white" />
@@ -435,7 +445,7 @@ export default function LandingPage({
                   onSelectSite("gale");
                   onEnterWorkspace();
                 }}
-                className="px-6 py-3.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold text-xs rounded-xl transition-all shadow-sm font-sans"
+                className="px-6 py-3.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold text-xs sm:text-sm rounded-xl transition-all shadow-sm font-sans"
               >
                 <span>Inspect Gale Boxwork</span>
               </button>
@@ -464,6 +474,9 @@ export default function LandingPage({
 
       {/* 6. OFFICIAL MISSION INSIGNIA & PROJECT IDENTITY (DEDICATED SECTION) */}
       <section className="w-full py-20 px-4 sm:px-6 bg-white border-b border-slate-200 relative overflow-hidden">
+        {/* Authentic NASA Space Apps Orbital Lines Background */}
+        <NasaOrbitalBackground opacity={0.6} />
+
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10 relative z-10">
           {/* Emblem Visual */}
           <div className="w-full md:w-5/12 flex justify-center">
@@ -530,9 +543,12 @@ export default function LandingPage({
         </div>
       </section>
 
-      {/* 7. INSTITUTIONAL AGENCY FOOTER (CLEAN LIGHT THEME) */}
-      <footer className="w-full py-14 px-4 sm:px-6 bg-slate-100 border-t border-slate-200 text-xs text-slate-600">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      {/* 7. INSTITUTIONAL AGENCY FOOTER (CLEAN LIGHT THEME WITH ORBITAL ARCS) */}
+      <footer className="w-full py-14 px-4 sm:px-6 bg-slate-100 border-t border-slate-200 text-xs text-slate-600 relative overflow-hidden">
+        {/* Authentic NASA Space Apps Orbital Lines Background */}
+        <NasaOrbitalBackground opacity={0.5} />
+
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="flex items-center gap-3.5">
             <img src="/marsatlas-brand.jpg" alt="MarsAtlas" className="w-10 h-10 rounded-full border border-slate-300 object-cover shadow-sm" />
             <div>
