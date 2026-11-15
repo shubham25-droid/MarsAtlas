@@ -57,85 +57,17 @@ export default function LandingPage({
     <div className="w-full bg-[#04070D] text-[#F8FAFC] min-h-screen flex flex-col space-grid-bg selection:bg-[#FC3D21] selection:text-white font-sans">
       
       {/* 1. CINEMATIC MISSION HERO WITH TRANSLUCENT FROSTED GLASS COCKPIT & SCIENTIFIC CELESTIAL VISTA */}
-      <section className="relative w-full min-h-[95vh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 pt-10 pb-20">
+      <section className="relative w-full min-h-[92vh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 pt-10 pb-20">
         
         {/* Layer A: Pure Cosmic Deep-Space Backdrop */}
         <div className="absolute inset-0 bg-[#030712] pointer-events-none" />
 
-        {/* Layer B: Space Apps Challenge Cosmic Galaxy Backdrop (Image provided by user) */}
-        <div 
-          className="absolute inset-0 bg-cover bg-top pointer-events-none opacity-40 mix-blend-screen"
-          style={{ backgroundImage: "url('/assets/space_galaxy_bg.jpg')" }}
-        />
-
-        {/* Layer C: Deep Space Cosmic Nebula Radial Glows */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(56,189,248,0.24),transparent_70%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_35%,rgba(249,115,22,0.22),transparent_55%)] pointer-events-none" />
-
-        {/* Layer D: Real-Time 3D Solar System Keplerian Orbits, Hohmann Trajectory & Starfield */}
+        {/* Layer B: Real-Time 3D NASA Keplerian Solar System, Planetary Orbits & Starfield */}
         <SolarSystemBackground />
 
-        {/* Layer E: Visible & Crisp NASA Orbital Trajectory Arcs (Watermark Lines) */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
-          <svg
-            className="w-full h-full"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1440 900"
-            preserveAspectRatio="xMidYMid slice"
-          >
-            <defs>
-              <linearGradient id="heroOrbitCyan" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.75" />
-                <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.45" />
-                <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.1" />
-              </linearGradient>
-              <linearGradient id="heroOrbitRust" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#F97316" stopOpacity="0.8" />
-                <stop offset="50%" stopColor="#EA580C" stopOpacity="0.5" />
-                <stop offset="100%" stopColor="#EA580C" stopOpacity="0.1" />
-              </linearGradient>
-              <linearGradient id="heroOrbitAmber" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FBBF24" stopOpacity="0.85" />
-                <stop offset="100%" stopColor="#FBBF24" stopOpacity="0.15" />
-              </linearGradient>
-            </defs>
-
-            {/* Earth & Mars Orbital Guides (Anchor: Upper-Right Sun Focal Center) */}
-            <g fill="none">
-              <ellipse cx="1260" cy="140" rx="420" ry="240" stroke="url(#heroOrbitCyan)" strokeWidth="1.2" transform="rotate(-18 1260 140)" />
-              <ellipse cx="1260" cy="140" rx="720" ry="410" stroke="url(#heroOrbitRust)" strokeWidth="1.4" transform="rotate(-18 1260 140)" />
-              <ellipse cx="1260" cy="140" rx="1080" ry="620" stroke="url(#heroOrbitCyan)" strokeWidth="1.0" opacity="0.6" transform="rotate(-18 1260 140)" />
-              <ellipse cx="1260" cy="140" rx="1480" ry="840" stroke="url(#heroOrbitRust)" strokeWidth="0.8" opacity="0.4" transform="rotate(-18 1260 140)" />
-
-              {/* Interplanetary Hohmann Transfer Trajectory Arc (Dashed Amber) */}
-              <path
-                d="M 120 780 C 420 480, 840 260, 1260 140"
-                stroke="url(#heroOrbitAmber)"
-                strokeWidth="1.5"
-                strokeDasharray="8 6"
-              />
-
-              {/* Astrometric Targeting Node Nodes */}
-              <circle cx="840" cy="360" r="4" fill="#38BDF8" />
-              <circle cx="840" cy="360" r="9" stroke="#38BDF8" strokeWidth="0.75" opacity="0.6" />
-              <circle cx="480" cy="560" r="4" fill="#F97316" />
-              <circle cx="480" cy="560" r="9" stroke="#F97316" strokeWidth="0.75" opacity="0.6" />
-
-              {/* Faint Astrometric Grid Coordinate Lines */}
-              <line x1="200" y1="0" x2="200" y2="900" stroke="#94A3B8" strokeWidth="0.5" opacity="0.12" strokeDasharray="4 8" />
-              <line x1="1240" y1="0" x2="1240" y2="900" stroke="#94A3B8" strokeWidth="0.5" opacity="0.12" strokeDasharray="4 8" />
-              <line x1="0" y1="450" x2="1440" y2="450" stroke="#94A3B8" strokeWidth="0.5" opacity="0.12" strokeDasharray="4 8" />
-            </g>
-          </svg>
-        </div>
-
-        {/* Layer F: Grand Martian Atmospheric Planetary Limb & Horizon Glow */}
-        <div className="absolute bottom-0 inset-x-0 h-[560px] pointer-events-none overflow-hidden">
-          {/* Sweeping Horizon Limb with Vibrant Orange Atmosphere */}
-          <div className="absolute -bottom-[430px] left-1/2 -translate-x-1/2 w-[1800px] h-[740px] rounded-[100%] border-t-2 border-[#F97316]/75 bg-gradient-to-t from-[#F97316]/25 via-[#EA580C]/12 to-transparent shadow-[0_-30px_110px_rgba(249,115,22,0.45)]" />
-          {/* Concentric Warm Planetary Ambient Diffusion */}
-          <div className="absolute bottom-0 inset-x-0 h-[360px] bg-[radial-gradient(ellipse_at_50%_100%,rgba(243,108,61,0.32),transparent_70%)]" />
-        </div>
+        {/* Layer C: Subtle Cosmic Atmospheric Depth & Horizon Glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(56,189,248,0.12),transparent_70%)] pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-0 h-[500px] bg-[radial-gradient(ellipse_65%_45%_at_50%_100%,rgba(243,108,61,0.22),transparent_75%)] pointer-events-none" />
 
         {/* Centered Hero Content Container */}
         <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center space-y-6 pt-2">
