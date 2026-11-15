@@ -236,7 +236,10 @@ export default function Home() {
                   activeSite={activeSite}
                   selectedMode={selectedMode}
                   evaResponse={evaResponse}
-                  onSelectCoordinate={(coords) => setTargetPoint(coords)}
+                  onSelectCoordinate={(coords) => {
+                    setTargetPoint(coords);
+                    handleApplyPreset(startPoint, coords);
+                  }}
                   onSelectScienceTarget={(feat) => handleSelectScienceTarget(feat)}
                   onOpenRoverPov={(obs) => setRoverObservation(obs)}
                   onOpen3DModal={() => setIs3DModalOpen(true)}

@@ -754,7 +754,9 @@ export default function MarsMap({
             <Crosshair className="w-3.5 h-3.5 text-[#0284C7]" />
             <span className="font-semibold text-slate-600">CURSOR:</span>
             <span className="text-[#0284C7] font-bold font-mono">
-              {cursorCoords ? `${cursorCoords.lon.toFixed(4)}°E, ${cursorCoords.lat.toFixed(4)}°N` : "77.4150°E, 18.4480°N"}
+              {cursorCoords 
+                ? `${cursorCoords.lon.toFixed(4)}°E, ${Math.abs(cursorCoords.lat).toFixed(4)}°${cursorCoords.lat < 0 ? "S" : "N"}` 
+                : activeSite === "gale" ? "137.4416°E, 4.5894°S" : "77.4150°E, 18.4480°N"}
             </span>
           </span>
 

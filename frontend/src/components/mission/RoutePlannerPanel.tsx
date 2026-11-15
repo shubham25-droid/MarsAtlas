@@ -133,7 +133,7 @@ export default function RoutePlannerPanel({
             <span>Departure Base</span>
           </div>
           <div className="font-mono text-slate-900 text-xs font-bold num-tabular">
-            {startPoint[0].toFixed(4)}°E, {startPoint[1].toFixed(4)}°{startPoint[1] < 0 ? "S" : "N"}
+            {startPoint[0].toFixed(4)}°E, {Math.abs(startPoint[1]).toFixed(4)}°{startPoint[1] < 0 ? "S" : "N"}
           </div>
           <div className="text-xs text-slate-500 mt-0.5 truncate">{baseName}</div>
         </div>
@@ -144,7 +144,7 @@ export default function RoutePlannerPanel({
             <span>Target Location</span>
           </div>
           <div className="font-mono text-slate-900 text-xs font-bold num-tabular">
-            {targetPoint[0].toFixed(4)}°E, {targetPoint[1].toFixed(4)}°{targetPoint[1] < 0 ? "S" : "N"}
+            {targetPoint[0].toFixed(4)}°E, {Math.abs(targetPoint[1]).toFixed(4)}°{targetPoint[1] < 0 ? "S" : "N"}
           </div>
           <div className="text-xs text-slate-500 mt-0.5 truncate">{targetDefaultDesc}</div>
         </div>
