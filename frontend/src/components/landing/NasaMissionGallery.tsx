@@ -172,7 +172,7 @@ export default function NasaMissionGallery() {
   return (
     <section className="w-full py-20 px-4 sm:px-6 bg-white border-b border-slate-200 relative overflow-hidden">
       {/* Authentic NASA Space Apps Orbital Lines Background */}
-      <NasaOrbitalBackground opacity={0.65} />
+      <NasaOrbitalBackground opacity={0.35} />
 
       <div className="max-w-7xl mx-auto space-y-7 relative z-10">
         {/* Section Header */}

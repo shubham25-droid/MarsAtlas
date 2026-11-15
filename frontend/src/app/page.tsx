@@ -92,11 +92,17 @@ export default function Home() {
   const handleSiteChange = (site: "jezero" | "gale") => {
     setActiveSite(site);
     if (site === "jezero") {
-      setStartPoint([77.4509, 18.4446]);
-      setTargetPoint([77.4018, 18.4532]);
+      const start: [number, number] = [77.4509, 18.4446];
+      const target: [number, number] = [77.4018, 18.4532];
+      setStartPoint(start);
+      setTargetPoint(target);
+      handleApplyPreset(start, target);
     } else {
-      setStartPoint([137.4416, -4.5894]);
-      setTargetPoint([137.3888, -4.8260]);
+      const start: [number, number] = [137.4416, -4.5894];
+      const target: [number, number] = [137.3888, -4.8260];
+      setStartPoint(start);
+      setTargetPoint(target);
+      handleApplyPreset(start, target);
     }
   };
 
@@ -106,7 +112,7 @@ export default function Home() {
     evaResponse?.routes["safe"];
 
   return (
-    <div className="min-h-screen bg-[#070A10] text-[#F3F5F7] flex flex-col">
+    <div className={`min-h-screen ${currentView === "landing" ? "bg-[#04070D] text-[#F8FAFC]" : "bg-[#F8FAFC] text-slate-800"} flex flex-col font-sans transition-colors duration-200`}>
       {/* Top Navigation */}
       <Navbar
         currentView={currentView}
@@ -129,26 +135,26 @@ export default function Home() {
         /* View 2: Main Application Workspace */
         <main className="flex-1 flex flex-col p-3 sm:p-4 gap-3.5 max-w-[1850px] w-full mx-auto">
           {/* Workspace Subheader */}
-          <div className="flex flex-wrap items-center justify-between gap-3 hud-panel px-4 py-2.5 rounded-xl text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-white/95 backdrop-blur-md border border-slate-200 shadow-sm px-4 py-2.5 rounded-2xl text-xs font-sans">
             <div className="flex items-center gap-3">
-              <span className="font-bold text-white uppercase tracking-wider text-xs flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#F36C3D] animate-pulse" />
+              <span className="font-bold text-slate-900 uppercase tracking-wider text-xs flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#EA580C] animate-pulse" />
                 {activeSite === "jezero" ? "Site 01: Jezero Crater (NASA Mars 2020 Perseverance)" : "Site 02: Gale Crater (NASA MSL Curiosity Boxwork)"}
               </span>
-              <span className="text-white/20 hidden md:inline">|</span>
-              <span className="text-slate-400 hidden md:inline font-mono text-[11px]">
+              <span className="text-slate-300 hidden md:inline">|</span>
+              <span className="text-slate-500 hidden md:inline font-mono text-[11px]">
                 Planetary Projection: EPSG:104905 Equirectangular (R_Mars = 3,396,190.0m)
               </span>
             </div>
 
             {/* Workspace Tool Tabs */}
-            <div className="flex items-center gap-1 bg-[#04070D]/80 p-1 rounded-lg border border-white/[0.08]">
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
               <button
                 onClick={() => setSidebarTab("planner")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-mono text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg font-sans text-xs font-bold transition-all ${
                   sidebarTab === "planner"
-                    ? "bg-[#F36C3D] text-white shadow-md shadow-[#F36C3D]/25"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-[#EA580C] text-white shadow-md shadow-[#EA580C]/25"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
                 }`}
               >
                 <RouteIcon className="w-3.5 h-3.5" />
@@ -157,10 +163,10 @@ export default function Home() {
 
               <button
                 onClick={() => setSidebarTab("science")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-mono text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg font-sans text-xs font-bold transition-all ${
                   sidebarTab === "science"
-                    ? "bg-[#38BDF8] text-[#04070D] font-bold shadow-md shadow-[#38BDF8]/25"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-[#0284C7] text-white shadow-md shadow-sky-500/25"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5" />
@@ -169,10 +175,10 @@ export default function Home() {
 
               <button
                 onClick={() => setSidebarTab("hud")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-mono text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg font-sans text-xs font-bold transition-all ${
                   sidebarTab === "hud"
-                    ? "bg-[#34D399] text-[#04070D] font-bold shadow-md shadow-[#34D399]/25"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-[#15803D] text-white shadow-md shadow-emerald-500/25"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
                 }`}
               >
                 <Thermometer className="w-3.5 h-3.5" />
@@ -187,6 +193,7 @@ export default function Home() {
             <div className="lg:col-span-4 flex flex-col gap-4">
               {sidebarTab === "planner" && (
                 <RoutePlannerPanel
+                  activeSite={activeSite}
                   startPoint={startPoint}
                   targetPoint={targetPoint}
                   selectedMode={selectedMode}
@@ -201,6 +208,7 @@ export default function Home() {
 
               {sidebarTab === "science" && (
                 <ScienceTargetsPanel
+                  activeSite={activeSite}
                   onSetTarget={(coords) => {
                     setTargetPoint(coords);
                     handleApplyPreset(startPoint, coords);

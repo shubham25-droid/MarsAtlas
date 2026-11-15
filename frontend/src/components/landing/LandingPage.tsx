@@ -261,7 +261,7 @@ export default function LandingPage({
       {/* 3. THREE PILLARS (THE SCIENTIFIC PROBLEMS MARSATLAS SOLVES) */}
       <section id="overview" className="w-full py-20 px-4 sm:px-6 bg-slate-50 border-b border-slate-200 relative overflow-hidden">
         {/* Authentic NASA Space Apps Orbital Lines Background */}
-        <NasaOrbitalBackground opacity={0.65} />
+        <NasaOrbitalBackground opacity={0.35} />
 
         <div className="max-w-6xl mx-auto space-y-12 relative z-10">
           <div className="text-center space-y-3">
@@ -288,9 +288,20 @@ export default function LandingPage({
                   Topographic Terrain Analysis
                 </h3>
               </div>
-              <p className="text-sm text-slate-600 leading-relaxed font-sans">
-                Visual imagery alone masks steep slopes and regolith hazards. MarsAtlas evaluates surface incline gradients with Horn&apos;s 3×3 finite-difference algorithm, local roughness standard deviations, and thermophysical proxy coefficients across the modelled sector.
-              </p>
+              <ul className="space-y-2 text-xs sm:text-sm text-slate-600 font-sans">
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#EA580C] mt-1.5 shrink-0" />
+                  <span><strong>Horn&apos;s 3×3 Algorithm:</strong> Rapid slope incline evaluation across digital elevation rasters.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#EA580C] mt-1.5 shrink-0" />
+                  <span><strong>Regolith Roughness:</strong> Surface hazard proxy detecting dunes and boulder fields.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#EA580C] mt-1.5 shrink-0" />
+                  <span><strong>Safety Cutoff:</strong> Algorithmic exclusion ceiling enforced strictly at ≤22.0° slope.</span>
+                </li>
+              </ul>
             </div>
 
             {/* Card 2 */}
@@ -304,9 +315,20 @@ export default function LandingPage({
                   Human Bioenergetic Workload
                 </h3>
               </div>
-              <p className="text-sm text-slate-600 leading-relaxed font-sans">
-                Computes 8-connected A* traverse options using Pandolf-Santee bioenergetic equations adapted for a 160 kg suited system in Martian gravity (0.376 g). Compares three algorithmic preferences: <em>Lower-Slope Preference</em>, <em>Balanced Preference</em>, and <em>Science Priority</em> with an enforced 22.0° slope ceiling.
-              </p>
+              <ul className="space-y-2 text-xs sm:text-sm text-slate-600 font-sans">
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0284C7] mt-1.5 shrink-0" />
+                  <span><strong>Pandolf-Santee Model:</strong> Metabolic energy expenditure tailored for 0.38g Mars gravity.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0284C7] mt-1.5 shrink-0" />
+                  <span><strong>160 kg Suited System:</strong> Calibrated for crew, spacesuit, and life-support ensemble.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0284C7] mt-1.5 shrink-0" />
+                  <span><strong>3 Route Preferences:</strong> Comparative trade-offs: Lower-Slope vs Balanced vs Science Priority.</span>
+                </li>
+              </ul>
             </div>
 
             {/* Card 3 */}
@@ -320,9 +342,20 @@ export default function LandingPage({
                   Science Context Along Traverse
                 </h3>
               </div>
-              <p className="text-sm text-slate-600 leading-relaxed font-sans">
-                Connects planned corridors with real Perseverance rover telemetry (708 waypoints, 559 drive legs), in-situ camera observations, simplified USGS SIM 3464 geological formations, and manually authored CRISM-referenced science targets.
-              </p>
+              <ul className="space-y-2 text-xs sm:text-sm text-slate-600 font-sans">
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#15803D] mt-1.5 shrink-0" />
+                  <span><strong>559 Rover Drive Legs:</strong> Ingests authentic Perseverance MMGIS telemetry through Sol 2022.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#15803D] mt-1.5 shrink-0" />
+                  <span><strong>In-Situ Observations:</strong> Mastcam-Z panoramas and ground-truth waypoint lookups.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#15803D] mt-1.5 shrink-0" />
+                  <span><strong>Stratigraphic Units:</strong> Simplified USGS SIM 3464 geologic formations and CRISM mineral targets.</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -331,7 +364,7 @@ export default function LandingPage({
       {/* 4. DATA SOURCES & IMPLEMENTATION STATUS (HIGH-CONTRAST LIGHT THEME) */}
       <section className="w-full py-20 px-4 sm:px-6 bg-white border-b border-slate-200 relative overflow-hidden">
         {/* Authentic NASA Space Apps Orbital Lines Background */}
-        <NasaOrbitalBackground opacity={0.6} />
+        <NasaOrbitalBackground opacity={0.35} />
 
         <div className="max-w-6xl mx-auto space-y-10 relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -419,7 +452,7 @@ export default function LandingPage({
       {/* 5. DUAL STUDY SITES (JEZERO CRATER & GALE BOXWORK) */}
       <section className="w-full py-20 px-4 sm:px-6 bg-slate-50 border-b border-slate-200 relative overflow-hidden">
         {/* Authentic NASA Space Apps Orbital Lines Background */}
-        <NasaOrbitalBackground opacity={0.65} />
+        <NasaOrbitalBackground opacity={0.35} />
 
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
           <div className="w-full md:w-1/2 space-y-4">
@@ -495,7 +528,7 @@ export default function LandingPage({
       {/* 6. OFFICIAL MISSION INSIGNIA & PROJECT IDENTITY (DEDICATED SECTION) */}
       <section className="w-full py-20 px-4 sm:px-6 bg-white border-b border-slate-200 relative overflow-hidden">
         {/* Authentic NASA Space Apps Orbital Lines Background */}
-        <NasaOrbitalBackground opacity={0.6} />
+        <NasaOrbitalBackground opacity={0.35} />
 
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10 relative z-10">
           {/* Emblem Visual */}
@@ -566,7 +599,7 @@ export default function LandingPage({
       {/* 7. INSTITUTIONAL AGENCY FOOTER (CLEAN LIGHT THEME WITH ORBITAL ARCS) */}
       <footer className="w-full py-14 px-4 sm:px-6 bg-slate-100 border-t border-slate-200 text-xs text-slate-600 relative overflow-hidden">
         {/* Authentic NASA Space Apps Orbital Lines Background */}
-        <NasaOrbitalBackground opacity={0.5} />
+        <NasaOrbitalBackground opacity={0.3} />
 
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="flex items-center gap-3.5">

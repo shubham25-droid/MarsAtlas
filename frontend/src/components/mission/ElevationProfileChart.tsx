@@ -18,8 +18,8 @@ export default function ElevationProfileChart({
 
   if (!telemetry || telemetry.length < 2) {
     return (
-      <div className="hud-panel rounded-xl p-5 text-center text-xs text-slate-400">
-        Generate an EVA traverse to view the continuous 32-bit elevation and metabolic workload profile.
+      <div className="bg-white/95 rounded-2xl p-5 text-center text-xs text-slate-500 border border-slate-200 shadow-sm font-sans">
+        Generate an EVA traverse to view the continuous elevation and bioenergetic workload profile.
       </div>
     );
   }
@@ -45,25 +45,25 @@ export default function ElevationProfileChart({
 
   // Secondary metric extents
   let secondaryVals: number[] = [];
-  let secColor = "#FBBF24";
+  let secColor = "#D97706";
   let secUnit = "°";
   let secLabel = "Slope (Horn's)";
 
   if (metric === "slope") {
     secondaryVals = telemetry.map((t) => t.slope_deg);
-    secColor = "#FBBF24";
+    secColor = "#D97706";
     secUnit = "°";
     secLabel = "Slope (Horn's)";
   } else if (metric === "watts") {
     secondaryVals = telemetry.map((t) => t.metabolic_rate_w);
-    secColor = "#F36C3D";
+    secColor = "#EA580C";
     secUnit = " W";
     secLabel = "Metabolic Power";
   } else {
     secondaryVals = telemetry.map((t) => t.cumulative_radiation_usv);
-    secColor = "#38BDF8";
+    secColor = "#0284C7";
     secUnit = " µSv";
-    secLabel = "RAD Proxy (Gale)";
+    secLabel = "RAD Proxy";
   }
 
   const maxSec = Math.max(...secondaryVals, 1);
@@ -95,52 +95,52 @@ export default function ElevationProfileChart({
   const activePoint = hoverIndex !== null ? telemetry[hoverIndex] : telemetry[telemetry.length - 1];
 
   return (
-    <div className="hud-panel rounded-xl p-4 shadow-2xl flex flex-col gap-3">
+    <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 flex flex-col gap-3.5 border border-slate-200 shadow-md font-sans text-slate-800">
       {/* Header & Metric Switcher */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/[0.08] pb-2.5">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center">
-            <Mountain className="w-3.5 h-3.5 text-[#38BDF8]" />
+          <div className="w-6 h-6 rounded-md bg-sky-50 border border-sky-200 flex items-center justify-center">
+            <Mountain className="w-3.5 h-3.5 text-[#0284C7]" />
           </div>
           <div>
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider">
-              Traverse Topographic & Metabolic Cross-Section
+            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider font-sans">
+              Traverse Topographic &amp; Metabolic Cross-Section
             </h4>
-            <p className="text-[10px] text-slate-400 font-mono">
-              Prototype Surrogate Grid • Horn&apos;s Gradient Metric
+            <p className="text-xs text-slate-500 font-sans">
+              Surrogate Elevation Grid • Horn&apos;s Finite-Difference Method
             </p>
           </div>
         </div>
 
         {/* Trace Buttons */}
-        <div className="flex items-center gap-1.5 text-xs bg-[#070B14]/80 p-1 rounded-lg border border-white/[0.06]">
-          <span className="text-[9px] text-slate-400 uppercase font-mono mr-1">Overlay:</span>
+        <div className="flex items-center gap-1.5 text-xs bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <span className="text-xs text-slate-500 uppercase font-sans mr-1 px-1">Overlay:</span>
           <button
             onClick={() => setMetric("slope")}
-            className={`px-2.5 py-1 rounded text-[10px] font-mono font-medium transition-all ${
+            className={`px-3 py-1 rounded-lg text-xs font-sans font-semibold transition-all ${
               metric === "slope"
-                ? "bg-[#FBBF24]/20 text-[#FBBF24] border border-[#FBBF24]/40"
-                : "text-slate-400 hover:text-white"
+                ? "bg-white text-amber-700 shadow-sm border border-amber-300"
+                : "text-slate-600 hover:text-slate-900"
             }`}
           >
             Slope (Horn)
           </button>
           <button
             onClick={() => setMetric("watts")}
-            className={`px-2.5 py-1 rounded text-[10px] font-mono font-medium transition-all ${
+            className={`px-3 py-1 rounded-lg text-xs font-sans font-semibold transition-all ${
               metric === "watts"
-                ? "bg-[#F36C3D]/20 text-[#F36C3D] border border-[#F36C3D]/40"
-                : "text-slate-400 hover:text-white"
+                ? "bg-white text-[#EA580C] shadow-sm border border-orange-300"
+                : "text-slate-600 hover:text-slate-900"
             }`}
           >
             Metabolic (W)
           </button>
           <button
             onClick={() => setMetric("radiation")}
-            className={`px-2.5 py-1 rounded text-[10px] font-mono font-medium transition-all ${
+            className={`px-3 py-1 rounded-lg text-xs font-sans font-semibold transition-all ${
               metric === "radiation"
-                ? "bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/40"
-                : "text-slate-400 hover:text-white"
+                ? "bg-white text-[#0284C7] shadow-sm border border-sky-300"
+                : "text-slate-600 hover:text-slate-900"
             }`}
           >
             RAD Proxy (µSv)
@@ -149,26 +149,22 @@ export default function ElevationProfileChart({
       </div>
 
       {metric === "radiation" && (
-        <div className="px-3 py-1.5 rounded-lg bg-[#38BDF8]/10 border border-[#38BDF8]/25 text-[10px] text-[#38BDF8] font-mono flex items-center gap-2">
-          <span>Illustrative radiation proxy — not a Jezero-specific radiation dose prediction.</span>
+        <div className="px-3 py-1.5 rounded-lg bg-sky-50 border border-sky-200 text-xs text-[#0284C7] font-sans flex items-center gap-2">
+          <span>Illustrative MSL RAD proxy baseline — not an empirical regional radiation dose prediction.</span>
         </div>
       )}
 
       {/* SVG Elevation Chart */}
-      <div className="relative w-full overflow-x-auto bg-[#04070D]/60 rounded-lg p-2 border border-white/[0.04]">
+      <div className="relative w-full overflow-x-auto bg-slate-50 rounded-xl p-2.5 border border-slate-200">
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto max-h-48 overflow-visible"
           onMouseLeave={() => setHoverIndex(null)}
         >
           <defs>
-            <linearGradient id="elevGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.0" />
-            </linearGradient>
-            <linearGradient id="slopeHazardGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#EF4444" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#EF4444" stopOpacity="0.0" />
+            <linearGradient id="lightElevGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#0284C7" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#0284C7" stopOpacity="0.02" />
             </linearGradient>
           </defs>
 
@@ -178,7 +174,7 @@ export default function ElevationProfileChart({
             y1={padding.top}
             x2={width - padding.right}
             y2={padding.top}
-            stroke="rgba(255,255,255,0.08)"
+            stroke="#CBD5E1"
             strokeDasharray="4 4"
           />
           <line
@@ -186,7 +182,7 @@ export default function ElevationProfileChart({
             y1={(padding.top + bottomY) / 2}
             x2={width - padding.right}
             y2={(padding.top + bottomY) / 2}
-            stroke="rgba(255,255,255,0.04)"
+            stroke="#E2E8F0"
             strokeDasharray="2 4"
           />
           <line
@@ -194,16 +190,16 @@ export default function ElevationProfileChart({
             y1={bottomY}
             x2={width - padding.right}
             y2={bottomY}
-            stroke="rgba(255,255,255,0.12)"
+            stroke="#94A3B8"
           />
 
           {/* Elevation Area and Primary Line */}
-          <path d={areaD} fill="url(#elevGradient)" />
+          <path d={areaD} fill="url(#lightElevGradient)" />
           <path
             d={pathD}
             fill="none"
-            stroke="#38BDF8"
-            strokeWidth="2.2"
+            stroke="#0284C7"
+            strokeWidth="2.4"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -213,7 +209,7 @@ export default function ElevationProfileChart({
             d={secPathD}
             fill="none"
             stroke={secColor}
-            strokeWidth="1.6"
+            strokeWidth="1.8"
             strokeDasharray="4 3"
             strokeLinecap="round"
           />
@@ -222,20 +218,22 @@ export default function ElevationProfileChart({
           <text
             x={padding.left - 8}
             y={padding.top + 4}
-            fill="#94A3B8"
-            fontSize="10"
+            fill="#64748B"
+            fontSize="11"
             fontFamily="monospace"
             textAnchor="end"
+            fontWeight="bold"
           >
             {Math.round(maxElev)}m
           </text>
           <text
             x={padding.left - 8}
             y={bottomY - 4}
-            fill="#94A3B8"
-            fontSize="10"
+            fill="#64748B"
+            fontSize="11"
             fontFamily="monospace"
             textAnchor="end"
+            fontWeight="bold"
           >
             {Math.round(minElev)}m
           </text>
@@ -245,7 +243,7 @@ export default function ElevationProfileChart({
             x={padding.left}
             y={bottomY + 16}
             fill="#64748B"
-            fontSize="10"
+            fontSize="11"
             fontFamily="monospace"
             textAnchor="start"
           >
@@ -255,7 +253,7 @@ export default function ElevationProfileChart({
             x={width - padding.right}
             y={bottomY + 16}
             fill="#64748B"
-            fontSize="10"
+            fontSize="11"
             fontFamily="monospace"
             textAnchor="end"
           >
@@ -287,7 +285,7 @@ export default function ElevationProfileChart({
                 y1={padding.top}
                 x2={scaleX(activePoint.distance_m)}
                 y2={bottomY}
-                stroke="#F1F5F9"
+                stroke="#64748B"
                 strokeWidth="1"
                 strokeDasharray="2 2"
               />
@@ -295,7 +293,7 @@ export default function ElevationProfileChart({
                 cx={scaleX(activePoint.distance_m)}
                 cy={scaleY(activePoint.elevation_m)}
                 r="4.5"
-                fill="#38BDF8"
+                fill="#0284C7"
                 stroke="#FFFFFF"
                 strokeWidth="2"
               />
@@ -313,34 +311,34 @@ export default function ElevationProfileChart({
       </div>
 
       {/* Active Point Telemetry Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 bg-[#0A0F1D]/80 p-2.5 rounded-lg border border-white/[0.06] text-xs">
+      <div className="grid grid-cols-2 sm:grid-cols-6 gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs font-sans">
         <div>
-          <span className="text-[9px] uppercase tracking-wider text-slate-500 font-mono block">Traverse Dist</span>
-          <span className="font-mono text-white font-bold num-tabular">{activePoint.distance_m} <span className="text-[10px] text-slate-500">m</span></span>
+          <span className="text-xs uppercase tracking-wide text-slate-500 font-sans block">Traverse Dist</span>
+          <span className="font-mono text-slate-900 font-bold num-tabular text-sm">{activePoint.distance_m} <span className="text-xs font-normal text-slate-500">m</span></span>
         </div>
         <div>
-          <span className="text-[9px] uppercase tracking-wider text-[#38BDF8] font-mono block">Datum Elevation</span>
-          <span className="font-mono text-[#38BDF8] font-bold num-tabular">{activePoint.elevation_m} <span className="text-[10px] text-slate-500">m</span></span>
+          <span className="text-xs uppercase tracking-wide text-[#0284C7] font-sans block">Datum Elevation</span>
+          <span className="font-mono text-[#0284C7] font-bold num-tabular text-sm">{activePoint.elevation_m} <span className="text-xs font-normal text-slate-500">m</span></span>
         </div>
         <div>
-          <span className="text-[9px] uppercase tracking-wider text-[#FBBF24] font-mono block">Horn&apos;s Slope</span>
-          <span className="font-mono text-[#FBBF24] font-bold num-tabular">{activePoint.slope_deg}°</span>
+          <span className="text-xs uppercase tracking-wide text-amber-700 font-sans block">Horn&apos;s Slope</span>
+          <span className="font-mono text-amber-700 font-bold num-tabular text-sm">{activePoint.slope_deg}°</span>
         </div>
         <div>
-          <span className="text-[9px] uppercase tracking-wider text-[#F36C3D] font-mono block">Metabolic Power</span>
-          <span className="font-mono text-[#F36C3D] font-bold num-tabular">{activePoint.metabolic_rate_w} <span className="text-[10px] text-slate-500">W</span></span>
+          <span className="text-xs uppercase tracking-wide text-[#EA580C] font-sans block">Metabolic Power</span>
+          <span className="font-mono text-[#EA580C] font-bold num-tabular text-sm">{activePoint.metabolic_rate_w} <span className="text-xs font-normal text-slate-500">W</span></span>
         </div>
         <div>
-          <span className="text-[9px] uppercase tracking-wider text-slate-500 font-mono block">Walking Speed</span>
-          <span className="font-mono text-white font-bold num-tabular">{activePoint.speed_ms} <span className="text-[10px] text-slate-500">m/s</span></span>
+          <span className="text-xs uppercase tracking-wide text-slate-500 font-sans block">Walking Speed</span>
+          <span className="font-mono text-slate-900 font-bold num-tabular text-sm">{activePoint.speed_ms} <span className="text-xs font-normal text-slate-500">m/s</span></span>
         </div>
         <div className="flex flex-col justify-center">
-          <span className={`text-[10px] font-mono px-2 py-1 rounded text-center font-bold border ${
+          <span className={`text-xs px-2.5 py-1.5 rounded-lg text-center font-bold border ${
             activePoint.slope_deg > 15
-              ? "bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/40"
+              ? "bg-red-50 text-red-700 border-red-200"
               : activePoint.slope_deg > 10
-              ? "bg-[#FBBF24]/20 text-[#FBBF24] border-[#FBBF24]/40"
-              : "bg-[#34D399]/20 text-[#34D399] border-[#34D399]/40"
+              ? "bg-amber-50 text-amber-700 border-amber-200"
+              : "bg-emerald-50 text-emerald-700 border-emerald-200"
           }`}>
             {activePoint.slope_deg > 15 ? "CAUTION: SLIP HAZARD" : activePoint.slope_deg > 10 ? "MODERATE GRADE" : "NOMINAL TRACTION"}
           </span>

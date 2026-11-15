@@ -560,7 +560,7 @@ export default function MarsMap({
   };
 
   return (
-    <div className="relative w-full h-full rounded-2xl overflow-hidden border border-white/[0.1] bg-[#04070D] shadow-2xl flex flex-col">
+    <div className="relative w-full h-full rounded-2xl overflow-hidden border border-slate-300 bg-slate-950 shadow-md flex flex-col font-sans">
       {/* Top Glassmorphic Tactical Tool Bar */}
       <div className="absolute top-3 left-3 right-3 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
         {/* Left Tools */}
@@ -568,10 +568,10 @@ export default function MarsMap({
           {/* Layer Panel Button */}
           <button
             onClick={() => setLayersOpen(!layersOpen)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-medium backdrop-blur-md border transition-all ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-sans font-bold backdrop-blur-md border transition-all ${
               layersOpen 
-                ? "bg-[#38BDF8] text-[#04070D] border-[#38BDF8] shadow-lg shadow-[#38BDF8]/20 font-bold" 
-                : "bg-[#070B14]/85 text-white border-white/[0.12] hover:bg-[#0D1527]"
+                ? "bg-[#0284C7] text-white border-[#0284C7] shadow-md shadow-sky-500/25" 
+                : "bg-white/95 text-slate-800 border-slate-200 hover:bg-slate-50 shadow-sm"
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -581,10 +581,10 @@ export default function MarsMap({
           {/* Swipe Comparator Toggle */}
           <button
             onClick={() => setSwipeMode(!swipeMode)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-medium backdrop-blur-md border transition-all ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-sans font-bold backdrop-blur-md border transition-all ${
               swipeMode 
-                ? "bg-[#FBBF24] text-[#04070D] border-[#FBBF24] shadow-lg shadow-[#FBBF24]/20 font-bold" 
-                : "bg-[#070B14]/85 text-white border-white/[0.12] hover:bg-[#0D1527]"
+                ? "bg-[#D97706] text-white border-[#D97706] shadow-md shadow-amber-500/25" 
+                : "bg-white/95 text-slate-800 border-slate-200 hover:bg-slate-50 shadow-sm"
             }`}
             title="Split-Screen Comparison: Optical vs Topographic Hillshade"
           >
@@ -595,10 +595,10 @@ export default function MarsMap({
           {/* 3D WebGL Sector Mesh */}
           <button
             onClick={onOpen3DModal}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-[#070B14]/85 hover:bg-[#0D1527] text-white border border-white/[0.12] backdrop-blur-md transition-all"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-sans font-bold bg-white/95 hover:bg-slate-50 text-slate-800 border border-slate-200 backdrop-blur-md transition-all shadow-sm"
             title="Launch 3D WebGL Surface Inspection"
           >
-            <Mountain className="w-3.5 h-3.5 text-[#F36C3D]" />
+            <Mountain className="w-3.5 h-3.5 text-[#EA580C]" />
             <span className="hidden sm:inline">3D Mesh View</span>
           </button>
         </div>
@@ -606,17 +606,17 @@ export default function MarsMap({
         {/* Right Tools */}
         <div className="flex items-center gap-2 pointer-events-auto">
           {/* Site Badge */}
-          <div className="px-3 py-1 rounded-lg bg-[#070B14]/90 border border-white/[0.1] text-xs font-mono backdrop-blur-md flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#34D399] animate-pulse" />
-            <span className="text-white font-bold">
-              {activeSite === "jezero" ? "JEZERO CRATER DELTA" : "MOUNT SHARP BOXWORK"}
+          <div className="px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200 text-xs font-sans backdrop-blur-md flex items-center gap-2 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-[#15803D] animate-pulse" />
+            <span className="text-slate-900 font-bold uppercase tracking-wide">
+              {activeSite === "jezero" ? "Jezero Crater Delta" : "Mount Sharp Boxwork"}
             </span>
           </div>
 
           {/* Reset Camera View */}
           <button
             onClick={handleResetView}
-            className="p-1.5 rounded-lg bg-[#070B14]/85 hover:bg-[#0D1527] text-slate-300 hover:text-white border border-white/[0.12] backdrop-blur-md transition-all"
+            className="p-2 rounded-xl bg-white/95 hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 backdrop-blur-md transition-all shadow-sm"
             title="Re-center map on active target"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -626,89 +626,89 @@ export default function MarsMap({
 
       {/* Floating Layer Selection Drawer */}
       {layersOpen && (
-        <div className="absolute top-14 left-3 z-30 w-72 bg-[#070B14]/95 border border-white/[0.12] rounded-xl p-3 shadow-2xl backdrop-blur-xl text-xs space-y-2.5">
-          <div className="flex items-center justify-between border-b border-white/[0.08] pb-1.5">
-            <span className="font-bold text-white uppercase text-[10px] tracking-wider font-mono">
+        <div className="absolute top-14 left-3 z-30 w-72 bg-white/95 border border-slate-200 rounded-2xl p-3.5 shadow-2xl backdrop-blur-xl text-xs font-sans space-y-2.5 text-slate-800">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <span className="font-bold text-slate-900 uppercase text-xs tracking-wider">
               Scientific Layer Stack
             </span>
-            <span className="text-[9px] text-[#38BDF8] font-mono">USGS & NASA OGC</span>
+            <span className="text-[11px] text-[#0284C7] font-semibold">USGS &amp; NASA OGC</span>
           </div>
 
           <div className="space-y-1.5">
             {/* 1. USGS Viking Color */}
-            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
-              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
-                <span className="w-2 h-2 rounded-full bg-[#F36C3D]" />
+            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 transition-colors">
+              <span className="text-slate-700 font-medium flex items-center gap-2 text-xs">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#EA580C]" />
                 USGS Viking Color Mosaic
               </span>
               <button onClick={() => toggleLayer("viking")}>
-                {layerConfig.viking.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+                {layerConfig.viking.visible ? <Eye className="w-4 h-4 text-[#15803D]" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
               </button>
             </div>
 
             {/* 2. MOLA Hillshade */}
-            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
-              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
-                <Mountain className="w-3.5 h-3.5 text-[#38BDF8]" />
+            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 transition-colors">
+              <span className="text-slate-700 font-medium flex items-center gap-2 text-xs">
+                <Mountain className="w-4 h-4 text-[#0284C7]" />
                 MOLA / HRSC Shaded Relief
               </span>
               <button onClick={() => toggleLayer("mola")}>
-                {layerConfig.mola.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+                {layerConfig.mola.visible ? <Eye className="w-4 h-4 text-[#15803D]" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
               </button>
             </div>
 
             {/* 3. HiRISE Slope Hazard */}
-            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
-              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
-                <AlertTriangle className="w-3.5 h-3.5 text-[#FBBF24]" />
+            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 transition-colors">
+              <span className="text-slate-700 font-medium flex items-center gap-2 text-xs">
+                <AlertTriangle className="w-4 h-4 text-[#D97706]" />
                 Modelled Slope Hazard (Surrogate)
               </span>
               <button onClick={() => toggleLayer("hazard")}>
-                {layerConfig.hazard.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+                {layerConfig.hazard.visible ? <Eye className="w-4 h-4 text-[#15803D]" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
               </button>
             </div>
 
             {/* 4. USGS Geology */}
-            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
-              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
-                <span className="w-2 h-2 rounded-full bg-[#A855F7]" />
+            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 transition-colors">
+              <span className="text-slate-700 font-medium flex items-center gap-2 text-xs">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#9333EA]" />
                 USGS SIM 3464 Units (Simplified)
               </span>
               <button onClick={() => toggleLayer("geology")}>
-                {layerConfig.geology.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+                {layerConfig.geology.visible ? <Eye className="w-4 h-4 text-[#15803D]" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
               </button>
             </div>
 
             {/* 5. CRISM Mineralogy */}
-            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
-              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
-                <Sparkles className="w-3.5 h-3.5 text-[#38BDF8]" />
+            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 transition-colors">
+              <span className="text-slate-700 font-medium flex items-center gap-2 text-xs">
+                <Sparkles className="w-4 h-4 text-[#0284C7]" />
                 CRISM-Referenced Targets (Authored)
               </span>
               <button onClick={() => toggleLayer("crism")}>
-                {layerConfig.crism.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+                {layerConfig.crism.visible ? <Eye className="w-4 h-4 text-[#15803D]" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
               </button>
             </div>
 
             {/* 6. Rover Traverse */}
-            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
-              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
-                <Compass className="w-3.5 h-3.5 text-[#F36C3D]" />
+            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 transition-colors">
+              <span className="text-slate-700 font-medium flex items-center gap-2 text-xs">
+                <Compass className="w-4 h-4 text-[#EA580C]" />
                 Perseverance Traverse (Real Telemetry)
               </span>
               <button onClick={() => toggleLayer("rover")}>
-                {layerConfig.rover.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+                {layerConfig.rover.visible ? <Eye className="w-4 h-4 text-[#15803D]" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
               </button>
             </div>
 
             {/* 7. Martian Landmarks */}
-            <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
-              <span className="text-slate-300 flex items-center gap-2 text-[11px]">
-                <MapPin className="w-3.5 h-3.5 text-[#34D399]" />
-                Landmarks & Rover POV
+            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 transition-colors">
+              <span className="text-slate-700 font-medium flex items-center gap-2 text-xs">
+                <MapPin className="w-4 h-4 text-[#15803D]" />
+                Landmarks &amp; Rover POV
               </span>
               <button onClick={() => toggleLayer("landmarks")}>
-                {layerConfig.landmarks.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
+                {layerConfig.landmarks.visible ? <Eye className="w-4 h-4 text-[#15803D]" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
               </button>
             </div>
           </div>
@@ -721,8 +721,8 @@ export default function MarsMap({
           className="absolute top-0 bottom-0 z-20 pointer-events-auto cursor-ew-resize flex items-center justify-center"
           style={{ left: `${swipePosition}%` }}
         >
-          <div className="w-0.5 h-full bg-[#FBBF24] shadow-[0_0_10px_#FBBF24]" />
-          <div className="absolute w-8 h-8 rounded-full bg-[#070B14] border-2 border-[#FBBF24] flex items-center justify-center text-[#FBBF24] shadow-xl">
+          <div className="w-0.5 h-full bg-[#D97706] shadow-[0_0_10px_#D97706]" />
+          <div className="absolute w-8 h-8 rounded-full bg-white border-2 border-[#D97706] flex items-center justify-center text-[#D97706] shadow-xl">
             <Columns className="w-4 h-4" />
           </div>
         </div>
@@ -730,17 +730,17 @@ export default function MarsMap({
 
       {/* Swipe Slider Control Bar (Visible when swipe active) */}
       {swipeMode && (
-        <div className="absolute top-14 left-1/2 -translate-x-1/2 z-30 bg-[#070B14]/90 border border-[#FBBF24]/40 px-4 py-2 rounded-xl backdrop-blur-md flex items-center gap-3 text-xs font-mono">
-          <span className="text-[#F36C3D] font-bold">Viking Color</span>
+        <div className="absolute top-14 left-1/2 -translate-x-1/2 z-30 bg-white/95 border border-amber-300 px-4 py-2 rounded-xl shadow-lg backdrop-blur-md flex items-center gap-3 text-xs font-sans text-slate-800">
+          <span className="text-[#EA580C] font-bold">Viking Color</span>
           <input
             type="range"
             min="5"
             max="95"
             value={swipePosition}
             onChange={(e) => setSwipePosition(Number(e.target.value))}
-            className="w-40 accent-[#FBBF24] cursor-ew-resize"
+            className="w-40 accent-[#D97706] cursor-ew-resize"
           />
-          <span className="text-[#38BDF8] font-bold">MOLA Hillshade</span>
+          <span className="text-[#0284C7] font-bold">MOLA Hillshade</span>
         </div>
       )}
 
@@ -748,39 +748,39 @@ export default function MarsMap({
       <div ref={mapElement} className="w-full flex-1 min-h-[480px]" />
 
       {/* Bottom Mission Telemetry HUD */}
-      <div className="bg-[#070B14]/95 border-t border-white/[0.08] px-4 py-2 text-xs flex flex-wrap items-center justify-between gap-3 font-mono text-slate-400">
+      <div className="bg-white/95 border-t border-slate-200 px-4 py-2.5 text-xs flex flex-wrap items-center justify-between gap-3 font-sans text-slate-600 shadow-sm">
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 text-white">
-            <Crosshair className="w-3.5 h-3.5 text-[#38BDF8]" />
-            <span>CURSOR:</span>
-            <span className="text-[#38BDF8] font-bold num-tabular">
+          <span className="flex items-center gap-1.5 text-slate-900">
+            <Crosshair className="w-3.5 h-3.5 text-[#0284C7]" />
+            <span className="font-semibold text-slate-600">CURSOR:</span>
+            <span className="text-[#0284C7] font-bold font-mono">
               {cursorCoords ? `${cursorCoords.lon.toFixed(4)}°E, ${cursorCoords.lat.toFixed(4)}°N` : "77.4150°E, 18.4480°N"}
             </span>
           </span>
 
-          <span className="hidden sm:inline text-white/20">|</span>
+          <span className="hidden sm:inline text-slate-300">|</span>
 
-          <span className="flex items-center gap-1.5">
-            <Mountain className="w-3.5 h-3.5 text-[#F36C3D]" />
-            <span>MOLA DATUM:</span>
-            <span className="text-white font-bold num-tabular">
+          <span className="flex items-center gap-1.5 text-slate-900">
+            <Mountain className="w-3.5 h-3.5 text-[#EA580C]" />
+            <span className="font-semibold text-slate-600">MOLA DATUM:</span>
+            <span className="text-slate-900 font-bold font-mono">
               {cursorTelemetry?.elevation_m !== undefined ? `${cursorTelemetry.elevation_m} m` : "-2545.0 m"}
             </span>
           </span>
 
-          <span className="hidden md:inline text-white/20">|</span>
+          <span className="hidden md:inline text-slate-300">|</span>
 
-          <span className="hidden md:flex items-center gap-1.5">
-            <AlertTriangle className="w-3.5 h-3.5 text-[#FBBF24]" />
-            <span>HORN SLOPE:</span>
-            <span className="text-white font-bold num-tabular">
+          <span className="hidden md:flex items-center gap-1.5 text-slate-900">
+            <AlertTriangle className="w-3.5 h-3.5 text-[#D97706]" />
+            <span className="font-semibold text-slate-600">HORN SLOPE:</span>
+            <span className="text-slate-900 font-bold font-mono">
               {cursorTelemetry?.slope_deg !== undefined ? `${cursorTelemetry.slope_deg}°` : "5.2°"}
             </span>
           </span>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="px-2.5 py-0.5 rounded-full bg-[#34D399]/15 text-[#34D399] border border-[#34D399]/30 text-[10px] font-bold">
+          <span className="px-3 py-1 rounded-full bg-emerald-50 text-[#15803D] border border-emerald-200 text-xs font-bold uppercase tracking-wide">
             {cursorTelemetry?.safety_status || "TRAVERSABLE INDURATED BEDROCK"}
           </span>
         </div>
