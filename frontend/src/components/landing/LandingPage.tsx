@@ -140,37 +140,37 @@ export default function LandingPage({
           </div>
 
           {/* Operational Telemetry Metrics Strip */}
-          <div className="pt-2 w-full max-w-4xl grid grid-cols-2 sm:grid-cols-4 gap-3.5 text-left font-sans">
-            <div className="p-4 rounded-2xl bg-[#040A18]/50 backdrop-blur-md border border-white/15 space-y-1 shadow-lg hover:border-white/25 transition-all">
-              <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">559</div>
+          <div className="pt-2 w-full max-w-5xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-3.5 text-left font-sans">
+            <div className="p-4 rounded-2xl bg-[#050C1C]/80 backdrop-blur-md border border-white/15 space-y-1 shadow-lg hover:border-white/25 transition-all">
+              <div className="text-3xl font-extrabold text-white tracking-tight">559</div>
               <div className="text-xs font-bold text-slate-200 uppercase tracking-wider">Drive Legs</div>
               <div className="text-xs text-slate-400 font-sans">Perseverance Sols 13–2022 (MMGIS)</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#040A18]/50 backdrop-blur-md border border-white/15 space-y-1 shadow-lg hover:border-white/25 transition-all">
-              <div className="text-3xl sm:text-4xl font-extrabold text-[#38BDF8] tracking-tight">11.3 m</div>
+            <div className="p-4 rounded-2xl bg-[#050C1C]/80 backdrop-blur-md border border-white/15 space-y-1 shadow-lg hover:border-white/25 transition-all">
+              <div className="text-3xl font-extrabold text-[#38BDF8] tracking-tight">11.3 m</div>
               <div className="text-xs font-bold text-slate-200 uppercase tracking-wider">Spatial Cell</div>
               <div className="text-xs text-slate-400 font-sans">350 × 550 Surrogate Grid</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#040A18]/50 backdrop-blur-md border border-white/15 space-y-1 shadow-lg hover:border-white/25 transition-all">
-              <div className="text-3xl sm:text-4xl font-extrabold text-[#FBBF24] tracking-tight">&le; 22.0°</div>
+            <div className="p-4 rounded-2xl bg-[#050C1C]/80 backdrop-blur-md border border-white/15 space-y-1 shadow-lg hover:border-white/25 transition-all">
+              <div className="text-3xl font-extrabold text-[#FBBF24] tracking-tight">&le; 22.0°</div>
               <div className="text-xs font-bold text-slate-200 uppercase tracking-wider">Planner Cutoff</div>
               <div className="text-xs text-slate-400 font-sans">Algorithmic Slope Constraint</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#040A18]/50 backdrop-blur-md border border-white/15 space-y-1 shadow-lg hover:border-white/25 transition-all">
-              <div className="text-3xl sm:text-4xl font-extrabold text-[#34D399] tracking-tight">0.38 g</div>
+            <div className="p-4 rounded-2xl bg-[#050C1C]/80 backdrop-blur-md border border-white/15 space-y-1 shadow-lg hover:border-white/25 transition-all">
+              <div className="text-3xl font-extrabold text-[#34D399] tracking-tight">0.38 g</div>
               <div className="text-xs font-bold text-slate-200 uppercase tracking-wider">Mars Gravity</div>
               <div className="text-xs text-slate-400 font-sans">Pandolf-Santee 160 kg Ensemble</div>
             </div>
           </div>
 
           {/* Dual Aerospace Command Showcase: 3D Rotating Mars + Boxed Flight Insignia */}
-          <div className="w-full max-w-5xl mx-auto pt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch text-left font-sans">
+          <div className="w-full max-w-5xl mx-auto pt-4 grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch text-left font-sans">
             
             {/* Box 1: Interactive 3D Planetary Observatory */}
-            <div className="p-5 rounded-3xl bg-[#050B17]/75 backdrop-blur-xl border border-white/15 shadow-[0_12px_48px_rgba(0,0,0,0.8)] flex flex-col items-center justify-between space-y-4">
+            <div className="p-5 rounded-3xl bg-[#050B17]/85 backdrop-blur-xl border border-white/15 shadow-[0_12px_48px_rgba(0,0,0,0.8)] flex flex-col items-center justify-between space-y-4">
               <div className="w-full flex items-center justify-between border-b border-white/10 pb-3">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#FC3D21] animate-ping" />
@@ -192,7 +192,7 @@ export default function LandingPage({
             </div>
 
             {/* Box 2: Official Mission Emblem & Flight Insignia */}
-            <div className="p-5 rounded-3xl bg-[#050B17]/75 backdrop-blur-xl border border-white/15 shadow-[0_12px_48px_rgba(0,0,0,0.8)] flex flex-col justify-between space-y-4 relative group">
+            <div className="p-5 rounded-3xl bg-[#050B17]/85 backdrop-blur-xl border border-white/15 shadow-[0_12px_48px_rgba(0,0,0,0.8)] flex flex-col justify-between space-y-4 relative group">
               <div className="w-full flex items-center justify-between border-b border-white/10 pb-3">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#38BDF8]" />
@@ -204,7 +204,7 @@ export default function LandingPage({
               </div>
 
               {/* Insignia Graphic Frame */}
-              <div className="relative group max-w-[340px] sm:max-w-[380px] w-full mx-auto my-auto">
+              <div className="relative group max-w-[320px] sm:max-w-[350px] w-full mx-auto my-auto">
                 <div className="absolute -inset-1 bg-gradient-to-r from-[#FC3D21]/40 via-[#F97316]/25 to-[#38BDF8]/40 rounded-2xl blur-lg opacity-70 group-hover:opacity-100 transition duration-500" />
                 <div className="relative rounded-2xl overflow-hidden border border-white/20 bg-[#070B14] shadow-2xl">
                   <img
@@ -219,10 +219,30 @@ export default function LandingPage({
                 </div>
               </div>
 
+              {/* Mission Parameters 2x2 Matrix */}
+              <div className="w-full grid grid-cols-2 gap-2 text-xs font-sans">
+                <div className="p-2.5 rounded-xl bg-black/40 border border-white/10 space-y-0.5">
+                  <span className="text-[11px] text-slate-400 block font-sans">Target Study Site</span>
+                  <span className="font-bold text-white text-xs block">Jezero Western Delta</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-black/40 border border-white/10 space-y-0.5">
+                  <span className="text-[11px] text-slate-400 block font-sans">Autonomous Routing</span>
+                  <span className="font-bold text-[#38BDF8] text-xs block">8-Way A* Bioenergetics</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-black/40 border border-white/10 space-y-0.5">
+                  <span className="text-[11px] text-slate-400 block font-sans">Elevation Span</span>
+                  <span className="font-bold text-[#FBBF24] text-xs block">-2605 m to -2121 m</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-black/40 border border-white/10 space-y-0.5">
+                  <span className="text-[11px] text-slate-400 block font-sans">Mission Safety Limit</span>
+                  <span className="font-bold text-[#34D399] text-xs block">&le; 22.0° Slope Exclusion</span>
+                </div>
+              </div>
+
               {/* Mission Badge Description */}
-              <div className="w-full pt-3 border-t border-white/10 space-y-1 text-left font-sans">
+              <div className="w-full pt-2.5 border-t border-white/10 space-y-1 text-left font-sans">
                 <span className="text-xs font-bold text-[#FC3D21] tracking-wider uppercase block font-sans">
-                  Integrated Terrain Intelligence
+                  Integrated Planetary Terrain Intelligence
                 </span>
                 <p className="text-xs text-slate-300 font-sans leading-relaxed">
                   Official mission emblem commemorating Perseverance at Jezero Crater, the human exploration ascent horizon, and autonomous traverse planning.
