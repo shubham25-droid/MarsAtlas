@@ -12,7 +12,7 @@
 
 ## 1. Project Title & Tagline
 
-* **Full Title:** MarsAtlas — Integrated Martian Terrain Intelligence and Extravehicular Activity (EVA) Traverse Planning System
+* **Full Title:** MarsAtlas - Integrated Martian Terrain Intelligence and Extravehicular Activity (EVA) Traverse Planning System
 * **Tagline:** *Explore Mars. Understand Terrain. Plan Every Traverse.*
 * **Concept:** *From Planetary Data to Exploration Decisions.*
 * **Status:** **Experimental Research Prototype** (developed independently for NASA Space Apps Challenge 2026).
