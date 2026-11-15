@@ -5,15 +5,10 @@ import {
   ArrowRight, 
   ExternalLink, 
   X, 
-  Sparkles, 
-  Camera, 
   Layers, 
   Compass,
   Mountain,
   Eye,
-  Activity,
-  ShieldCheck,
-  CheckCircle2,
   Info
 } from "lucide-react";
 
@@ -31,6 +26,7 @@ export interface GalleryItem {
   description: string;
   marsAtlasRole: string;
   officialUrl: string;
+  linkText: string;
 }
 
 const GALLERY_ITEMS: GalleryItem[] = [
@@ -47,7 +43,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     imageSrc: "/assets/nasa_gallery/perseverance.jpg",
     description: "Perseverance rover surveyed the base of the Western Delta, identifying fine-grained clay-rich lacustrine mudstones with high biosignature preservation potential. Serves as ground-truth planetary imagery.",
     marsAtlasRole: "Ground-truth visual reference: In-situ Mastcam-Z panorama providing visual ground truth for the delta contact region.",
-    officialUrl: "https://mars.nasa.gov/mars2020/"
+    officialUrl: "https://mars.nasa.gov/mars2020/",
+    linkText: "Explore NASA Mars 2020 Mission Archive"
   },
   {
     id: "hirise_delta_scarp",
@@ -62,7 +59,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     imageSrc: "/assets/nasa_gallery/hirise_delta.jpg",
     description: "1-meter-per-pixel orbital stereo digital elevation model showing the steep 60-meter drop-off and layered sedimentary strata of the delta scarp. Serves as scientific reference context; active route planning executes on the experimental surrogate grid.",
     marsAtlasRole: "Scientific reference context: Informs understanding of regional scarp geometry; computational pathfinding executes on the experimental surrogate grid with a 22.0° slope cutoff constraint.",
-    officialUrl: "https://hirise.lpl.arizona.edu/"
+    officialUrl: "https://hirise.lpl.arizona.edu/",
+    linkText: "Explore University of Arizona HiRISE Archive"
   },
   {
     id: "mastcamz_delta_strata",
@@ -77,7 +75,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     imageSrc: "/assets/nasa_gallery/mastcamz_delta.jpg",
     description: "Ultra-high-resolution panoramic mosaic showing boulder distributions, gravel beds, and cross-bedding sandstone layers at the delta front.",
     marsAtlasRole: "Reference observation archive: Used in nearest-neighbor visual lookups when inspecting rover ground-truth coordinates along the traverse.",
-    officialUrl: "https://mars.nasa.gov/mars2020/multimedia/raw-images/"
+    officialUrl: "https://mars.nasa.gov/mars2020/multimedia/raw-images/",
+    linkText: "Explore NASA Mars Raw Image Catalog"
   },
   {
     id: "curiosity_gale_boxwork",
@@ -92,7 +91,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     imageSrc: "/assets/nasa_gallery/curiosity_boxwork.jpg",
     description: "Curiosity climbing the steep slopes of Mount Sharp (Aeolis Mons), investigating mineralized fracture ridges ('boxwork') and boulder-strewn channels.",
     marsAtlasRole: "Comparative Gale Crater reference: Ingests 1,389 real MSL drive waypoints for secondary regional terrain comparison.",
-    officialUrl: "https://mars.nasa.gov/msl/"
+    officialUrl: "https://mars.nasa.gov/msl/",
+    linkText: "Explore NASA Curiosity Mars Mission"
   },
   {
     id: "m20_traverse_mmgis",
@@ -107,7 +107,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     imageSrc: "/assets/nasa_gallery/m20_traverse_map.png",
     description: "Official NASA-AMMOS spatial record of the Perseverance rover drive path, documenting traverse distances, sol stamps, and localized elevations.",
     marsAtlasRole: "Active operational layer: Rendered directly on our OpenLayers map canvas as a verified 559-leg telemetry benchmark alongside computed human EVA traverses.",
-    officialUrl: "https://mars.nasa.gov/maps/location/?mission=M20"
+    officialUrl: "https://mars.nasa.gov/maps/location/?mission=M20",
+    linkText: "Explore NASA-AMMOS MMGIS Map Portal"
   },
   {
     id: "terrain_heatmaps_derived",
@@ -120,9 +121,10 @@ const GALLERY_ITEMS: GalleryItem[] = [
     dateOrSol: "Derived 550 × 350 Metric Raster",
     nasaId: "MARSATLAS_GRID_01",
     imageSrc: "/assets/nasa_gallery/terrain_heatmaps.png",
-    description: "Co-registered 550 × 350 cell prototype surrogate raster with elevation (-2605m to -2121m), Horn's finite-difference slope (0.0°–22.7°), local roughness (sigma_z), and thermal inertia proxy.",
+    description: "Co-registered 550 × 350 cell prototype surrogate raster with elevation (-2605m to -2121m), Horn's finite-difference slope (0.0°–22.7°), local roughness (σ_z standard deviation), and thermal inertia proxy.",
     marsAtlasRole: "Active computational cost surface: Input raster for the 8-connected A* traverse planner to balance slope grade, transit time, and bioenergetics.",
-    officialUrl: "https://github.com/shubham25-droid/MarsAtlas"
+    officialUrl: "https://trek.nasa.gov/mars/",
+    linkText: "Explore NASA Mars Trek Topography Portal"
   },
   {
     id: "geology_sim3464_crism",
@@ -137,7 +139,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     imageSrc: "/assets/nasa_gallery/geology_sim3464.png",
     description: "Simplified geologic vector units digitized after Sun & Stack (2020) SIM 3464, combined with 5 manually authored CRISM-referenced science target locations for regional exploration context.",
     marsAtlasRole: "Contextual spatial overlay: Renders simplified stratigraphic units and science-interest targets as contextual map layers; informs Science Priority route weighting heuristics.",
-    officialUrl: "https://pubs.usgs.gov/sim/3464/"
+    officialUrl: "https://pubs.usgs.gov/sim/3464/",
+    linkText: "Explore USGS SIM 3464 Geologic Publication"
   },
   {
     id: "ingenuity_aerial_scout",
@@ -152,7 +155,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     imageSrc: "/assets/nasa_gallery/ingenuity.jpg",
     description: "Aerial color imagery captured during historic helicopter flights over Séítah sand fields, illustrating traversability hazards impassable from ground view.",
     marsAtlasRole: "Reference context: Demonstrates the necessity of orbital and aerial hazard detection to avoid sand ripple entrapment.",
-    officialUrl: "https://mars.nasa.gov/technology/helicopter/"
+    officialUrl: "https://mars.nasa.gov/technology/helicopter/",
+    linkText: "Explore NASA Ingenuity Flight Archive"
   }
 ];
 
@@ -175,20 +179,20 @@ export default function NasaMissionGallery() {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#F36C3D] animate-pulse" />
-              <span className="text-xs font-mono font-bold text-[#F36C3D] tracking-widest uppercase">
-                SCIENTIFIC DATA PROVENANCE &amp; OBSERVATION ARCHIVES
+              <span className="text-xs font-sans font-bold text-[#F36C3D] tracking-widest uppercase">
+                Scientific Data Provenance &amp; Mission Archives
               </span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight uppercase font-sans">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight uppercase font-sans">
               Planetary Surface &amp; Mission Observations
             </h2>
-            <p className="text-sm text-[#94A3B8] max-w-2xl leading-relaxed">
+            <p className="text-sm text-slate-300 max-w-2xl leading-relaxed font-sans">
               Authentic NASA &amp; USGS planetary observations and mission context. Explore in-situ rover imagery, reference orbital topography, and regional geologic maps providing scientific benchmarks for our prototype traverse decision-support engine.
             </p>
           </div>
 
           <div className="flex items-center gap-3 self-start md:self-auto">
-            <span className="text-xs font-bold text-white tracking-wide uppercase font-mono">Explore NASA Archives</span>
+            <span className="text-xs font-sans font-bold text-white tracking-wide uppercase">Explore NASA Archives</span>
             <a
               href="https://mars.nasa.gov/mars2020/multimedia/raw-images/"
               target="_blank"
@@ -202,10 +206,10 @@ export default function NasaMissionGallery() {
         </div>
 
         {/* Epistemic Provenance Distinction Banner */}
-        <div className="p-3.5 rounded-xl bg-[#0C1220]/90 border border-white/[0.08] flex flex-col sm:flex-row sm:items-center gap-3 text-xs text-[#94A3B8]">
+        <div className="p-3.5 rounded-xl bg-[#0C1220]/90 border border-white/[0.08] flex flex-col sm:flex-row sm:items-center gap-3 text-xs text-slate-300 font-sans">
           <div className="flex items-center gap-2 shrink-0">
             <Info className="w-4 h-4 text-[#38BDF8]" />
-            <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/30 font-bold uppercase">
+            <span className="px-2.5 py-0.5 rounded font-sans text-[10px] bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/30 font-bold uppercase tracking-wider">
               Data Distinction
             </span>
           </div>
@@ -215,13 +219,13 @@ export default function NasaMissionGallery() {
         </div>
 
         {/* Category Filters (Pill Buttons) */}
-        <div className="flex flex-wrap items-center gap-2 text-xs">
+        <div className="flex flex-wrap items-center gap-2 text-xs font-sans">
           <button
             onClick={() => setSelectedCategory("all")}
             className={`px-4 py-2 rounded-full font-medium transition-all ${
               selectedCategory === "all"
                 ? "bg-white text-black font-bold shadow-md shadow-white/10"
-                : "bg-[#0C1220] text-[#94A3B8] hover:text-white border border-white/[0.08]"
+                : "bg-[#0C1220] text-slate-400 hover:text-white border border-white/[0.08]"
             }`}
           >
             All Datasets ({GALLERY_ITEMS.length})
@@ -231,7 +235,7 @@ export default function NasaMissionGallery() {
             className={`px-4 py-2 rounded-full font-medium transition-all ${
               selectedCategory === "jezero"
                 ? "bg-[#F36C3D] text-white font-bold shadow-md shadow-[#F36C3D]/25"
-                : "bg-[#0C1220] text-[#94A3B8] hover:text-white border border-white/[0.08]"
+                : "bg-[#0C1220] text-slate-400 hover:text-white border border-white/[0.08]"
             }`}
           >
             Site 01: Jezero Crater (Perseverance)
@@ -241,7 +245,7 @@ export default function NasaMissionGallery() {
             className={`px-4 py-2 rounded-full font-medium transition-all ${
               selectedCategory === "gale"
                 ? "bg-[#38BDF8] text-[#04070D] font-bold shadow-md shadow-[#38BDF8]/25"
-                : "bg-[#0C1220] text-[#94A3B8] hover:text-white border border-white/[0.08]"
+                : "bg-[#0C1220] text-slate-400 hover:text-white border border-white/[0.08]"
             }`}
           >
             Site 02: Mount Sharp Boxwork (Curiosity)
@@ -251,7 +255,7 @@ export default function NasaMissionGallery() {
             className={`px-4 py-2 rounded-full font-medium transition-all ${
               selectedCategory === "orbital"
                 ? "bg-[#34D399] text-[#04070D] font-bold shadow-md shadow-[#34D399]/25"
-                : "bg-[#0C1220] text-[#94A3B8] hover:text-white border border-white/[0.08]"
+                : "bg-[#0C1220] text-slate-400 hover:text-white border border-white/[0.08]"
             }`}
           >
             Orbital DTM &amp; Geologic Maps (USGS / HiRISE)
@@ -279,10 +283,10 @@ export default function NasaMissionGallery() {
 
               {/* Top Tag Badges: Region + Epistemic Tier */}
               <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between gap-2">
-                <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider uppercase bg-black/75 text-white/90 border border-white/10 backdrop-blur-md">
+                <span className="px-2.5 py-1 rounded-md text-[10px] font-sans font-semibold tracking-wider uppercase bg-black/75 text-white/90 border border-white/10 backdrop-blur-md">
                   {item.category === "jezero" ? "Jezero Crater" : item.category === "gale" ? "Mount Sharp" : "Orbital Reference"}
                 </span>
-                <span className={`px-2 py-0.5 rounded-md text-[9px] font-mono font-bold tracking-wider uppercase border backdrop-blur-md ${
+                <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-sans font-semibold tracking-wider uppercase border backdrop-blur-md ${
                   item.dataTier === "Active Dataset"
                     ? "bg-[#34D399]/25 text-[#34D399] border-[#34D399]/40"
                     : item.dataTier === "Contextual Overlay"
@@ -299,7 +303,7 @@ export default function NasaMissionGallery() {
                   <h3 className="text-lg font-bold text-white leading-tight font-sans tracking-tight drop-shadow-md">
                     {item.title}
                   </h3>
-                  <p className="text-xs text-[#CBD5E1] line-clamp-1 drop-shadow">
+                  <p className="text-xs text-slate-300 line-clamp-1 drop-shadow font-sans">
                     {item.mission}
                   </p>
                 </div>
@@ -323,11 +327,11 @@ export default function NasaMissionGallery() {
               <div className="flex items-center gap-3">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#F36C3D]" />
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-base font-bold text-white font-sans uppercase tracking-wide">
+                  <div className="flex items-center gap-2.5">
+                    <h3 className="text-base font-bold text-white font-sans tracking-tight">
                       {activeItem.title}
                     </h3>
-                    <span className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold uppercase border ${
+                    <span className={`px-2.5 py-0.5 rounded-full font-sans text-[10px] font-semibold uppercase border ${
                       activeItem.dataTier === "Active Dataset"
                         ? "bg-[#34D399]/20 text-[#34D399] border-[#34D399]/30"
                         : activeItem.dataTier === "Contextual Overlay"
@@ -337,8 +341,8 @@ export default function NasaMissionGallery() {
                       {activeItem.dataTier}
                     </span>
                   </div>
-                  <p className="text-xs text-[#94A3B8] font-mono">
-                    NASA Product ID: {activeItem.nasaId}
+                  <p className="text-xs text-slate-400 font-sans mt-0.5">
+                    Product Reference: {activeItem.nasaId}
                   </p>
                 </div>
               </div>
@@ -364,22 +368,22 @@ export default function NasaMissionGallery() {
               </div>
 
               {/* Metadata Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-                <div className="p-3 rounded-lg bg-[#0C1220] border border-white/[0.06] space-y-1">
-                  <span className="text-[10px] font-mono text-[#64748B] uppercase font-bold block">Mission Source</span>
-                  <span className="text-white font-semibold">{activeItem.mission}</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-sans">
+                <div className="p-3.5 rounded-xl bg-[#0C1220] border border-white/[0.06] space-y-1">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">Mission Source</span>
+                  <span className="text-white font-medium text-xs sm:text-[13px]">{activeItem.mission}</span>
                 </div>
-                <div className="p-3 rounded-lg bg-[#0C1220] border border-white/[0.06] space-y-1">
-                  <span className="text-[10px] font-mono text-[#64748B] uppercase font-bold block">Instrument Payload</span>
-                  <span className="text-[#38BDF8] font-semibold">{activeItem.instrument}</span>
+                <div className="p-3.5 rounded-xl bg-[#0C1220] border border-white/[0.06] space-y-1">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">Instrument Payload</span>
+                  <span className="text-[#38BDF8] font-medium text-xs sm:text-[13px]">{activeItem.instrument}</span>
                 </div>
-                <div className="p-3 rounded-lg bg-[#0C1220] border border-white/[0.06] space-y-1">
-                  <span className="text-[10px] font-mono text-[#64748B] uppercase font-bold block">Target Feature</span>
-                  <span className="text-[#34D399] font-semibold">{activeItem.target}</span>
+                <div className="p-3.5 rounded-xl bg-[#0C1220] border border-white/[0.06] space-y-1">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">Target Feature</span>
+                  <span className="text-white font-medium text-xs sm:text-[13px]">{activeItem.target}</span>
                 </div>
-                <div className="p-3 rounded-lg bg-[#0C1220] border border-white/[0.06] space-y-1">
-                  <span className="text-[10px] font-mono text-[#64748B] uppercase font-bold block">Data Role</span>
-                  <span className={`font-semibold ${
+                <div className="p-3.5 rounded-xl bg-[#0C1220] border border-white/[0.06] space-y-1">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">Data Role</span>
+                  <span className={`font-semibold text-xs sm:text-[13px] ${
                     activeItem.dataTier === "Active Dataset"
                       ? "text-[#34D399]"
                       : activeItem.dataTier === "Contextual Overlay"
@@ -397,21 +401,24 @@ export default function NasaMissionGallery() {
 
               {/* Detailed Description */}
               <div className="space-y-2">
-                <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-                  Scientific Observation Context
-                </h4>
-                <p className="text-xs text-[#94A3B8] leading-relaxed">
+                <div className="flex items-center gap-2">
+                  <Compass className="w-4 h-4 text-[#F36C3D]" />
+                  <h4 className="text-xs font-sans font-bold text-slate-200 uppercase tracking-wider">
+                    Scientific Observation Context
+                  </h4>
+                </div>
+                <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed font-sans pl-6">
                   {activeItem.description}
                 </p>
               </div>
 
               {/* Direct Role in MarsAtlas */}
               <div className="p-4 rounded-xl bg-[#0C1220] border border-[#38BDF8]/20 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#38BDF8]">
-                  <Sparkles className="w-4 h-4 text-[#38BDF8]" />
-                  <span>Integration into MarsAtlas Architecture</span>
+                <div className="flex items-center gap-2 text-xs font-sans font-bold text-[#38BDF8]">
+                  <Layers className="w-4 h-4 text-[#38BDF8]" />
+                  <span>Role in MarsAtlas Geospatial Engine</span>
                 </div>
-                <p className="text-xs text-[#CBD5E1] leading-relaxed">
+                <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed font-sans pl-6">
                   {activeItem.marsAtlasRole}
                 </p>
               </div>
@@ -422,9 +429,9 @@ export default function NasaMissionGallery() {
                   href={activeItem.officialUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 bg-[#F36C3D] hover:bg-[#db542a] text-white text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-[#F36C3D]/25"
+                  className="px-5 py-2.5 bg-[#F36C3D] hover:bg-[#db542a] text-white text-xs font-sans font-semibold rounded-xl flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
                 >
-                  <span>Explore on Official NASA / USGS Mission Page</span>
+                  <span>{activeItem.linkText}</span>
                   <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
