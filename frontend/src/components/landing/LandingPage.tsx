@@ -53,24 +53,17 @@ export default function LandingPage({
       {/* 1. CINEMATIC MISSION HERO WITH TRANSLUCENT FROSTED GLASS HUD & VISIBLE VISTA */}
       <section className="relative w-full min-h-[92vh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 pt-10 pb-20">
         
-        {/* Layer A: Deep Space Celestial Canvas (NASA Space Apps Style, Clean & No baked text) */}
-        <div className="absolute inset-0 bg-[#04070D] pointer-events-none" />
-        
-        {/* Layer B: Subtle NASA Space Apps Orbital Geometry Rings & Coordinate Arcs */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none flex items-center justify-center overflow-hidden">
-          <svg className="w-full h-full max-w-7xl min-w-[800px]" viewBox="0 0 1000 1000" fill="none">
-            <circle cx="500" cy="500" r="460" stroke="#38BDF8" strokeWidth="0.75" strokeDasharray="4 8" />
-            <circle cx="500" cy="500" r="340" stroke="#FC3D21" strokeWidth="0.5" strokeOpacity="0.5" />
-            <circle cx="500" cy="500" r="220" stroke="#FBBF24" strokeWidth="0.5" strokeDasharray="2 6" strokeOpacity="0.4" />
-            <ellipse cx="500" cy="500" rx="490" ry="210" stroke="#38BDF8" strokeWidth="0.5" strokeOpacity="0.3" transform="rotate(-15 500 500)" />
-            <ellipse cx="500" cy="500" rx="430" ry="170" stroke="#FC3D21" strokeWidth="0.5" strokeOpacity="0.3" strokeDasharray="6 6" transform="rotate(25 500 500)" />
-            <line x1="100" y1="500" x2="900" y2="500" stroke="#38BDF8" strokeWidth="0.3" strokeOpacity="0.2" strokeDasharray="3 9" />
-            <line x1="500" y1="100" x2="500" y2="900" stroke="#38BDF8" strokeWidth="0.3" strokeOpacity="0.2" strokeDasharray="3 9" />
-          </svg>
-        </div>
+        {/* Layer A: Authentic Martian Background Vista (Richly visible with sharp details, restored) */}
+        <div 
+          className="absolute inset-0 bg-center bg-no-repeat bg-cover pointer-events-none opacity-80"
+          style={{ backgroundImage: "url('/assets/hero-banner.jpg')" }} 
+        />
 
-        {/* Layer C: Subtle Ambient Planetary Glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-[radial-gradient(ellipse,rgba(252,61,33,0.12),transparent_70%)] blur-3xl pointer-events-none" />
+        {/* Layer B: Gentle Vignette Gradient for Depth (Keeps Mars Centerpiece Vibrant) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#04070D]/40 via-transparent to-[#04070D]" />
+        
+        {/* Layer C: Subtle Ambient Glow */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-[radial-gradient(ellipse,rgba(252,61,33,0.15),transparent_70%)] blur-3xl pointer-events-none" />
 
         {/* Centered Hero Content Container */}
         <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center space-y-6 pt-2">
@@ -171,8 +164,38 @@ export default function LandingPage({
           </div>
 
           {/* Centerpiece Live Interactive Rotating Mars Globe */}
-          <div className="w-full pt-4">
+          <div className="w-full pt-4 flex flex-col items-center">
             <RotatingMarsGlobe />
+          </div>
+
+          {/* Dedicated MarsAtlas Mission Insignia Showcase ("Niche Side") */}
+          <div className="pt-6 w-full max-w-sm sm:max-w-md mx-auto">
+            <div className="relative group mx-auto">
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#FC3D21]/40 via-[#38BDF8]/30 to-[#A78BFA]/40 rounded-2xl blur-lg opacity-60 group-hover:opacity-90 transition duration-500" />
+              <div className="relative rounded-2xl overflow-hidden border border-white/20 bg-[#070B14] shadow-2xl">
+                <img
+                  src="/marsatlas-brand.jpg"
+                  alt="MarsAtlas Mission Emblem"
+                  className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-md bg-black/85 border border-white/10 text-[10px] font-mono text-[#38BDF8] backdrop-blur-md flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
+                  <span>OFFICIAL MISSION EMBLEM</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="text-center mt-3 space-y-1">
+              <span className="text-[10px] font-mono font-bold text-[#FC3D21] tracking-widest uppercase block">
+                NASA SPACE APPS CHALLENGE 2026
+              </span>
+              <h4 className="text-xs font-bold text-white uppercase font-sans tracking-wide">
+                MarsAtlas Project Identity
+              </h4>
+              <p className="text-[11px] text-slate-300 font-sans leading-relaxed">
+                Official mission insignia commemorating Perseverance rover operations at Jezero Crater and autonomous traverse planning.
+              </p>
+            </div>
           </div>
 
         </div>
