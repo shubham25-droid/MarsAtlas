@@ -255,7 +255,7 @@ export default function LandingPage({
                 SCIENTIFIC RIGOR &amp; PROVENANCE
               </span>
               <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight font-sans">
-                Integrated Planetary Datasets
+                Planetary Data and Scientific Context
               </h2>
             </div>
             <button

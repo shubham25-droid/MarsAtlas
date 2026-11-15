@@ -21,7 +21,7 @@ export interface GalleryItem {
   id: string;
   title: string;
   category: "all" | "jezero" | "gale" | "orbital";
-  dataTier: "Active Dataset" | "Reference Context";
+  dataTier: "Active Dataset" | "Contextual Overlay" | "Reference Context";
   mission: string;
   instrument: string;
   target: string;
@@ -91,7 +91,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     nasaId: "PIA26251 / MSL_Gale",
     imageSrc: "/assets/nasa_gallery/curiosity_boxwork.jpg",
     description: "Curiosity climbing the steep slopes of Mount Sharp (Aeolis Mons), investigating mineralized fracture ridges ('boxwork') and boulder-strewn channels.",
-    marsAtlasRole: "Comparative Gale Crater reference: Provides 1,389 real MSL drive waypoints for secondary regional terrain comparison.",
+    marsAtlasRole: "Comparative Gale Crater reference: Ingests 1,389 real MSL drive waypoints for secondary regional terrain comparison.",
     officialUrl: "https://mars.nasa.gov/msl/"
   },
   {
@@ -128,15 +128,15 @@ const GALLERY_ITEMS: GalleryItem[] = [
     id: "geology_sim3464_crism",
     title: "USGS SIM 3464 Units & CRISM Targets",
     category: "orbital",
-    dataTier: "Active Dataset",
+    dataTier: "Contextual Overlay",
     mission: "USGS Astrogeology & NASA MRO CRISM",
     instrument: "Geologic Mapping & CRISM Spectral Literature",
     target: "Jezero Lacustrine Units & Carbonate Outcrops",
     dateOrSol: "Sun & Stack (2020) SIM 3464 Standard",
     nasaId: "USGS_SIM_3464 / CRISM_HOTSPOTS",
     imageSrc: "/assets/nasa_gallery/geology_sim3464.png",
-    description: "Simplified geologic vector units digitized after Sun & Stack (2020) SIM 3464, combined with 5 manually authored CRISM-referenced science target locations.",
-    marsAtlasRole: "Active vector overlays: Renders simplified stratigraphic units on the map canvas and provides heuristic reward bonuses in Science Priority mode.",
+    description: "Simplified geologic vector units digitized after Sun & Stack (2020) SIM 3464, combined with 5 manually authored CRISM-referenced science target locations for regional exploration context.",
+    marsAtlasRole: "Contextual spatial overlay: Renders simplified stratigraphic units and science-interest targets as contextual map layers; informs Science Priority route weighting heuristics.",
     officialUrl: "https://pubs.usgs.gov/sim/3464/"
   },
   {
@@ -210,7 +210,7 @@ export default function NasaMissionGallery() {
             </span>
           </div>
           <p className="leading-relaxed">
-            Items labeled <span className="text-[#34D399] font-semibold">Active Dataset</span> (e.g. MMGIS rover traverse telemetry, 550×350 surrogate cost grid, vector overlays) directly feed application calculations. Items labeled <span className="text-[#38BDF8] font-semibold">Reference Context</span> (e.g. raw 1m HiRISE DTMs, Mastcam-Z mosaics, Ingenuity aerial imagery) provide external planetary ground truth and scientific context.
+            Items labeled <span className="text-[#34D399] font-semibold">Active Dataset</span> (e.g. MMGIS rover traverse telemetry, 550×350 surrogate cost grid) directly feed calculations. Items labeled <span className="text-[#A78BFA] font-semibold">Contextual Overlay</span> (e.g. simplified USGS SIM 3464 geologic polygons, authored CRISM-referenced points) provide spatial overlays. Items labeled <span className="text-[#38BDF8] font-semibold">Reference Context</span> (e.g. raw 1m HiRISE DTMs, Mastcam-Z mosaics, Ingenuity aerial photography) provide external planetary ground truth.
           </p>
         </div>
 
@@ -285,6 +285,8 @@ export default function NasaMissionGallery() {
                 <span className={`px-2 py-0.5 rounded-md text-[9px] font-mono font-bold tracking-wider uppercase border backdrop-blur-md ${
                   item.dataTier === "Active Dataset"
                     ? "bg-[#34D399]/25 text-[#34D399] border-[#34D399]/40"
+                    : item.dataTier === "Contextual Overlay"
+                    ? "bg-[#A78BFA]/25 text-[#A78BFA] border-[#A78BFA]/40"
                     : "bg-[#38BDF8]/25 text-[#38BDF8] border-[#38BDF8]/40"
                 }`}>
                   {item.dataTier}
@@ -328,6 +330,8 @@ export default function NasaMissionGallery() {
                     <span className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold uppercase border ${
                       activeItem.dataTier === "Active Dataset"
                         ? "bg-[#34D399]/20 text-[#34D399] border-[#34D399]/30"
+                        : activeItem.dataTier === "Contextual Overlay"
+                        ? "bg-[#A78BFA]/20 text-[#A78BFA] border-[#A78BFA]/30"
                         : "bg-[#38BDF8]/20 text-[#38BDF8] border-[#38BDF8]/30"
                     }`}>
                       {activeItem.dataTier}
@@ -376,9 +380,17 @@ export default function NasaMissionGallery() {
                 <div className="p-3 rounded-lg bg-[#0C1220] border border-white/[0.06] space-y-1">
                   <span className="text-[10px] font-mono text-[#64748B] uppercase font-bold block">Data Role</span>
                   <span className={`font-semibold ${
-                    activeItem.dataTier === "Active Dataset" ? "text-[#34D399]" : "text-[#38BDF8]"
+                    activeItem.dataTier === "Active Dataset"
+                      ? "text-[#34D399]"
+                      : activeItem.dataTier === "Contextual Overlay"
+                      ? "text-[#A78BFA]"
+                      : "text-[#38BDF8]"
                   }`}>
-                    {activeItem.dataTier === "Active Dataset" ? "Operational Input" : "External Benchmark"}
+                    {activeItem.dataTier === "Active Dataset"
+                      ? "Operational Input"
+                      : activeItem.dataTier === "Contextual Overlay"
+                      ? "Contextual Overlay"
+                      : "External Benchmark"}
                   </span>
                 </div>
               </div>
