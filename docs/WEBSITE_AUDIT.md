@@ -165,7 +165,7 @@ python -m pytest "backend/tests" -v
 - `test_nearest_rover_observation`: **PASSED** (Verifies nearest-neighbor query retrieves Perseverance Sol 13 Mastcam-Z panorama).
 - `test_fastapi_endpoints`: **PASSED** (Simulates full client HTTP requests across health, point-telemetry, plan-eva, and briefing endpoints).
 
-**Summary:** **8 passed, 1 deprecation warning in 37.02s** (100% test pass rate).
+**Summary:** **8 passed, 1 deprecation warning (10.70s baseline local run; 30.8s–37.0s under background task monitoring and cold raster decompression)** (100% test pass rate).
 
 ### Frontend Production Build
 Command executed:

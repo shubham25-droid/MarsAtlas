@@ -105,7 +105,7 @@ The following capabilities remain planned for future work:
 * **Test Suite:** `backend/tests/test_geospatial_engine.py`
 * **Test Command:** `python -m pytest backend/tests/test_geospatial_engine.py -v`
 * **Test Environment:** Python 3.12.7, pytest 9.1.1, Windows 11
-* **Execution Summary:** **8 passed, 1 warning in 10.70 seconds**
+* **Execution Summary:** **8 passed, 1 warning in 10.70 seconds** *(ranges from 10.7s baseline to 30.8s–37.0s under background process monitoring / cold raster decompression; 100% pass rate)*
   * `test_geodetic_constants`: PASSED
   * `test_terrain_engine_loading`: PASSED
   * `test_point_telemetry_sampling`: PASSED

@@ -355,7 +355,7 @@ backend/tests/test_geospatial_engine.py::test_fastapi_endpoints PASSED          
 
 ======================== 8 passed, 1 warning in 10.70s ========================
 ```
-*Note: A Starlette deprecation warning regarding HTTPX test client is benign and does not affect test execution. For details on what these tests verify vs. what remains unvalidated, see [docs/TESTING.md](docs/TESTING.md).*
+*Note: Baseline test execution completes in 10.70s (extending to 30.8s under background task monitoring and cold raster decompression). All 8 tests consistently pass at 100%. The Starlette deprecation warning regarding HTTPX test client is benign and does not affect test execution. For details on what these tests verify vs. what remains unvalidated, see [docs/TESTING.md](docs/TESTING.md).*
 
 ---
 

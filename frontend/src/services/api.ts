@@ -118,7 +118,7 @@ const PREBAKED_ROUTES: PlanEvaResponse = {
   comparison: [
     {
       mode: "safe",
-      strategy: "Safest / Minimum Metabolic Workload",
+      strategy: "Lower-Slope Preference / Minimum Metabolic Workload",
       total_distance_m: 2975.0,
       total_distance_km: 2.98,
       estimated_duration_min: 88.8,

@@ -555,7 +555,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
                       How It Works
                     </span>
                     <span className="font-bold text-white">
-                      Topographic Slope Safety &amp; Traverse Comparison
+                      Topographic Slope Classification &amp; Traverse Comparison
                     </span>
                   </div>
                   <p className="text-slate-300 text-[11px] leading-relaxed">
@@ -625,7 +625,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
                   }`}
                 >
                   <ShieldAlert className="w-3.5 h-3.5 text-[#FC3D21]" />
-                  <span>Slope Hazard (Safety)</span>
+                  <span>Slope Gradient Surface</span>
                 </button>
                 <button
                   onClick={() => setShadingMode("realistic")}
@@ -713,7 +713,7 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
                     Slope Colors:
                   </span>
                   <div className="flex items-center justify-between text-slate-300">
-                    <span className="text-[#34D399]">Green: Safe (&lt;8°)</span>
+                    <span className="text-[#34D399]">Green: Low Slope (&lt;8°)</span>
                     <span className="text-[#FBBF24]">Amber: 8–14°</span>
                     <span className="text-[#F87171]">Red: Cliff (&gt;14°)</span>
                   </div>

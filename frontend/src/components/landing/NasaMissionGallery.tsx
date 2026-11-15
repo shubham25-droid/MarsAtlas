@@ -12,13 +12,16 @@ import {
   Mountain,
   Eye,
   Activity,
-  ShieldCheck
+  ShieldCheck,
+  CheckCircle2,
+  Info
 } from "lucide-react";
 
 export interface GalleryItem {
   id: string;
   title: string;
   category: "all" | "jezero" | "gale" | "orbital";
+  dataTier: "Active Dataset" | "Reference Context";
   mission: string;
   instrument: string;
   target: string;
@@ -33,36 +36,39 @@ export interface GalleryItem {
 const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: "perseverance_delta",
-    title: "Perseverance Rover at Jezero Delta",
+    title: "Perseverance at Western Delta",
     category: "jezero",
+    dataTier: "Reference Context",
     mission: "NASA Mars 2020 Exploration Mission",
     instrument: "Mastcam-Z & SuperCam Remote Micro-Imager",
     target: "Cape Flatley Delta Front Contact",
     dateOrSol: "Sol 360–2022 Continuous Telemetry",
     nasaId: "PIA24836 / Mars 2020",
     imageSrc: "/assets/nasa_gallery/perseverance.jpg",
-    description: "Perseverance rover surveyed the base of the Western Delta, identifying fine-grained clay-rich lacustrine mudstones with high biosignature preservation potential.",
-    marsAtlasRole: "Ground-truth benchmark: MarsAtlas ingests 708 real Perseverance waypoints and 559 drive legs to calibrate path-planning models.",
+    description: "Perseverance rover surveyed the base of the Western Delta, identifying fine-grained clay-rich lacustrine mudstones with high biosignature preservation potential. Serves as ground-truth planetary imagery.",
+    marsAtlasRole: "Ground-truth visual reference: In-situ Mastcam-Z panorama providing visual ground truth for the delta contact region.",
     officialUrl: "https://mars.nasa.gov/mars2020/"
   },
   {
     id: "hirise_delta_scarp",
-    title: "HiRISE 1m Jezero Scarp Topography",
+    title: "HiRISE 1m Jezero Scarp (Reference)",
     category: "orbital",
+    dataTier: "Reference Context",
     mission: "NASA Mars Reconnaissance Orbiter (MRO)",
     instrument: "HiRISE Stereo Camera (1.0 m/pixel)",
-    target: "Jezero Crater Western Fan Scarps",
+    target: "Jezero Western Fan Scarps (Orbital Reference Context)",
     dateOrSol: "MRO Primary Planetary Science Phase",
     nasaId: "PIA23962 / PSP_001415",
     imageSrc: "/assets/nasa_gallery/hirise_delta.jpg",
-    description: "1-meter-per-pixel orbital stereo digital elevation model showing the steep 60-meter drop-off and layered sedimentary strata of the delta scarp.",
-    marsAtlasRole: "Informs prototype slope calculations and triggers algorithmic obstacle avoidance for cells exceeding the 22.0° planner cutoff threshold (computational constraint on prototype surrogate grid).",
+    description: "1-meter-per-pixel orbital stereo digital elevation model showing the steep 60-meter drop-off and layered sedimentary strata of the delta scarp. Serves as scientific reference context; active route planning executes on the experimental surrogate grid.",
+    marsAtlasRole: "Scientific reference context: Informs understanding of regional scarp geometry; computational pathfinding executes on the experimental surrogate grid with a 22.0° slope cutoff constraint.",
     officialUrl: "https://hirise.lpl.arizona.edu/"
   },
   {
     id: "mastcamz_delta_strata",
     title: "Mastcam-Z Delta Sedimentary Panorama",
     category: "jezero",
+    dataTier: "Reference Context",
     mission: "NASA Mars 2020 Science Team",
     instrument: "Mastcam-Z Multispectral Stereo System",
     target: "Western Delta Front Outcrops & Boulder Fields",
@@ -70,13 +76,14 @@ const GALLERY_ITEMS: GalleryItem[] = [
     nasaId: "PIA25287 / Mastcam-Z",
     imageSrc: "/assets/nasa_gallery/mastcamz_delta.jpg",
     description: "Ultra-high-resolution panoramic mosaic showing boulder distributions, gravel beds, and cross-bedding sandstone layers at the delta front.",
-    marsAtlasRole: "Used in nearest-neighbor observation lookups: clicking a route waypoint retrieves in-situ rover imagery of that exact geographic location.",
+    marsAtlasRole: "Reference observation archive: Used in nearest-neighbor visual lookups when inspecting rover ground-truth coordinates along the traverse.",
     officialUrl: "https://mars.nasa.gov/mars2020/multimedia/raw-images/"
   },
   {
     id: "curiosity_gale_boxwork",
     title: "Curiosity at Mount Sharp (Site 02)",
     category: "gale",
+    dataTier: "Reference Context",
     mission: "NASA Mars Science Laboratory (MSL)",
     instrument: "Mast Camera (Mastcam) & ChemCam Laser",
     target: "Mount Sharp Gediz Vallis Ridge & Boxwork",
@@ -84,13 +91,14 @@ const GALLERY_ITEMS: GalleryItem[] = [
     nasaId: "PIA26251 / MSL_Gale",
     imageSrc: "/assets/nasa_gallery/curiosity_boxwork.jpg",
     description: "Curiosity climbing the steep slopes of Mount Sharp (Aeolis Mons), investigating mineralized fracture ridges ('boxwork') and boulder-strewn channels.",
-    marsAtlasRole: "Provides comparative Gale Crater context in MarsAtlas with 1,389 real drive waypoints for secondary terrain comparison.",
+    marsAtlasRole: "Comparative Gale Crater reference: Provides 1,389 real MSL drive waypoints for secondary regional terrain comparison.",
     officialUrl: "https://mars.nasa.gov/msl/"
   },
   {
     id: "m20_traverse_mmgis",
     title: "Perseverance MMGIS 559 Drive Legs",
     category: "jezero",
+    dataTier: "Active Dataset",
     mission: "NASA-AMMOS Multimission Geographic Information System",
     instrument: "Engineering Hazcams & In-Situ Odometry",
     target: "Octavia E. Butler Landing Site to Delta Front",
@@ -98,49 +106,52 @@ const GALLERY_ITEMS: GalleryItem[] = [
     nasaId: "MMGIS_M20_TRAVERSE",
     imageSrc: "/assets/nasa_gallery/m20_traverse_map.png",
     description: "Official NASA-AMMOS spatial record of the Perseverance rover drive path, documenting traverse distances, sol stamps, and localized elevations.",
-    marsAtlasRole: "Rendered directly on our OpenLayers map canvas as the ground-truth historical benchmark alongside computed human EVA traverses.",
+    marsAtlasRole: "Active operational layer: Rendered directly on our OpenLayers map canvas as a verified 559-leg telemetry benchmark alongside computed human EVA traverses.",
     officialUrl: "https://mars.nasa.gov/maps/location/?mission=M20"
   },
   {
     id: "terrain_heatmaps_derived",
     title: "Multi-Layer Terrain Intelligence Grid",
     category: "orbital",
+    dataTier: "Active Dataset",
     mission: "MarsAtlas Geospatial Computation Engine",
-    instrument: "Horn Finite Difference + THEMIS Thermal Inertia",
-    target: "Jezero Modelled Sector (77.35°–77.46°E, 18.41°–18.48°N)",
+    instrument: "Horn Finite Difference + THEMIS Thermal Inertia Proxy",
+    target: "Jezero Modelled Sector (550 × 350 Surrogate Grid)",
     dateOrSol: "Derived 550 × 350 Metric Raster",
     nasaId: "MARSATLAS_GRID_01",
     imageSrc: "/assets/nasa_gallery/terrain_heatmaps.png",
-    description: "Co-registered four-panel cost surface showing Elevation (-2605m to -2121m), Slope (0.0°–22.7°), Roughness (sigma_z), and Nighttime Thermal Inertia.",
-    marsAtlasRole: "The mathematical cost surface passed to our 8-connected A* planner, balancing metabolic workload, walking speed, and mechanical slip.",
+    description: "Co-registered 550 × 350 cell prototype surrogate raster with elevation (-2605m to -2121m), Horn's finite-difference slope (0.0°–22.7°), local roughness (sigma_z), and thermal inertia proxy.",
+    marsAtlasRole: "Active computational cost surface: Input raster for the 8-connected A* traverse planner to balance slope grade, transit time, and bioenergetics.",
     officialUrl: "https://github.com/shubham25-droid/MarsAtlas"
   },
   {
     id: "geology_sim3464_crism",
-    title: "USGS SIM 3464 Geology & CRISM Targets",
+    title: "USGS SIM 3464 Units & CRISM Targets",
     category: "orbital",
+    dataTier: "Active Dataset",
     mission: "USGS Astrogeology & NASA MRO CRISM",
-    instrument: "CRISM Hyperspectral Spectrometer & Geologic Mapping",
+    instrument: "Geologic Mapping & CRISM Spectral Literature",
     target: "Jezero Lacustrine Units & Carbonate Outcrops",
     dateOrSol: "Sun & Stack (2020) SIM 3464 Standard",
     nasaId: "USGS_SIM_3464 / CRISM_HOTSPOTS",
     imageSrc: "/assets/nasa_gallery/geology_sim3464.png",
-    description: "Peer-reviewed geologic stratigraphy vectors (delta front, margin carbonate, olivine floor) overlaid with 5 authored CRISM science interest targets.",
-    marsAtlasRole: "Integrated into 'Science Priority' route optimization, providing algorithmic reward bonuses for routes passing near manually authored CRISM reference locations.",
+    description: "Simplified geologic vector units digitized after Sun & Stack (2020) SIM 3464, combined with 5 manually authored CRISM-referenced science target locations.",
+    marsAtlasRole: "Active vector overlays: Renders simplified stratigraphic units on the map canvas and provides heuristic reward bonuses in Science Priority mode.",
     officialUrl: "https://pubs.usgs.gov/sim/3464/"
   },
   {
     id: "ingenuity_aerial_scout",
-    title: "Ingenuity Helicopter Aerial Scout",
+    title: "Ingenuity Aerial Scout (Reference)",
     category: "jezero",
+    dataTier: "Reference Context",
     mission: "NASA Mars 2020 Aerial Scout Experiment",
     instrument: "Return-to-Earth (RTE) High-Resolution Color Camera",
     target: "Airfield J & Séítah Sand Ripple Fields",
     dateOrSol: "72 Historic Flights Completed",
     nasaId: "PIA24654 / Ingenuity",
     imageSrc: "/assets/nasa_gallery/ingenuity.jpg",
-    description: "First powered, controlled flight on another world, capturing aerial oblique views of sand hollows and rock hazards impassable from ground view.",
-    marsAtlasRole: "Validates why orbital/aerial terrain intelligence is essential: sand ripples that entrap rovers are detected and avoided in human EVA planning.",
+    description: "Aerial color imagery captured during historic helicopter flights over Séítah sand fields, illustrating traversability hazards impassable from ground view.",
+    marsAtlasRole: "Reference context: Demonstrates the necessity of orbital and aerial hazard detection to avoid sand ripple entrapment.",
     officialUrl: "https://mars.nasa.gov/technology/helicopter/"
   }
 ];
@@ -158,7 +169,7 @@ export default function NasaMissionGallery() {
       {/* Background Radial Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#F36C3D]/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto space-y-9 relative z-10">
+      <div className="max-w-7xl mx-auto space-y-7 relative z-10">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b border-white/[0.08]">
           <div className="space-y-2">
@@ -172,7 +183,7 @@ export default function NasaMissionGallery() {
               Planetary Surface &amp; Mission Observations
             </h2>
             <p className="text-sm text-[#94A3B8] max-w-2xl leading-relaxed">
-              Authentic NASA &amp; USGS planetary data products integrated directly into MarsAtlas. Explore the exact rover imagery, orbital digital elevation models, and geologic maps powering our decision-support engine.
+              Authentic NASA &amp; USGS planetary observations and mission context. Explore in-situ rover imagery, reference orbital topography, and regional geologic maps providing scientific benchmarks for our prototype traverse decision-support engine.
             </p>
           </div>
 
@@ -188,6 +199,19 @@ export default function NasaMissionGallery() {
               <ArrowRight className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" />
             </a>
           </div>
+        </div>
+
+        {/* Epistemic Provenance Distinction Banner */}
+        <div className="p-3.5 rounded-xl bg-[#0C1220]/90 border border-white/[0.08] flex flex-col sm:flex-row sm:items-center gap-3 text-xs text-[#94A3B8]">
+          <div className="flex items-center gap-2 shrink-0">
+            <Info className="w-4 h-4 text-[#38BDF8]" />
+            <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/30 font-bold uppercase">
+              Data Distinction
+            </span>
+          </div>
+          <p className="leading-relaxed">
+            Items labeled <span className="text-[#34D399] font-semibold">Active Dataset</span> (e.g. MMGIS rover traverse telemetry, 550×350 surrogate cost grid, vector overlays) directly feed application calculations. Items labeled <span className="text-[#38BDF8] font-semibold">Reference Context</span> (e.g. raw 1m HiRISE DTMs, Mastcam-Z mosaics, Ingenuity aerial imagery) provide external planetary ground truth and scientific context.
+          </p>
         </div>
 
         {/* Category Filters (Pill Buttons) */}
@@ -253,10 +277,17 @@ export default function NasaMissionGallery() {
               {/* Scrim Gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/10 group-hover:via-black/60 transition-colors" />
 
-              {/* Top Tag Badge */}
-              <div className="absolute top-4 left-4 z-10">
-                <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider uppercase bg-black/70 text-white/90 border border-white/10 backdrop-blur-md">
-                  {item.category === "jezero" ? "Jezero Crater" : item.category === "gale" ? "Mount Sharp" : "Orbital Data"}
+              {/* Top Tag Badges: Region + Epistemic Tier */}
+              <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between gap-2">
+                <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider uppercase bg-black/75 text-white/90 border border-white/10 backdrop-blur-md">
+                  {item.category === "jezero" ? "Jezero Crater" : item.category === "gale" ? "Mount Sharp" : "Orbital Reference"}
+                </span>
+                <span className={`px-2 py-0.5 rounded-md text-[9px] font-mono font-bold tracking-wider uppercase border backdrop-blur-md ${
+                  item.dataTier === "Active Dataset"
+                    ? "bg-[#34D399]/25 text-[#34D399] border-[#34D399]/40"
+                    : "bg-[#38BDF8]/25 text-[#38BDF8] border-[#38BDF8]/40"
+                }`}>
+                  {item.dataTier}
                 </span>
               </div>
 
@@ -290,9 +321,18 @@ export default function NasaMissionGallery() {
               <div className="flex items-center gap-3">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#F36C3D]" />
                 <div>
-                  <h3 className="text-base font-bold text-white font-sans uppercase tracking-wide">
-                    {activeItem.title}
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold text-white font-sans uppercase tracking-wide">
+                      {activeItem.title}
+                    </h3>
+                    <span className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold uppercase border ${
+                      activeItem.dataTier === "Active Dataset"
+                        ? "bg-[#34D399]/20 text-[#34D399] border-[#34D399]/30"
+                        : "bg-[#38BDF8]/20 text-[#38BDF8] border-[#38BDF8]/30"
+                    }`}>
+                      {activeItem.dataTier}
+                    </span>
+                  </div>
                   <p className="text-xs text-[#94A3B8] font-mono">
                     NASA Product ID: {activeItem.nasaId}
                   </p>
@@ -334,8 +374,12 @@ export default function NasaMissionGallery() {
                   <span className="text-[#34D399] font-semibold">{activeItem.target}</span>
                 </div>
                 <div className="p-3 rounded-lg bg-[#0C1220] border border-white/[0.06] space-y-1">
-                  <span className="text-[10px] font-mono text-[#64748B] uppercase font-bold block">Mission Phase</span>
-                  <span className="text-[#FBBF24] font-semibold">{activeItem.dateOrSol}</span>
+                  <span className="text-[10px] font-mono text-[#64748B] uppercase font-bold block">Data Role</span>
+                  <span className={`font-semibold ${
+                    activeItem.dataTier === "Active Dataset" ? "text-[#34D399]" : "text-[#38BDF8]"
+                  }`}>
+                    {activeItem.dataTier === "Active Dataset" ? "Operational Input" : "External Benchmark"}
+                  </span>
                 </div>
               </div>
 

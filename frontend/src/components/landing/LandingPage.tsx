@@ -394,7 +394,7 @@ export default function LandingPage({
             <div className="absolute bottom-4 left-4 right-4 bg-[#070B14]/90 backdrop-blur-md border border-white/15 p-3.5 rounded-xl flex items-center justify-between text-xs">
               <div>
                 <span className="font-bold text-white block">Horn&apos;s Method Slope Hazard Map</span>
-                <span className="text-[10px] text-slate-300">Green (&lt;8° Safe) | Amber (8-14° Caution) | Crimson (&gt;14° Scarp Hazard)</span>
+                <span className="text-[10px] text-slate-300">Green (&lt;8° Low Slope) | Amber (8-14° Moderate Incline) | Crimson (&gt;14° Steep Grade)</span>
               </div>
               <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/30 font-bold">
                 Surrogate Grid
