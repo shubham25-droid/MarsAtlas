@@ -23,11 +23,11 @@ export default function MissionBriefingModal({
 
   const handleCopy = () => {
     const text = `================================================================================
-MARSATLAS EVA FLIGHT DIRECTOR BRIEFING
+MARSATLAS EVA FLIGHT DIRECTOR BRIEFING (RESEARCH PROTOTYPE)
 NASA Space Apps Challenge 2026: Interplanetary Survival Guide: Martian Map
 ================================================================================
-TRAVERSE PROFILE: ${mode.toUpperCase()}
-TARGET REGION: Jezero Crater Western Delta to Margin Carbonates (18.44°N, 77.45°E)
+TRAVERSE PREFERENCE: ${mode.toUpperCase()}
+TARGET REGION: Jezero Crater Western Delta (18.44°N, 77.45°E)
 
 TRAVERSE METRICS:
 - Total Surface Distance: ${summary.total_distance_km} km
@@ -35,19 +35,20 @@ TRAVERSE METRICS:
 - Cumulative Metabolic Work: ${summary.total_energy_kj} kJ (Avg: ${summary.average_metabolic_w} W)
 - Peak Topographic Gradient: ${summary.peak_slope_deg}° (Horn's 3x3 Metric Scale)
 - Mean Incline: ${summary.mean_slope_deg}°
-- Cumulative Ionizing Radiation: ${summary.cumulative_radiation_usv} µSv (MSL RAD baseline)
+- Cumulative Ionizing Radiation Proxy: ${summary.cumulative_radiation_usv} µSv (Gale RAD baseline transfer)
 
-SAFETY & LIFE SUPPORT ENVELOPE:
-1. Life Support: 450 W cooling loop capability maintained with nominal metabolic load.
-2. Terrain Clearance: Peak slope strictly complies with < 22.0° spacesuit traction threshold.
-3. Radiation Exposure: Consumes < 12% of allowable single-traverse dose.
-4. Timing: Execute during diurnal thermal maximum (10:00 - 14:30 LTST, -35°C to -15°C).
+COMPUTATIONAL CONSTRAINTS:
+1. Life Support: Calculated via Pandolf-Santee bioenergetics for 160 kg suited ensemble.
+2. Terrain Clearance: Peak slope complies with ≤ 22.0° algorithmic planner exclusion cutoff.
+3. Radiation Exposure: Illustrative Gale RAD proxy — not a Jezero dose prediction.
+4. Timing: Illustrative diurnal maximum advisory (10:00 - 14:30 LTST, -35°C to -15°C).
 
-DATA INTEGRATION GROUNDING:
-- Elevation: USGS Mars 2020 TRN 1m HiRISE DTM (MOLA geoid datum)
-- Physiology: NASA JSC Crew State & Risk Model (CSRM) & Pandolf-Santee (G=0.376)
-- Atmosphere: Mars 2020 MEDA Diurnal Climatology
-- Science Targets: MRO CRISM MTRDR Spectral Hydrated Minerals & USGS SIM 3464
+DATA GROUNDING & LIMITATIONS:
+- Terrain: Prototype surrogate grid (jezero_eva_sector.npz) for route comparison.
+- Physiology: Pandolf-Santee gross suited walking equations (G=0.376).
+- Atmosphere: Mars 2020 MEDA Diurnal Climatology envelopes.
+- Targets: Manually authored CRISM-referenced coordinates & USGS SIM 3464 overlays.
+*DISCLAIMER: Experimental research prototype. Not certified for mission operations.*
 ================================================================================`;
 
     navigator.clipboard.writeText(text);
@@ -69,12 +70,12 @@ DATA INTEGRATION GROUNDING:
                 <h3 className="text-sm font-bold text-white tracking-wide uppercase">
                   EVA Flight Director Mission Briefing
                 </h3>
-                <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#34D399]/10 text-[#34D399] border border-[#34D399]/30 font-bold">
-                  APPROVED FLIGHT ENVELOPE
+                <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/30 font-bold">
+                  RESEARCH SIMULATION
                 </span>
               </div>
               <p className="text-xs text-slate-400 font-mono">
-                NASA Space Apps Challenge 2026 • Multi-Mission Telemetry Integration
+                NASA Space Apps Challenge 2026 • Experimental Route Telemetry
               </p>
             </div>
           </div>
@@ -108,18 +109,23 @@ DATA INTEGRATION GROUNDING:
             </div>
           </div>
 
+          {/* Disclaimer Banner */}
+          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-300">
+            <span>Terrain analysis uses an experimental surrogate grid for prototype route comparison. Results are illustrative and are not validated for real mission navigation.</span>
+          </div>
+
           {/* Life Support & Consumables */}
           <div className="bg-[#0D1527]/70 p-4 rounded-xl border border-white/[0.08] space-y-2">
             <h4 className="font-bold text-[#38BDF8] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
               <HeartPulse className="w-4 h-4 text-[#38BDF8]" />
-              1. Consumables & Physiological Clearance (CSRM)
+              1. Suited Bioenergetics (Pandolf-Santee Formulation)
             </h4>
             <p className="text-slate-300 leading-relaxed">
-              Calculated using the <strong>NASA Johnson Space Center Crew State & Risk Model (CSRM)</strong> and Pandolf-Santee metabolic equations for a 75 kg explorer carrying an 85 kg pressurized spacesuit/PLSS in Martian gravity (<em>G = 0.376</em>).
+              Calculated using the <strong>Pandolf-Santee bioenergetic equations</strong> adapted for a 75 kg explorer carrying an 85 kg pressurized spacesuit/PLSS in Martian gravity (<em>G = 0.376</em>).
             </p>
             <ul className="list-disc list-inside space-y-1 text-slate-400 pl-1 text-[11px]">
-              <li>Mean metabolic power: <strong className="text-white font-mono">{summary.average_metabolic_w} W</strong> (Well within suit sublimator capacity of 450 W).</li>
-              <li>Estimated walkback safety envelope: <strong className="text-[#34D399] font-mono">45-minute contingency margin preserved</strong>.</li>
+              <li>Mean metabolic power: <strong className="text-white font-mono">{summary.average_metabolic_w} W</strong>.</li>
+              <li>Traverse preference: <strong className="text-[#34D399] font-mono">{mode.toUpperCase()}</strong>.</li>
             </ul>
           </div>
 
@@ -130,10 +136,10 @@ DATA INTEGRATION GROUNDING:
               2. Topographic & Regolith Hazard Clearance
             </h4>
             <p className="text-slate-300 leading-relaxed">
-              Horn&apos;s 3x3 finite-difference gradient with metric scaling (<code className="text-[#38BDF8] font-mono">dx = R · Δλ · cosφ</code>) evaluated across the 1m HiRISE DTM.
+              Horn&apos;s 3x3 finite-difference gradient evaluated across the prototype surrogate grid (11.3 m resolution).
             </p>
             <ul className="list-disc list-inside space-y-1 text-slate-400 pl-1 text-[11px]">
-              <li>Peak traverse grade: <strong className="text-white font-mono">{summary.peak_slope_deg}°</strong> (complies with the strict 22.0° spacesuit slip limit).</li>
+              <li>Peak traverse grade: <strong className="text-white font-mono">{summary.peak_slope_deg}°</strong> (complies with the ≤ 22.0° algorithmic planner exclusion cutoff).</li>
               <li>Thermal Inertia check: Low-inertia aeolian dunes (<code className="text-[#FBBF24] font-mono">TI &lt; 140 J·m⁻²·K⁻¹·s⁻½</code>) avoided in favor of indurated delta benches.</li>
             </ul>
           </div>
@@ -142,10 +148,10 @@ DATA INTEGRATION GROUNDING:
           <div className="bg-[#0D1527]/70 p-4 rounded-xl border border-white/[0.08] space-y-2">
             <h4 className="font-bold text-[#34D399] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
               <Compass className="w-4 h-4 text-[#34D399]" />
-              3. Radiation Dosimetry & Climatological Timing
+              3. Radiation Dosimetry Proxy & Diurnal Timing
             </h4>
             <ul className="list-disc list-inside space-y-1 text-slate-400 pl-1 text-[11px]">
-              <li>Cumulative surface ionizing radiation: <strong className="text-white font-mono">{summary.cumulative_radiation_usv} µSv</strong> (MSL RAD baseline). Consumes &lt; 12% of permissible single-traverse dose ceiling.</li>
+              <li>Cumulative surface ionizing radiation proxy: <strong className="text-white font-mono">{summary.cumulative_radiation_usv} µSv</strong> (Illustrative radiation proxy based on Gale RAD baseline).</li>
               <li>Mars 2020 MEDA Diurnal Advisory: Optimal traverse window between <strong className="text-white font-mono">10:00 and 14:30 LTST</strong> for maximum surface temperature (-35°C to -15°C).</li>
             </ul>
           </div>

@@ -39,10 +39,10 @@ export default function ScienceTargetsPanel({
           </div>
           <div>
             <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-              Science Along The Route
+              CRISM-Referenced Science-Interest Locations
             </h3>
             <p className="text-[10px] text-slate-400 font-mono">
-              CRISM MTRDR Spectral & USGS SIM 3464
+              Manually Authored Context • USGS SIM 3464 Overlays
             </p>
           </div>
         </div>
@@ -66,9 +66,17 @@ export default function ScienceTargetsPanel({
                 : "text-slate-400 hover:text-white"
             }`}
           >
-            USGS Units ({geologicUnits.length})
+            USGS Overlays ({geologicUnits.length})
           </button>
         </div>
+      </div>
+
+      <div className="px-3 py-1.5 rounded-lg bg-[#070B14] border border-white/[0.06] text-[10px] text-slate-400 font-mono">
+        {tab === "crism" ? (
+          <span>Manually authored coordinates citing CRISM IDs. No active spectral cube processing.</span>
+        ) : (
+          <span>Simplified polygonal units after Sun &amp; Stack (2020), USGS SIM 3464. Coarse approximations.</span>
+        )}
       </div>
 
       {/* CRISM Targets List */}

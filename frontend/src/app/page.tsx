@@ -14,7 +14,7 @@ import MissionBriefingModal from "@/components/dashboard/MissionBriefingModal";
 import DataProvenanceModal from "@/components/shared/DataProvenanceModal";
 import { planEvaTraverse } from "@/services/api";
 import { PlanEvaResponse, RoverObservation, ScienceTargetFeature } from "@/types/mars";
-import { Activity, Sparkles, Thermometer, MapPin, Layers, Route as RouteIcon } from "lucide-react";
+import { Sparkles, Thermometer, Route as RouteIcon } from "lucide-react";
 
 // Dynamically import ThreeTerrainModal with SSR disabled
 const ThreeTerrainModal = dynamic(() => import("@/components/map/ThreeTerrainModal"), {
@@ -56,11 +56,6 @@ export default function Home() {
   const [isProvenanceOpen, setIsProvenanceOpen] = useState(false);
   const [roverObservation, setRoverObservation] = useState<RoverObservation | null>(null);
 
-  // Compute canonical route on mount so workspace is pre-populated
-  useEffect(() => {
-    handleComputeRoute();
-  }, []);
-
   const handleComputeRoute = async () => {
     setIsComputing(true);
     try {
@@ -72,6 +67,11 @@ export default function Home() {
       setIsComputing(false);
     }
   };
+
+  // Compute canonical route on mount so workspace is pre-populated
+  useEffect(() => {
+    handleComputeRoute();
+  }, []);
 
   const handleApplyPreset = (start: [number, number], target: [number, number]) => {
     setStartPoint(start);

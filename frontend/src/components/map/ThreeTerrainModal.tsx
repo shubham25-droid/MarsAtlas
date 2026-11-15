@@ -471,14 +471,14 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
                   Jezero Crater 3D Tactical Sector
                 </h3>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#38BDF8]/15 text-[#38BDF8] border border-[#38BDF8]/30 font-semibold">
-                  USGS 1.0M DTM RELIEF
+                  PROTOTYPE SURROGATE MESH
                 </span>
                 <span className="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#34D399]/15 text-[#34D399] border border-[#34D399]/30">
                   EVA TRAVERSE COPILOT
                 </span>
               </div>
               <p className="text-[11px] text-slate-300">
-                Topographic relief model showing slope hazard avoidance from Perseverance landing plain to Cape Flatley delta front.
+                Topographic relief model showing slope hazard avoidance from Perseverance landing plain to Cape Flatley delta front. Illustrative surrogate grid.
               </p>
             </div>
           </div>
@@ -559,9 +559,10 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
                     </span>
                   </div>
                   <p className="text-slate-300 text-[11px] leading-relaxed">
-                    Astronauts in 160 kg EVA suits cannot safely walk on slopes steeper than <strong>15°–22°</strong>. 
-                    In this 3D view, <span className="text-[#F87171] font-semibold">Red areas</span> indicate dangerous steep cliffs and crater walls. 
-                    The colored lines represent <strong>A* computed traverses</strong> navigating safely around cliff hazards to reach ancient rock formations.
+                    Astronauts in 160 kg EVA ensembles face acute physiological workload on steep inclines. 
+                    In this 3D view, <span className="text-[#F87171] font-semibold">Red areas</span> indicate steep cliffs and crater walls. 
+                    The colored lines represent <strong>A* computed traverses</strong> navigating around slope obstacles. 
+                    <em>Terrain analysis uses an experimental surrogate grid for prototype route comparison; results are illustrative.</em>
                   </p>
                 </div>
                 <button
@@ -662,24 +663,24 @@ export default function ThreeTerrainModal({ isOpen, onClose }: ThreeTerrainModal
                   <div className="flex items-center gap-2 text-white">
                     <span className="w-3 h-1.5 rounded-full bg-[#34D399]" />
                     <div>
-                      <span className="font-semibold text-[#34D399] block">Safe Route (3.02 km)</span>
-                      <span className="text-[10px] text-slate-400">Minimizes slope gradient &lt;10°</span>
+                      <span className="font-semibold text-[#34D399] block">Lower-Slope Preference (3.02 km)</span>
+                      <span className="text-[10px] text-slate-400">Minimizes incline grade &lt;10°</span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 text-white">
                     <span className="w-3 h-1.5 rounded-full bg-[#38BDF8]" />
                     <div>
-                      <span className="font-semibold text-[#38BDF8] block">Balanced Route (2.98 km)</span>
-                      <span className="text-[10px] text-slate-400">Fastest direct safe traverse</span>
+                      <span className="font-semibold text-[#38BDF8] block">Balanced Preference (2.98 km)</span>
+                      <span className="text-[10px] text-slate-400">Fastest direct corridor</span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 text-white">
                     <span className="w-3 h-1.5 rounded-full bg-[#FC3D21]" />
                     <div>
-                      <span className="font-semibold text-[#FC3D21] block">Science Route (3.80 km)</span>
-                      <span className="text-[10px] text-slate-400">Visits Séítah carbonate rocks</span>
+                      <span className="font-semibold text-[#FC3D21] block">Science Priority (3.80 km)</span>
+                      <span className="text-[10px] text-slate-400">Visits Séítah carbonate outcrops</span>
                     </div>
                   </div>
                 </div>

@@ -56,7 +56,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     nasaId: "PIA23962 / PSP_001415",
     imageSrc: "/assets/nasa_gallery/hirise_delta.jpg",
     description: "1-meter-per-pixel orbital stereo digital elevation model showing the steep 60-meter drop-off and layered sedimentary strata of the delta scarp.",
-    marsAtlasRole: "Underpins our 3x3 finite-difference slope gradient equations and triggers strict obstacle avoidance for slopes exceeding the 22.0° astronaut limit.",
+    marsAtlasRole: "Informs prototype slope calculations and triggers algorithmic obstacle avoidance for cells exceeding the 22.0° planner cutoff threshold (computational constraint on prototype surrogate grid).",
     officialUrl: "https://hirise.lpl.arizona.edu/"
   },
   {
@@ -84,7 +84,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     nasaId: "PIA26251 / MSL_Gale",
     imageSrc: "/assets/nasa_gallery/curiosity_boxwork.jpg",
     description: "Curiosity climbing the steep slopes of Mount Sharp (Aeolis Mons), investigating mineralized fracture ridges ('boxwork') and boulder-strewn channels.",
-    marsAtlasRole: "Powers the Site 02 preset in MarsAtlas, providing 1,389 real drive waypoints to stress-test route traversal through sand hollows and ridge networks.",
+    marsAtlasRole: "Provides comparative Gale Crater context in MarsAtlas with 1,389 real drive waypoints for secondary terrain comparison.",
     officialUrl: "https://mars.nasa.gov/msl/"
   },
   {
@@ -126,7 +126,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     nasaId: "USGS_SIM_3464 / CRISM_HOTSPOTS",
     imageSrc: "/assets/nasa_gallery/geology_sim3464.png",
     description: "Peer-reviewed geologic stratigraphy vectors (delta front, margin carbonate, olivine floor) overlaid with 5 authored CRISM science interest targets.",
-    marsAtlasRole: "Integrated into 'Science Mode' route optimization, providing algorithmic reward bonuses for routes that pass near high-priority mineral contacts.",
+    marsAtlasRole: "Integrated into 'Science Priority' route optimization, providing algorithmic reward bonuses for routes passing near manually authored CRISM reference locations.",
     officialUrl: "https://pubs.usgs.gov/sim/3464/"
   },
   {

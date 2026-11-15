@@ -12,7 +12,7 @@ const PREBAKED_ROUTES: PlanEvaResponse = {
       status: "OPTIMAL_PATH_FOUND",
       summary: {
         mode: "safe",
-        strategy: "Safest / Minimum Metabolic Workload",
+        strategy: "Lower-Slope Preference",
         total_distance_m: 2975.0,
         total_distance_km: 2.98,
         estimated_duration_min: 88.8,
@@ -51,7 +51,7 @@ const PREBAKED_ROUTES: PlanEvaResponse = {
       status: "OPTIMAL_PATH_FOUND",
       summary: {
         mode: "balanced",
-        strategy: "Balanced / Optimal Time",
+        strategy: "Balanced Preference",
         total_distance_m: 2840.0,
         total_distance_km: 2.84,
         estimated_duration_min: 76.5,
@@ -85,7 +85,7 @@ const PREBAKED_ROUTES: PlanEvaResponse = {
       status: "OPTIMAL_PATH_FOUND",
       summary: {
         mode: "science",
-        strategy: "Science Discovery Priority (CRISM Hotspots)",
+        strategy: "Science Priority",
         total_distance_m: 3410.0,
         total_distance_km: 3.41,
         estimated_duration_min: 102.4,
@@ -299,14 +299,14 @@ export async function fetchRoverGroundTruth(lon: number, lat: number): Promise<R
   };
 }
 
-export async function fetchLiveRoverImages(): Promise<any[]> {
+export async function fetchLiveRoverImages(): Promise<Record<string, unknown>[]> {
   try {
     const res = await fetch(`${BACKEND_URL}/api/rover-pov`);
     if (res.ok) {
       const data = await res.json();
       return data.images || [];
     }
-  } catch (err) {
+  } catch {
     // fallback
   }
 

@@ -98,14 +98,15 @@ export default function Navbar({
                 onSiteChange("jezero");
                 onNavigate("workspace");
               }}
-              className={`px-3.5 py-1.5 rounded-lg font-medium flex items-center gap-2 transition-all ${
+              className={`px-2.5 sm:px-3.5 py-1.5 rounded-lg font-medium flex items-center gap-1.5 sm:gap-2 transition-all ${
                 activeSite === "jezero"
                   ? "bg-[#FC3D21] text-white font-bold shadow-md shadow-[#FC3D21]/30"
                   : "text-slate-400 hover:text-white hover:bg-white/5"
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span className="tracking-wide">SITE 01: JEZERO DELTA</span>
+              <span className="tracking-wide hidden sm:inline">SITE 01: JEZERO DELTA</span>
+              <span className="tracking-wide sm:hidden text-[11px]">JEZERO</span>
             </button>
 
             <button
@@ -113,14 +114,15 @@ export default function Navbar({
                 onSiteChange("gale");
                 onNavigate("workspace");
               }}
-              className={`px-3.5 py-1.5 rounded-lg font-medium flex items-center gap-2 transition-all ${
+              className={`px-2.5 sm:px-3.5 py-1.5 rounded-lg font-medium flex items-center gap-1.5 sm:gap-2 transition-all ${
                 activeSite === "gale"
                   ? "bg-[#38BDF8] text-[#04070D] font-bold shadow-md shadow-[#38BDF8]/30"
                   : "text-slate-400 hover:text-white hover:bg-white/5"
               }`}
             >
               <Mountain className="w-3.5 h-3.5" />
-              <span className="tracking-wide">SITE 02: MOUNT SHARP BOXWORK</span>
+              <span className="tracking-wide hidden sm:inline">SITE 02: MOUNT SHARP BOXWORK</span>
+              <span className="tracking-wide sm:hidden text-[11px]">GALE</span>
             </button>
           </div>
 
@@ -141,10 +143,11 @@ export default function Navbar({
             {/* Primary Action Button */}
             <button
               onClick={() => onNavigate(currentView === "landing" ? "workspace" : "landing")}
-              className="px-4 py-2 rounded-xl font-bold bg-[#FC3D21] hover:bg-[#E0341B] text-white transition-all shadow-md shadow-[#FC3D21]/30 flex items-center gap-1.5 uppercase text-xs tracking-wider"
+              className="px-3 sm:px-4 py-2 rounded-xl font-bold bg-[#FC3D21] hover:bg-[#E0341B] text-white transition-all shadow-md shadow-[#FC3D21]/30 flex items-center gap-1.5 uppercase text-xs tracking-wider"
             >
               <Activity className="w-4 h-4 text-white" />
-              <span>{currentView === "landing" ? "Launch Mission Console" : "Mission Overview"}</span>
+              <span className="hidden sm:inline">{currentView === "landing" ? "Launch Mission Console" : "Mission Overview"}</span>
+              <span className="sm:hidden">{currentView === "landing" ? "Console" : "Overview"}</span>
             </button>
 
             {/* Data Provenance Matrix Modal Trigger */}

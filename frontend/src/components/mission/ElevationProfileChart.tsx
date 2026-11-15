@@ -63,7 +63,7 @@ export default function ElevationProfileChart({
     secondaryVals = telemetry.map((t) => t.cumulative_radiation_usv);
     secColor = "#38BDF8";
     secUnit = " µSv";
-    secLabel = "Radiation";
+    secLabel = "RAD Proxy (Gale)";
   }
 
   const maxSec = Math.max(...secondaryVals, 1);
@@ -107,7 +107,7 @@ export default function ElevationProfileChart({
               Traverse Topographic & Metabolic Cross-Section
             </h4>
             <p className="text-[10px] text-slate-400 font-mono">
-              USGS 1m HiRISE DTM • Horn&apos;s Gradient Metric
+              Prototype Surrogate Grid • Horn&apos;s Gradient Metric
             </p>
           </div>
         </div>
@@ -143,10 +143,16 @@ export default function ElevationProfileChart({
                 : "text-slate-400 hover:text-white"
             }`}
           >
-            Radiation (µSv)
+            RAD Proxy (µSv)
           </button>
         </div>
       </div>
+
+      {metric === "radiation" && (
+        <div className="px-3 py-1.5 rounded-lg bg-[#38BDF8]/10 border border-[#38BDF8]/25 text-[10px] text-[#38BDF8] font-mono flex items-center gap-2">
+          <span>Illustrative radiation proxy — not a Jezero-specific radiation dose prediction.</span>
+        </div>
+      )}
 
       {/* SVG Elevation Chart */}
       <div className="relative w-full overflow-x-auto bg-[#04070D]/60 rounded-lg p-2 border border-white/[0.04]">

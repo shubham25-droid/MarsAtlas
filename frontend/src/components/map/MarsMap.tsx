@@ -661,7 +661,7 @@ export default function MarsMap({
             <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
               <span className="text-slate-300 flex items-center gap-2 text-[11px]">
                 <AlertTriangle className="w-3.5 h-3.5 text-[#FBBF24]" />
-                1m HiRISE Slope Hazard
+                Modelled Slope Hazard (Surrogate)
               </span>
               <button onClick={() => toggleLayer("hazard")}>
                 {layerConfig.hazard.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
@@ -672,7 +672,7 @@ export default function MarsMap({
             <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
               <span className="text-slate-300 flex items-center gap-2 text-[11px]">
                 <span className="w-2 h-2 rounded-full bg-[#A855F7]" />
-                USGS SIM 3464 Units
+                USGS SIM 3464 Units (Simplified)
               </span>
               <button onClick={() => toggleLayer("geology")}>
                 {layerConfig.geology.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
@@ -683,7 +683,7 @@ export default function MarsMap({
             <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
               <span className="text-slate-300 flex items-center gap-2 text-[11px]">
                 <Sparkles className="w-3.5 h-3.5 text-[#38BDF8]" />
-                CRISM Mineral Hotspots
+                CRISM-Referenced Targets (Authored)
               </span>
               <button onClick={() => toggleLayer("crism")}>
                 {layerConfig.crism.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}
@@ -694,7 +694,7 @@ export default function MarsMap({
             <div className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors">
               <span className="text-slate-300 flex items-center gap-2 text-[11px]">
                 <Compass className="w-3.5 h-3.5 text-[#F36C3D]" />
-                Perseverance Traverse
+                Perseverance Traverse (Real Telemetry)
               </span>
               <button onClick={() => toggleLayer("rover")}>
                 {layerConfig.rover.visible ? <Eye className="w-3.5 h-3.5 text-[#34D399]" /> : <EyeOff className="w-3.5 h-3.5 text-slate-500" />}

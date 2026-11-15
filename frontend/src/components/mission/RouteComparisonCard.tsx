@@ -11,7 +11,8 @@ import {
   HeartPulse, 
   AlertTriangle,
   Radio,
-  CheckCircle2
+  CheckCircle2,
+  Info
 } from "lucide-react";
 
 interface RouteComparisonCardProps {
@@ -44,13 +45,19 @@ export default function RouteComparisonCard({
               Multi-Route Trade-Off Scorecard
             </h3>
             <p className="text-[10px] text-slate-400 font-mono">
-              NASA JSC CSRM • Pandolf-Santee G=0.376
+              A* Trajectory Comparison • Pandolf-Santee Bioenergetics (G=0.376)
             </p>
           </div>
         </div>
         <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-white/[0.04] text-slate-400 border border-white/[0.06]">
-          3 Trajectories Solved
+          3 Preferences Solved
         </span>
+      </div>
+
+      {/* Disclaimers Strip */}
+      <div className="text-[10px] text-slate-400 flex items-center gap-1.5 font-mono px-1">
+        <Info className="w-3 h-3 text-[#38BDF8] flex-shrink-0" />
+        <span>Computational preferences on surrogate grid • Not certified astronaut safety ratings</span>
       </div>
 
       {/* Comparison Grid */}
@@ -65,7 +72,7 @@ export default function RouteComparisonCard({
           let bgCol = "bg-[#34D399]/10";
           let barCol = "bg-[#34D399]";
           let icon = <ShieldCheck className="w-4 h-4 text-[#34D399]" />;
-          let label = "MIN-METABOLIC";
+          let label = "LOWER-SLOPE PREFERENCE";
 
           if (modeKey === "balanced") {
             borderClass = "border-[#38BDF8]/40 hover:border-[#38BDF8]";
@@ -74,7 +81,7 @@ export default function RouteComparisonCard({
             bgCol = "bg-[#38BDF8]/10";
             barCol = "bg-[#38BDF8]";
             icon = <Zap className="w-4 h-4 text-[#38BDF8]" />;
-            label = "BALANCED TIME";
+            label = "BALANCED PREFERENCE";
           } else if (modeKey === "science") {
             borderClass = "border-[#C084FC]/40 hover:border-[#C084FC]";
             activeBorder = "border-[#C084FC] shadow-[0_0_15px_rgba(192,132,252,0.15)] ring-1 ring-[#C084FC]/50";
@@ -99,9 +106,9 @@ export default function RouteComparisonCard({
               <div>
                 {/* Route Header */}
                 <div className="flex items-center justify-between mb-2">
-                  <span className={`text-[11px] font-bold tracking-wide flex items-center gap-1.5 ${textCol}`}>
+                  <span className={`text-[10px] font-bold tracking-wide flex items-center gap-1.5 ${textCol}`}>
                     {icon}
-                    {label}
+                    <span>{label}</span>
                   </span>
                   {isSelected && (
                     <CheckCircle2 className={`w-3.5 h-3.5 ${textCol}`} />
@@ -172,10 +179,10 @@ export default function RouteComparisonCard({
                 </div>
               </div>
 
-              {/* Radiation Badge */}
+              {/* Radiation Badge with Disclosure */}
               <div className="mt-2.5 pt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px]">
-                <span className="text-slate-500 flex items-center gap-1">
-                  <Radio className="w-3 h-3 text-slate-500" /> RAD Dose:
+                <span className="text-slate-500 flex items-center gap-1" title="Illustrative radiation proxy — not a Jezero-specific radiation dose prediction">
+                  <Radio className="w-3 h-3 text-slate-500" /> RAD Proxy:
                 </span>
                 <span className="font-mono text-[#FBBF24] font-semibold num-tabular">
                   {route.cumulative_radiation_usv} µSv

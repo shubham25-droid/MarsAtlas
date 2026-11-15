@@ -22,7 +22,9 @@ import {
   Shield,
   Clock,
   Orbit,
-  Globe2
+  Globe2,
+  AlertTriangle,
+  Info
 } from "lucide-react";
 import NasaMissionGallery from "@/components/landing/NasaMissionGallery";
 
@@ -88,8 +90,14 @@ export default function LandingPage({
             </h1>
             
             <p className="max-w-2xl mx-auto text-sm sm:text-base text-slate-200 font-normal leading-relaxed drop-shadow-md">
-              MarsAtlas bridges raw orbital observations, metric terrain topography, and rover telemetry with human bioenergetic constraints. Designed for future human exploration of Jezero and Gale Craters.
+              MarsAtlas is an experimental planetary exploration platform combining Martian geospatial context, rover observations, and computational A* traverse planning to help users investigate terrain and compare exploration routes.
             </p>
+
+            {/* Prototype Disclaimer Pill */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-mono mx-auto">
+              <Info className="w-3.5 h-3.5 flex-shrink-0 text-amber-400" />
+              <span>Experimental research prototype • Not a certified astronaut navigation or safety system</span>
+            </div>
 
             {/* Primary Action Buttons */}
             <div className="flex flex-wrap items-center justify-center gap-3.5 pt-3">
@@ -122,34 +130,34 @@ export default function LandingPage({
             </div>
           </div>
 
-          {/* Operational Telemetry Metrics Strip (Clean NASA-Style Clean Typography) */}
+          {/* Operational Telemetry Metrics Strip */}
           <div className="pt-2 w-full max-w-4xl grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
             <div className="p-4 rounded-2xl bg-[#040A18]/40 backdrop-blur-md border border-white/10 space-y-1 shadow-lg hover:border-white/20 transition-all">
               <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">559</div>
               <div className="text-xs font-semibold text-slate-200 uppercase tracking-wider">Drive Legs</div>
-              <div className="text-[11px] text-slate-400">Perseverance Sols 13–2022</div>
+              <div className="text-[11px] text-slate-400">Perseverance Sols 13–2022 (MMGIS)</div>
             </div>
 
             <div className="p-4 rounded-2xl bg-[#040A18]/40 backdrop-blur-md border border-white/10 space-y-1 shadow-lg hover:border-white/20 transition-all">
               <div className="text-2xl sm:text-3xl font-extrabold text-[#38BDF8] tracking-tight">11.3 m</div>
-              <div className="text-xs font-semibold text-slate-200 uppercase tracking-wider">Grid Cell</div>
-              <div className="text-[11px] text-slate-400">550 × 350 Modelled Sector</div>
+              <div className="text-xs font-semibold text-slate-200 uppercase tracking-wider">Spatial Cell</div>
+              <div className="text-[11px] text-slate-400">350 × 550 Surrogate Grid</div>
             </div>
 
             <div className="p-4 rounded-2xl bg-[#040A18]/40 backdrop-blur-md border border-white/10 space-y-1 shadow-lg hover:border-white/20 transition-all">
               <div className="text-2xl sm:text-3xl font-extrabold text-[#FBBF24] tracking-tight">&le; 22.0°</div>
-              <div className="text-xs font-semibold text-slate-200 uppercase tracking-wider">Slope Limit</div>
-              <div className="text-[11px] text-slate-400">Horn 3×3 Finite Difference</div>
+              <div className="text-xs font-semibold text-slate-200 uppercase tracking-wider">Planner Cutoff</div>
+              <div className="text-[11px] text-slate-400">Algorithmic Slope Constraint</div>
             </div>
 
             <div className="p-4 rounded-2xl bg-[#040A18]/40 backdrop-blur-md border border-white/10 space-y-1 shadow-lg hover:border-white/20 transition-all">
               <div className="text-2xl sm:text-3xl font-extrabold text-[#34D399] tracking-tight">0.38 g</div>
               <div className="text-xs font-semibold text-slate-200 uppercase tracking-wider">Mars Gravity</div>
-              <div className="text-[11px] text-slate-400">Pandolf-Santee 160 kg Suit</div>
+              <div className="text-[11px] text-slate-400">Pandolf-Santee 160 kg Ensemble</div>
             </div>
           </div>
 
-          {/* Centerpiece Mission Insignia Visual (Square Card with Glowing Rim) */}
+          {/* Centerpiece Mission Insignia Visual */}
           <div className="relative group max-w-[280px] sm:max-w-xs mx-auto pt-3">
             <div className="absolute -inset-1 bg-gradient-to-r from-[#FC3D21]/40 via-[#38BDF8]/30 to-[#A78BFA]/40 rounded-2xl blur-lg opacity-60 group-hover:opacity-90 transition duration-500" />
             <div className="relative rounded-2xl overflow-hidden border border-white/20 bg-[#070B14] shadow-2xl">
@@ -182,7 +190,7 @@ export default function LandingPage({
               From Planetary Data to Exploration Decisions
             </h2>
             <p className="max-w-2xl mx-auto text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Standard maps show what is on Mars. MarsAtlas computes what an astronaut in a pressurized spacesuit can safely traverse, survive, and sample.
+              MarsAtlas connects planetary orbital observations and in-situ rover telemetry with computational A* pathfinding and bioenergetic equations to evaluate exploration feasibility.
             </p>
           </div>
 
@@ -195,11 +203,11 @@ export default function LandingPage({
               <div className="space-y-1">
                 <span className="text-[10px] font-mono text-[#FC3D21] font-bold tracking-wider uppercase">PILLAR 01</span>
                 <h3 className="text-base font-bold text-white uppercase tracking-wide font-sans">
-                  Beyond Visible Imagery
+                  Topographic Terrain Analysis
                 </h3>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Optical photos mask treacherous slopes and loose regolith. MarsAtlas combines 1m elevation models with Horn&apos;s gradient equations and THEMIS nighttime thermal inertia to classify mechanical slip hazards before boots touch dust.
+                Visual imagery alone masks steep slopes and regolith hazards. MarsAtlas evaluates surface incline gradients with Horn&apos;s 3×3 finite-difference algorithm, local roughness standard deviations, and thermophysical proxy coefficients across the modelled sector.
               </p>
             </div>
 
@@ -211,11 +219,11 @@ export default function LandingPage({
               <div className="space-y-1">
                 <span className="text-[10px] font-mono text-[#38BDF8] font-bold tracking-wider uppercase">PILLAR 02</span>
                 <h3 className="text-base font-bold text-white uppercase tracking-wide font-sans">
-                  Human Bioenergetic Margins
+                  Human Bioenergetic Workload
                 </h3>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Compute 8-connected A* traverses grounded in the <strong>NASA JSC Crew State &amp; Risk Model (CSRM)</strong>. Compare 3 distinct strategies—Min-Metabolic, Balanced Time, and Max-Science—with dynamic walkback safety envelopes respecting 160 kg suit mass.
+                Computes 8-connected A* traverse options using Pandolf-Santee bioenergetic equations adapted for a 160 kg suited system in Martian gravity (0.376 g). Compares three algorithmic preferences: <em>Lower-Slope Preference</em>, <em>Balanced Preference</em>, and <em>Science Priority</em> with an enforced 22.0° slope ceiling.
               </p>
             </div>
 
@@ -227,18 +235,18 @@ export default function LandingPage({
               <div className="space-y-1">
                 <span className="text-[10px] font-mono text-[#34D399] font-bold tracking-wider uppercase">PILLAR 03</span>
                 <h3 className="text-base font-bold text-white uppercase tracking-wide font-sans">
-                  Science Along the Traverse
+                  Science Context Along Traverse
                 </h3>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Connect orbital routes directly to Perseverance and Curiosity ground-truth telemetry. Click any waypoint to view in-situ Mastcam-Z panoramas, SuperCam telescopic details, and USGS SIM 3464 carbonate/smectite signatures.
+                Connects planned corridors with real Perseverance rover telemetry (708 waypoints, 559 drive legs), in-situ camera observations, simplified USGS SIM 3464 geological formations, and manually authored CRISM-referenced science targets.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4. FIVE AUTHORITATIVE NASA & USGS DATASETS */}
+      {/* 4. DATA SOURCES & IMPLEMENTATION STATUS */}
       <section className="w-full py-20 px-4 sm:px-6 bg-[#04070D]">
         <div className="max-w-6xl mx-auto space-y-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -247,7 +255,7 @@ export default function LandingPage({
                 SCIENTIFIC RIGOR &amp; PROVENANCE
               </span>
               <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight font-sans">
-                Authoritative Multi-Mission Datasets
+                Integrated Planetary Datasets
               </h2>
             </div>
             <button
@@ -260,63 +268,63 @@ export default function LandingPage({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs">
-            {/* 1. Optical */}
+            {/* 1. Global Basemap */}
             <div className="p-4 rounded-xl bg-[#0A0F1D] border border-white/10 space-y-2.5 shadow-lg">
-              <span className="text-[10px] font-mono text-[#38BDF8] font-bold uppercase tracking-wider block">Optical Imagery</span>
-              <h4 className="font-bold text-white text-sm">MRO CTX Jezero Mosaic</h4>
+              <span className="text-[10px] font-mono text-[#38BDF8] font-bold uppercase tracking-wider block">Operational Base</span>
+              <h4 className="font-bold text-white text-sm">USGS Viking &amp; MOLA WMS</h4>
               <p className="text-slate-300 text-[11px] leading-relaxed">
-                6 m/pixel controlled orthomosaic streamed dynamically via NASA Mars Trek OGC WMTS.
+                Global MDIM2.1 color mosaic and MOLA shaded relief streamed via USGS Astrogeology WMS.
               </p>
               <div className="pt-2 border-t border-white/10 text-[10px] text-[#38BDF8] font-mono">
-                JEZ_ctx_B_soc_008
+                EPSG:104905 Projection
               </div>
             </div>
 
-            {/* 2. Topo */}
+            {/* 2. Topo Surrogate */}
             <div className="p-4 rounded-xl bg-[#0A0F1D] border border-white/10 space-y-2.5 shadow-lg">
-              <span className="text-[10px] font-mono text-[#34D399] font-bold uppercase tracking-wider block">Topography</span>
-              <h4 className="font-bold text-white text-sm">Mars 2020 TRN 1m DTM</h4>
+              <span className="text-[10px] font-mono text-[#34D399] font-bold uppercase tracking-wider block">Terrain Model</span>
+              <h4 className="font-bold text-white text-sm">EVA Prototype Sector</h4>
               <p className="text-slate-300 text-[11px] leading-relaxed">
-                USGS 32-bit floating-point elevation raster co-registered and tied to MOLA geoid datum.
+                350 × 550 surrogate grid (11.3 m spacing) for prototype route comparison and slope evaluation.
               </p>
               <div className="pt-2 border-t border-white/10 text-[10px] text-[#34D399] font-mono">
-                1.0 m/px Co-Registered
+                Surrogate Grid (.npz)
               </div>
             </div>
 
-            {/* 3. Thermal */}
+            {/* 3. Rover Telemetry */}
             <div className="p-4 rounded-xl bg-[#0A0F1D] border border-white/10 space-y-2.5 shadow-lg">
-              <span className="text-[10px] font-mono text-[#FBBF24] font-bold uppercase tracking-wider block">Thermophysical</span>
-              <h4 className="font-bold text-white text-sm">THEMIS Nighttime IR</h4>
+              <span className="text-[10px] font-mono text-[#FC3D21] font-bold uppercase tracking-wider block">Real Telemetry</span>
+              <h4 className="font-bold text-white text-sm">NASA-AMMOS MMGIS</h4>
               <p className="text-slate-300 text-[11px] leading-relaxed">
-                100 m/pixel thermal inertia separating loose sand hollows from firm bedrock ridges.
-              </p>
-              <div className="pt-2 border-t border-white/10 text-[10px] text-[#FBBF24] font-mono">
-                J·m⁻²·K⁻¹·s⁻¹/²
-              </div>
-            </div>
-
-            {/* 4. Geology */}
-            <div className="p-4 rounded-xl bg-[#0A0F1D] border border-white/10 space-y-2.5 shadow-lg">
-              <span className="text-[10px] font-mono text-[#A78BFA] font-bold uppercase tracking-wider block">Astrogeology</span>
-              <h4 className="font-bold text-white text-sm">USGS SIM 3464 Map</h4>
-              <p className="text-slate-300 text-[11px] leading-relaxed">
-                1:75,000 peer-reviewed geological map documenting lacustrine carbonates and smectites.
-              </p>
-              <div className="pt-2 border-t border-white/10 text-[10px] text-[#A78BFA] font-mono">
-                Sun &amp; Stack (2020)
-              </div>
-            </div>
-
-            {/* 5. In-Situ Rover */}
-            <div className="p-4 rounded-xl bg-[#0A0F1D] border border-white/10 space-y-2.5 shadow-lg">
-              <span className="text-[10px] font-mono text-[#FC3D21] font-bold uppercase tracking-wider block">In-Situ Rover</span>
-              <h4 className="font-bold text-white text-sm">MMGIS &amp; Raw Feeds</h4>
-              <p className="text-slate-300 text-[11px] leading-relaxed">
-                708 Sols of Perseverance rover drive legs and Mastcam-Z / SuperCam in-situ panoramas.
+                708 Perseverance waypoints and 559 traverse legs from landing through Sol 2022.
               </p>
               <div className="pt-2 border-t border-white/10 text-[10px] text-[#FC3D21] font-mono">
-                Live NASA Endpoints
+                Real Spacecraft Data
+              </div>
+            </div>
+
+            {/* 4. Geology Overlays */}
+            <div className="p-4 rounded-xl bg-[#0A0F1D] border border-white/10 space-y-2.5 shadow-lg">
+              <span className="text-[10px] font-mono text-[#A78BFA] font-bold uppercase tracking-wider block">Simplified Context</span>
+              <h4 className="font-bold text-white text-sm">USGS SIM 3464 Overlays</h4>
+              <p className="text-slate-300 text-[11px] leading-relaxed">
+                5 hand-simplified polygon units after Sun &amp; Stack (2020) illustrating regional geological context.
+              </p>
+              <div className="pt-2 border-t border-white/10 text-[10px] text-[#A78BFA] font-mono">
+                Simplified Polygon Layer
+              </div>
+            </div>
+
+            {/* 5. Science Targets */}
+            <div className="p-4 rounded-xl bg-[#0A0F1D] border border-white/10 space-y-2.5 shadow-lg">
+              <span className="text-[10px] font-mono text-[#FBBF24] font-bold uppercase tracking-wider block">Authored Targets</span>
+              <h4 className="font-bold text-white text-sm">CRISM-Referenced Points</h4>
+              <p className="text-slate-300 text-[11px] leading-relaxed">
+                5 manually authored locations referencing published CRISM observations (no live spectral cube processing).
+              </p>
+              <div className="pt-2 border-t border-white/10 text-[10px] text-[#FBBF24] font-mono">
+                Authored Reference Data
               </div>
             </div>
           </div>
@@ -334,21 +342,21 @@ export default function LandingPage({
               Jezero Crater &amp; Mount Sharp Boxwork
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Targeted by NASA for ancient habitability and biosignature preservation. MarsAtlas provides dual operational presets: the <strong>Jezero Crater Western Delta to Margin Rim</strong> (Perseverance site) and the <strong>Mount Sharp Boxwork Foothills</strong> (Curiosity site).
+              Targeted by NASA for ancient habitability and biosignature preservation. MarsAtlas provides dual regional contexts: the <strong>Jezero Crater Western Delta</strong> (primary study region with active routing) and the <strong>Gale Crater Mount Sharp Boxwork</strong> (comparative regional preset).
             </p>
 
             <div className="space-y-2 pt-2 text-xs">
               <div className="flex items-center gap-2.5 text-white">
                 <CheckCircle2 className="w-4 h-4 text-[#34D399]" />
-                <span>Elevation Span: -2570 m (Crater Floor) to -1936 m (Crater Rim)</span>
+                <span>Elevation Span: -2605 m (Crater Floor) to -2121 m (Delta Contact)</span>
               </div>
               <div className="flex items-center gap-2.5 text-white">
                 <CheckCircle2 className="w-4 h-4 text-[#34D399]" />
-                <span>Horn&apos;s Slope Range: 0.0° to 22.7° (Strict &lt;22.0° Suit Stability Constraint)</span>
+                <span>Horn&apos;s Slope Range: 0.0° to 22.7° (Enforced ≤22.0° Planner Exclusion Cutoff)</span>
               </div>
               <div className="flex items-center gap-2.5 text-white">
                 <CheckCircle2 className="w-4 h-4 text-[#34D399]" />
-                <span>Curiosity Boxwork Spiderweb Ridges vs. Sand Hollow Traversal Analysis</span>
+                <span>Curiosity Boxwork Ridges Telemetry Context through Sol 5073</span>
               </div>
             </div>
 
@@ -388,8 +396,8 @@ export default function LandingPage({
                 <span className="font-bold text-white block">Horn&apos;s Method Slope Hazard Map</span>
                 <span className="text-[10px] text-slate-300">Green (&lt;8° Safe) | Amber (8-14° Caution) | Crimson (&gt;14° Scarp Hazard)</span>
               </div>
-              <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-[#34D399]/20 text-[#34D399] border border-[#34D399]/30 font-bold">
-                1m HiRISE DTM
+              <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/30 font-bold">
+                Surrogate Grid
               </span>
             </div>
           </div>

@@ -56,11 +56,11 @@ export default function DataProvenanceModal({ isOpen, onClose }: DataProvenanceM
                 </span>
               </div>
               <ul className="list-disc list-inside space-y-1 text-[#A0ACB9] pl-1">
-                <li><strong>MRO HiRISE Stereo DTM:</strong> 1m/pixel co-registered elevation grid tied to MOLA datum.</li>
-                <li><strong>MRO CTX Mosaic:</strong> 6m/pixel controlled orthomosaic (Mars Trek WMTS).</li>
-                <li><strong>Mars Odyssey THEMIS Night IR:</strong> 100m calibrated brightness temperature & thermal inertia.</li>
-                <li><strong>Mars 2020 Perseverance & MSL Curiosity Telemetry:</strong> 708 Sols of live MMGIS waypoints and raw Mastcam-Z/SuperCam images.</li>
-                <li><strong>Mars 2020 MEDA & MSL RAD:</strong> Diurnal surface temperature, pressure, and 0.560 mSv/day ionizing radiation baseline.</li>
+                <li><strong>Perseverance Telemetry (MMGIS):</strong> 708 validated waypoints and 559 traverse legs spanning Sols 13–2022.</li>
+                <li><strong>Curiosity Telemetry (MMGIS):</strong> 1,389 validated waypoints through Sol 5073 (comparative Gale Crater context).</li>
+                <li><strong>Rover Surface Camera Imagery:</strong> Verified Mastcam-Z, SuperCam RMI, and Navcam observations linked to rover waypoints.</li>
+                <li><strong>Mars 2020 MEDA &amp; MSL RAD:</strong> Diurnal surface temperature/pressure envelopes and 0.560 mSv/sol ionizing radiation baseline.</li>
+                <li><strong>Global Cartographic Basemap:</strong> USGS Viking MDIM2.1 color mosaic and MOLA shaded relief streamed via USGS WMS.</li>
               </ul>
             </div>
 
@@ -76,9 +76,9 @@ export default function DataProvenanceModal({ isOpen, onClose }: DataProvenanceM
                 </span>
               </div>
               <ul className="list-disc list-inside space-y-1 text-[#A0ACB9] pl-1">
-                <li><strong>Topographic Slope (°):</strong> Horn&apos;s 3x3 finite-difference algorithm ($dx = R \cdot \Delta\lambda \cdot \cos\phi$).</li>
-                <li><strong>Local Terrain Roughness:</strong> Detrended elevation standard deviation ($\sigma_z$) across 3x3 moving window.</li>
-                <li><strong>Radiation Topographic Shielding:</strong> Solid-angle reduction factor ($\psi_j \in [0.68, 0.98]$) in crater floor hollows.</li>
+                <li><strong>Topographic Slope (°):</strong> Horn&apos;s 3x3 finite-difference algorithm evaluated on smoothed terrain (dx = R · Δλ · cosφ).</li>
+                <li><strong>Local Terrain Roughness:</strong> Local elevation standard deviation (&sigma;<sub>z</sub>) across moving window.</li>
+                <li><strong>Topographic Obstacle Boundaries:</strong> Cells with slope &theta; &gt; 22.0° treated as impassable by planner.</li>
               </ul>
             </div>
 
@@ -87,16 +87,18 @@ export default function DataProvenanceModal({ isOpen, onClose }: DataProvenanceM
               <div className="flex items-center justify-between">
                 <span className="font-bold text-[#E8B65A] text-xs uppercase tracking-wider flex items-center gap-1.5">
                   <FileText className="w-4 h-4 text-[#E8B65A]" />
-                  Tier 3: Explicit Modeling Assumptions
+                  Tier 3: Explicit Modeling Assumptions &amp; Context
                 </span>
                 <span className="text-[10px] bg-[#E8B65A]/10 text-[#E8B65A] px-2 py-0.5 rounded font-mono">
                   Published Literature
                 </span>
               </div>
               <ul className="list-disc list-inside space-y-1 text-[#A0ACB9] pl-1">
-                <li><strong>Astronaut Suit System Mass:</strong> Nude mass W = 75 kg, pressurized suit + PLSS L = 85 kg, Mars gravity G = 0.376.</li>
-                <li><strong>Terrain Impedance Factor:</strong> Empirical synthesis mapping &eta; = 1.0 + 0.5 &times; clip((350 - TI)/250, 0, 1) + 0.6 &times; clip(&sigma; / 0.4, 0, 1).</li>
-                <li><strong>Apollo Traverse Speed Equation:</strong> V = max(0.15, (-0.01 S + 0.75) / &eta;) m/s.</li>
+                <li><strong>Astronaut Suit Ensemble Mass:</strong> Nude mass W = 75 kg, pressurized suit + PLSS L = 85 kg (total 160 kg, Mars G = 0.376).</li>
+                <li><strong>Terrain Impedance Factor:</strong> Empirical heuristic &eta; combining thermal inertia and local roughness (&sigma;<sub>z</sub>).</li>
+                <li><strong>Apollo Traverse Speed Equation:</strong> Dynamic degradation V = max(0.15, (-0.01 S + 0.75) / &eta;) m/s.</li>
+                <li><strong>USGS SIM 3464 Overlays:</strong> 5 hand-simplified polygonal units after Sun &amp; Stack (2020) illustrating geological context.</li>
+                <li><strong>CRISM-Referenced Locations:</strong> 5 manually authored coordinates citing published CRISM observations (no live spectral cube processing).</li>
               </ul>
             </div>
 
@@ -105,15 +107,23 @@ export default function DataProvenanceModal({ isOpen, onClose }: DataProvenanceM
               <div className="flex items-center justify-between">
                 <span className="font-bold text-[#E46A43] text-xs uppercase tracking-wider flex items-center gap-1.5">
                   <FileText className="w-4 h-4 text-[#E46A43]" />
-                  Tier 4: Hypothetical Mission Simulations
+                  Tier 4: Prototype Surrogate Inputs &amp; Simulations
                 </span>
                 <span className="text-[10px] bg-[#E46A43]/10 text-[#E46A43] px-2 py-0.5 rounded font-mono">
                   Prototype Only
                 </span>
               </div>
-              <p className="text-[#A0ACB9] pl-1">
-                Multi-objective A* paths, simulated metabolic energy depletion curves, and walkback safety buffers are experimental decision-support outputs created for the NASA Space Apps Challenge 2026.
-              </p>
+              <ul className="list-disc list-inside space-y-1 text-[#A0ACB9] pl-1">
+                <li><strong>Prototype Surrogate Terrain Grid:</strong> 350 × 550 cells (11.3 m spacing) for prototype route comparison; RMSE ~74 m vs rover elevations. Not a validated raw HiRISE crop.</li>
+                <li><strong>Multi-Objective A* Traverses:</strong> Lower-Slope Preference, Balanced Preference, and Science Priority path options.</li>
+                <li><strong>Radiation Dosage Proxy:</strong> Illustrative scaling from Gale RAD baseline — not a Jezero-specific dose prediction.</li>
+              </ul>
+            </div>
+
+            {/* Documented Future Datasets Notice */}
+            <div className="p-3 bg-[#0A0F1D] border border-white/[0.08] rounded-xl text-[11px] text-slate-400 space-y-1">
+              <span className="text-white font-bold block">Documented Future Integration Datasets:</span>
+              <p>MRO CTX (6m/px), THEMIS Nighttime IR (100m/px), and the raw USGS 1m HiRISE DTM GeoTIFF are documented reference products cataloged for future streaming integration.</p>
             </div>
           </div>
         </div>

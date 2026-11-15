@@ -102,9 +102,9 @@ def plan_eva(req: PlanRequest):
     science_route = planner.solve_route(start_lon, start_lat, dest_lon, dest_lat, mode="science")
 
     comparison = [
-        {"strategy": "Safest / Minimum Metabolic", **safe_route["summary"]},
-        {"strategy": "Balanced / Optimal Time", **balanced_route["summary"]},
-        {"strategy": "Science Discovery Priority", **science_route["summary"]}
+        {"strategy": "Lower-Slope Preference", **safe_route["summary"]},
+        {"strategy": "Balanced Preference", **balanced_route["summary"]},
+        {"strategy": "Science Priority", **science_route["summary"]}
     ]
 
     return {

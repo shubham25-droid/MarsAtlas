@@ -46,7 +46,7 @@ export interface RouteResult {
   summary: RouteSummary;
   geojson: {
     type: string;
-    properties: Record<string, any>;
+    properties: Record<string, unknown>;
     geometry: {
       type: string;
       coordinates: [number, number, number][];

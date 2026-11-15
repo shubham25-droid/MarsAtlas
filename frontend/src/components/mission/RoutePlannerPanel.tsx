@@ -12,7 +12,9 @@ import {
   Layers,
   ArrowRight,
   Compass,
-  FileText
+  FileText,
+  AlertTriangle,
+  Info
 } from "lucide-react";
 
 interface RoutePlannerPanelProps {
@@ -66,7 +68,7 @@ export default function RoutePlannerPanel({
   ];
 
   return (
-    <div className="hud-panel rounded-2xl p-4 flex flex-col gap-4 shadow-2xl">
+    <div className="hud-panel rounded-2xl p-4 flex flex-col gap-3.5 shadow-2xl">
       {/* Panel Header */}
       <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
         <div className="flex items-center gap-2">
@@ -76,8 +78,16 @@ export default function RoutePlannerPanel({
           </h3>
         </div>
         <span className="text-[10px] font-mono text-[#38BDF8] bg-[#38BDF8]/10 px-2.5 py-0.5 rounded-full border border-[#38BDF8]/25 font-semibold">
-          NASA JSC CSRM ENGINE
+          8-CONNECTED A* ENGINE
         </span>
+      </div>
+
+      {/* Experimental Prototype Notice */}
+      <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-[11px] text-amber-300 leading-snug flex items-start gap-2">
+        <Info className="w-3.5 h-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+        <div>
+          <span>Terrain analysis uses an experimental surrogate grid for prototype route comparison. Results are illustrative and are not validated for real mission navigation.</span>
+        </div>
       </div>
 
       {/* Trajectory Coordinates Inspector */}
@@ -96,7 +106,7 @@ export default function RoutePlannerPanel({
         <div className="bg-[#070B14] p-3 rounded-xl border border-white/[0.06] hover:border-white/[0.15] transition-all">
           <div className="flex items-center gap-1.5 text-[#F36C3D] font-bold text-[10px] tracking-wider uppercase mb-1">
             <span className="w-1.5 h-1.5 rounded-full bg-[#F36C3D]" />
-            <span>Science Target</span>
+            <span>Target Location</span>
           </div>
           <div className="font-mono text-white text-[11px] font-semibold num-tabular">
             {targetPoint[0].toFixed(4)}°E, {targetPoint[1].toFixed(4)}°N
@@ -130,11 +140,14 @@ export default function RoutePlannerPanel({
         </div>
       </div>
 
-      {/* Optimization Strategy Mode Selector */}
+      {/* Computational Route Preferences Selector */}
       <div>
-        <span className="text-[10px] font-mono font-bold text-[#64748B] uppercase tracking-widest block mb-2">
-          CSRM TRAVERSE STRATEGY
-        </span>
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[10px] font-mono font-bold text-[#64748B] uppercase tracking-widest">
+            ROUTE PREFERENCE (NOT SAFETY CERTIFICATION)
+          </span>
+          <span className="text-[9px] font-mono text-slate-500">θ ≤ 22.0° Cutoff</span>
+        </div>
         <div className="grid grid-cols-2 gap-1.5">
           <button
             onClick={() => onModeChange("all")}
@@ -145,7 +158,7 @@ export default function RoutePlannerPanel({
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>All 3 Modes</span>
+            <span>All 3 Preferences</span>
           </button>
 
           <button
@@ -157,7 +170,7 @@ export default function RoutePlannerPanel({
             }`}
           >
             <ShieldCheck className="w-3.5 h-3.5 text-[#34D399]" />
-            <span>Min Metabolic</span>
+            <span>Lower-Slope</span>
           </button>
 
           <button
@@ -169,7 +182,7 @@ export default function RoutePlannerPanel({
             }`}
           >
             <Zap className="w-3.5 h-3.5 text-[#38BDF8]" />
-            <span>Balanced Time</span>
+            <span>Balanced</span>
           </button>
 
           <button
@@ -181,7 +194,7 @@ export default function RoutePlannerPanel({
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-[#E879F9]" />
-            <span>Science Target</span>
+            <span>Science Priority</span>
           </button>
         </div>
       </div>
@@ -200,7 +213,7 @@ export default function RoutePlannerPanel({
         ) : (
           <>
             <Play className="w-4 h-4 fill-white" />
-            <span>Compute EVA Traverse Alternatives</span>
+            <span>Compute Traverse Alternatives</span>
           </>
         )}
       </button>

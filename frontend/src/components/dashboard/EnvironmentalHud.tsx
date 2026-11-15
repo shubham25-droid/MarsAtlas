@@ -84,19 +84,24 @@ export default function EnvironmentalHud() {
           </div>
         </div>
 
-        {/* Radiation Dose */}
+        {/* Radiation Dose Proxy */}
         <div className="bg-[#0A0F1D]/80 p-3 rounded-lg border border-white/[0.06]">
           <div className="flex items-center justify-between text-slate-400 mb-1">
-            <span className="text-[10px] uppercase font-mono tracking-wider">GCR / Solar Dose</span>
+            <span className="text-[10px] uppercase font-mono tracking-wider">RAD Proxy (Gale)</span>
             <Radio className="w-3.5 h-3.5 text-[#FBBF24]" />
           </div>
           <div className="text-lg font-bold text-[#FBBF24] font-mono num-tabular">
             23.3 <span className="text-xs text-slate-400 font-normal">µSv/h</span>
           </div>
           <div className="text-[10px] text-slate-400 mt-1 font-mono">
-            Daily: 0.560 mSv/sol
+            MSL RAD Surface Proxy
           </div>
         </div>
+      </div>
+
+      {/* Radiation Disclosure Strip */}
+      <div className="px-3 py-1.5 rounded-lg bg-[#070B14] border border-white/[0.06] text-[10px] text-slate-400 font-mono">
+        <span>Illustrative radiation proxy — not a Jezero-specific radiation dose prediction.</span>
       </div>
 
       {/* Diurnal Timeline Slider Representation */}
