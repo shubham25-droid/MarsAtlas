@@ -34,6 +34,11 @@ const RotatingMarsGlobe = dynamic(
   { ssr: false, loading: () => <div className="w-full max-w-[340px] sm:max-w-[400px] aspect-square rounded-3xl bg-[#030712]/70 border border-white/10 flex items-center justify-center text-xs font-mono text-slate-500 mx-auto">Loading 3D Mars Globe...</div> }
 );
 
+const SolarSystemBackground = dynamic(
+  () => import("@/components/landing/SolarSystemBackground"),
+  { ssr: false }
+);
+
 interface LandingPageProps {
   onEnterWorkspace: () => void;
   onOpenProvenance: () => void;
@@ -53,22 +58,14 @@ export default function LandingPage({
       {/* 1. CINEMATIC MISSION HERO WITH TRANSLUCENT FROSTED GLASS HUD & VISIBLE VISTA */}
       <section className="relative w-full min-h-[92vh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 pt-10 pb-20">
         
-        {/* Layer A: Pure Cosmic Deep-Space Backdrop (Zero text, no zoomed blurry distortion) */}
+        {/* Layer A: Pure Cosmic Deep-Space Backdrop */}
         <div className="absolute inset-0 bg-[#030712] pointer-events-none" />
 
-        {/* Layer B: Space Apps Celestial Trajectory Rings & Subtle Orbital Grid */}
-        <div className="absolute inset-0 opacity-25 pointer-events-none flex items-center justify-center overflow-hidden">
-          <svg className="w-full h-full max-w-7xl min-w-[750px]" viewBox="0 0 1000 1000" fill="none">
-            <circle cx="500" cy="500" r="450" stroke="#38BDF8" strokeWidth="0.75" strokeDasharray="4 8" />
-            <circle cx="500" cy="500" r="320" stroke="#FC3D21" strokeWidth="0.5" strokeOpacity="0.6" />
-            <ellipse cx="500" cy="500" rx="480" ry="200" stroke="#38BDF8" strokeWidth="0.5" strokeOpacity="0.3" transform="rotate(-15 500 500)" />
-            <ellipse cx="500" cy="500" rx="420" ry="160" stroke="#FBBF24" strokeWidth="0.5" strokeDasharray="6 6" strokeOpacity="0.35" transform="rotate(25 500 500)" />
-            <line x1="80" y1="500" x2="920" y2="500" stroke="#38BDF8" strokeWidth="0.3" strokeOpacity="0.25" strokeDasharray="3 9" />
-          </svg>
-        </div>
+        {/* Layer B: Real-Time 3D Solar System Planetary Orbits & Starfield */}
+        <SolarSystemBackground />
 
         {/* Layer C: Gentle Warm Planetary Horizon Arc (Atmospheric depth, clean & elegant) */}
-        <div className="absolute bottom-0 inset-x-0 h-[480px] bg-[radial-gradient(ellipse_at_50%_100%,rgba(243,108,61,0.16),transparent_70%)] pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-0 h-[480px] bg-[radial-gradient(ellipse_at_50%_100%,rgba(243,108,61,0.18),transparent_70%)] pointer-events-none" />
 
         {/* Centered Hero Content Container */}
         <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center space-y-6 pt-2">
@@ -168,9 +165,70 @@ export default function LandingPage({
             </div>
           </div>
 
-          {/* Centerpiece Live Interactive Rotating Mars Globe */}
-          <div className="w-full pt-4 flex flex-col items-center">
-            <RotatingMarsGlobe />
+          {/* Dual Aerospace Command Showcase: 3D Rotating Mars + Boxed Flight Insignia */}
+          <div className="w-full max-w-5xl mx-auto pt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch text-left">
+            
+            {/* Box 1: Interactive 3D Planetary Observatory */}
+            <div className="p-5 rounded-3xl bg-[#050B17]/70 backdrop-blur-xl border border-white/15 shadow-[0_12px_48px_rgba(0,0,0,0.8)] flex flex-col items-center justify-between space-y-4">
+              <div className="w-full flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#FC3D21] animate-ping" />
+                  <span className="text-xs font-bold text-white font-sans uppercase tracking-wider">3D Planetary Observatory</span>
+                </div>
+                <span className="text-[10px] font-mono text-[#38BDF8] px-2 py-0.5 rounded bg-[#38BDF8]/10 border border-[#38BDF8]/20">
+                  Mars IAU2000
+                </span>
+              </div>
+
+              <div className="w-full flex justify-center py-1">
+                <RotatingMarsGlobe />
+              </div>
+
+              <div className="w-full pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                <span>Axial Tilt: 25.19°</span>
+                <span className="text-[#34D399]">Drag to Spin Globe</span>
+              </div>
+            </div>
+
+            {/* Box 2: Official Mission Emblem & Flight Insignia ("logo tha na ek box me wo bhi accha lag raha tha") */}
+            <div className="p-5 rounded-3xl bg-[#050B17]/70 backdrop-blur-xl border border-white/15 shadow-[0_12px_48px_rgba(0,0,0,0.8)] flex flex-col justify-between space-y-4 relative group">
+              <div className="w-full flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#38BDF8]" />
+                  <span className="text-xs font-bold text-white font-sans uppercase tracking-wider">Official Flight Insignia</span>
+                </div>
+                <span className="text-[10px] font-mono text-[#FC3D21] px-2 py-0.5 rounded bg-[#FC3D21]/10 border border-[#FC3D21]/20 font-bold uppercase">
+                  Space Apps 2026
+                </span>
+              </div>
+
+              {/* Insignia Graphic Frame */}
+              <div className="relative group max-w-[340px] sm:max-w-[380px] w-full mx-auto my-auto">
+                <div className="absolute -inset-1 bg-gradient-to-r from-[#FC3D21]/40 via-[#F97316]/25 to-[#38BDF8]/40 rounded-2xl blur-lg opacity-70 group-hover:opacity-100 transition duration-500" />
+                <div className="relative rounded-2xl overflow-hidden border border-white/20 bg-[#070B14] shadow-2xl">
+                  <img
+                    src="/marsatlas-brand.jpg"
+                    alt="MarsAtlas Official Mission Emblem"
+                    className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-md bg-black/85 border border-white/10 text-[10px] font-mono text-[#38BDF8] backdrop-blur-md flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
+                    <span>MISSION EMBLEM</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mission Badge Description */}
+              <div className="w-full pt-3 border-t border-white/10 space-y-1 text-left">
+                <span className="text-[10px] font-mono font-bold text-[#FC3D21] tracking-widest uppercase block">
+                  Integrated Terrain Intelligence
+                </span>
+                <p className="text-[11px] text-slate-300 font-sans leading-relaxed">
+                  Official mission emblem commemorating Perseverance at Jezero Crater, the human exploration ascent horizon, and autonomous traverse planning.
+                </p>
+              </div>
+            </div>
+
           </div>
 
         </div>
