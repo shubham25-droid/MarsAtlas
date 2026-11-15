@@ -25,7 +25,7 @@ export default function SolarSystemBackground() {
     // 1. Scene & Deep Space Perspective Camera
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 400);
-    camera.position.set(0, 4, 48);
+    camera.position.set(0, 2, 40);
     camera.lookAt(0, 0, 0);
 
     // 2. High-Performance WebGL Renderer
@@ -39,7 +39,7 @@ export default function SolarSystemBackground() {
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       renderer.setSize(width, height);
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 0.95;
+      renderer.toneMappingExposure = 1.05;
       container.appendChild(renderer.domElement);
     } catch (e) {
       console.error("WebGL initialization failed for SolarSystemBackground:", e);
@@ -47,17 +47,17 @@ export default function SolarSystemBackground() {
     }
 
     // 3. Deep Celestial Starfield (Placed far behind UI at z = -40 to -140)
-    const starCount = 2200;
+    const starCount = 2800;
     const starGeo = new THREE.BufferGeometry();
     const positions = new Float32Array(starCount * 3);
     const colors = new Float32Array(starCount * 3);
 
     for (let i = 0; i < starCount; i++) {
       // Cylindrical deep-space distribution
-      const radius = 35 + Math.random() * 85;
+      const radius = 30 + Math.random() * 95;
       const theta = Math.random() * Math.PI * 2;
-      const y = (Math.random() - 0.5) * 80;
-      const zDepth = -30 - Math.random() * 90; // Far behind UI plane
+      const y = (Math.random() - 0.5) * 90;
+      const zDepth = -20 - Math.random() * 110;
 
       positions[i * 3] = radius * Math.cos(theta);
       positions[i * 3 + 1] = y;
@@ -65,24 +65,24 @@ export default function SolarSystemBackground() {
 
       // Authentic astronomical stellar temperatures
       const rand = Math.random();
-      if (rand > 0.92) {
+      if (rand > 0.90) {
         // Red / Amber giants (Class M/K)
-        colors[i * 3] = 0.96;
-        colors[i * 3 + 1] = 0.45;
-        colors[i * 3 + 2] = 0.22;
-      } else if (rand > 0.78) {
+        colors[i * 3] = 0.98;
+        colors[i * 3 + 1] = 0.55;
+        colors[i * 3 + 2] = 0.28;
+      } else if (rand > 0.75) {
         // Blue-white stellar beacons (Class O/B)
-        colors[i * 3] = 0.55;
-        colors[i * 3 + 1] = 0.78;
+        colors[i * 3] = 0.65;
+        colors[i * 3 + 1] = 0.85;
         colors[i * 3 + 2] = 1.0;
-      } else if (rand > 0.6) {
+      } else if (rand > 0.55) {
         // Solar-type yellow-white stars (Class G)
         colors[i * 3] = 1.0;
-        colors[i * 3 + 1] = 0.95;
-        colors[i * 3 + 2] = 0.8;
+        colors[i * 3 + 1] = 0.98;
+        colors[i * 3 + 2] = 0.85;
       } else {
         // Faint background stars
-        const val = 0.35 + Math.random() * 0.35;
+        const val = 0.5 + Math.random() * 0.45;
         colors[i * 3] = val;
         colors[i * 3 + 1] = val;
         colors[i * 3 + 2] = val;
@@ -93,27 +93,27 @@ export default function SolarSystemBackground() {
     starGeo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
     const starMat = new THREE.PointsMaterial({
-      size: 0.15,
+      size: 0.18,
       vertexColors: true,
       transparent: true,
-      opacity: 0.7
+      opacity: 0.85
     });
 
     const starField = new THREE.Points(starGeo, starMat);
     scene.add(starField);
 
-    // 4. Subtle Ambient Celestial Orbits (Faint background line-art, NOT solid discs)
+    // 4. Vibrant & Crisp NASA Celestial Orbits & Hohmann Trajectories
     const orbitsGroup = new THREE.Group();
-    orbitsGroup.position.set(0, 0, -25); // Pushed deep behind UI cards
-    orbitsGroup.rotation.x = THREE.MathUtils.degToRad(26);
-    orbitsGroup.rotation.z = THREE.MathUtils.degToRad(-14);
+    orbitsGroup.position.set(0, -1, -8); // Positioned so arcs gracefully frame the hero viewport
+    orbitsGroup.rotation.x = THREE.MathUtils.degToRad(24);
+    orbitsGroup.rotation.z = THREE.MathUtils.degToRad(-12);
     scene.add(orbitsGroup);
 
-    // Scaled Planetary Orbits with low opacity (faint background guide lines)
+    // Scaled Planetary Orbits with visible, glowing scientific line-art
     const ORBIT_CURVES = [
-      { a: 9.0, e: 0.0167, color: 0x38bdf8, opacity: 0.15 }, // Earth orbit (faint cyan)
-      { a: 14.5, e: 0.0934, color: 0xfc3d21, opacity: 0.22 }, // Mars orbit (warm rust)
-      { a: 21.0, e: 0.05, color: 0xfbbf24, opacity: 0.12 }   // Asteroid belt boundary
+      { a: 10.5, e: 0.0167, color: 0x38bdf8, opacity: 0.55 }, // Earth orbit (glowing cyan)
+      { a: 16.0, e: 0.0934, color: 0xf97316, opacity: 0.65 }, // Mars orbit (warm rust orange)
+      { a: 22.5, e: 0.05, color: 0xfbbf24, opacity: 0.35 }    // Asteroid belt boundary (warm amber)
     ];
 
     ORBIT_CURVES.forEach((orb) => {
@@ -128,7 +128,7 @@ export default function SolarSystemBackground() {
         0
       );
 
-      const points = curve.getPoints(96);
+      const points = curve.getPoints(128);
       const pts3D = points.map((p) => new THREE.Vector3(p.x, 0, p.y));
       const lineGeo = new THREE.BufferGeometry().setFromPoints(pts3D);
       const lineMat = new THREE.LineBasicMaterial({
@@ -141,9 +141,9 @@ export default function SolarSystemBackground() {
       orbitsGroup.add(lineLoop);
     });
 
-    // Faint Dashed Hohmann Interplanetary Transfer Arc
-    const r1 = 9.0;
-    const r2 = 14.5;
+    // Faint Dashed Hohmann Interplanetary Transfer Arc (Earth to Mars Transfer Window)
+    const r1 = 10.5;
+    const r2 = 16.0;
     const aH = (r1 + r2) / 2;
     const bH = Math.sqrt(r1 * r2);
     const cH = aH - r1;
@@ -155,28 +155,48 @@ export default function SolarSystemBackground() {
       false,
       0
     );
-    const hohmannPts = hohmannCurve.getPoints(64);
+    const hohmannPts = hohmannCurve.getPoints(80);
     const hohmannPts3D = hohmannPts.map((p) => new THREE.Vector3(p.x, 0, p.y));
     const hohmannGeo = new THREE.BufferGeometry().setFromPoints(hohmannPts3D);
     const hohmannMat = new THREE.LineDashedMaterial({
-      color: 0xf59e0b,
-      dashSize: 0.5,
-      gapSize: 0.4,
+      color: 0xfbbf24,
+      dashSize: 0.7,
+      gapSize: 0.45,
       transparent: true,
-      opacity: 0.25
+      opacity: 0.75
     });
     const hohmannLine = new THREE.Line(hohmannGeo, hohmannMat);
     hohmannLine.computeLineDistances();
     orbitsGroup.add(hohmannLine);
 
-    // Subtle Diffuse Asteroid Dust Particles in Deep Background
-    const dustCount = 240;
+    // Glowing Astrometric Telemetry Nodes along the Orbits
+    const nodeGeo = new THREE.SphereGeometry(0.14, 16, 16);
+    // Earth node
+    const earthNodeMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+    const earthNode = new THREE.Mesh(nodeGeo, earthNodeMat);
+    earthNode.position.set(10.5, 0, 0);
+    orbitsGroup.add(earthNode);
+
+    // Mars node
+    const marsNodeMat = new THREE.MeshBasicMaterial({ color: 0xf97316 });
+    const marsNode = new THREE.Mesh(nodeGeo, marsNodeMat);
+    marsNode.position.set(-16.0, 0, 0);
+    orbitsGroup.add(marsNode);
+
+    // Transfer arrival vector node
+    const transNodeMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
+    const transNode = new THREE.Mesh(nodeGeo, transNodeMat);
+    transNode.position.set(0, 0, bH);
+    orbitsGroup.add(transNode);
+
+    // Diffuse Asteroid Dust Particles in Deep Background
+    const dustCount = 350;
     const dustGeo = new THREE.BufferGeometry();
     const dustPositions = new Float32Array(dustCount * 3);
     for (let i = 0; i < dustCount; i++) {
-      const dist = 18.0 + Math.random() * 5.0;
+      const dist = 19.0 + Math.random() * 6.0;
       const angle = Math.random() * Math.PI * 2;
-      const yOffset = (Math.random() - 0.5) * 1.5;
+      const yOffset = (Math.random() - 0.5) * 2.0;
 
       dustPositions[i * 3] = dist * Math.cos(angle);
       dustPositions[i * 3 + 1] = yOffset;
@@ -184,10 +204,10 @@ export default function SolarSystemBackground() {
     }
     dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPositions, 3));
     const dustMat = new THREE.PointsMaterial({
-      color: 0x94a3b8,
-      size: 0.1,
+      color: 0xcbd5e1,
+      size: 0.12,
       transparent: true,
-      opacity: 0.2
+      opacity: 0.4
     });
     const dustField = new THREE.Points(dustGeo, dustMat);
     orbitsGroup.add(dustField);

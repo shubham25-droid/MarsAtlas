@@ -125,9 +125,10 @@ export default function RotatingMarsGlobe() {
     tiltGroup.rotation.z = THREE.MathUtils.degToRad(-25.19);
     scene.add(tiltGroup);
 
-    // 5. Mars Sphere Mesh with Procedural MOLA Relief Bump Mapping
+    // 5. High-Definition Mars Sphere Mesh with Procedural MOLA Relief Bump Mapping
     const sphereRadius = 2.15;
-    const sphereGeo = new THREE.SphereGeometry(sphereRadius, 64, 64);
+    // 128x128 high-polygon tessellation for silky smooth silhouette and crater detail
+    const sphereGeo = new THREE.SphereGeometry(sphereRadius, 128, 128);
 
     const textureLoader = new THREE.TextureLoader();
     const marsTexture = textureLoader.load(
@@ -138,13 +139,13 @@ export default function RotatingMarsGlobe() {
     );
     marsTexture.colorSpace = THREE.SRGBColorSpace;
 
-    // Standard material with bumpMap deriving relief directly from the 2K texture
+    // Physically-based material with high-contrast topographic bump mapping
     const marsMaterial = new THREE.MeshStandardMaterial({
       map: marsTexture,
       bumpMap: marsTexture,
-      bumpScale: 0.038, // Realistic crater and canyon relief along the terminator
-      roughness: 0.86,
-      metalness: 0.02
+      bumpScale: 0.048, // Authentic crater rims and rift valley depth along the solar terminator
+      roughness: 0.84,
+      metalness: 0.03
     });
 
     const marsMesh = new THREE.Mesh(sphereGeo, marsMaterial);
@@ -154,29 +155,78 @@ export default function RotatingMarsGlobe() {
     tiltGroup.add(marsMesh);
     marsMeshRef.current = marsMesh;
 
-    // 6. Realistic Mars Atmospheric Limb Scattering (6.1 hPa Dust Aerosol Glow)
-    const atmoGeo = new THREE.SphereGeometry(sphereRadius * 1.022, 64, 64);
-    const atmoMat = new THREE.MeshBasicMaterial({
-      color: 0xf97316,
-      transparent: true,
-      opacity: 0.09,
+    // 6. Ultra-Realistic Mars Atmospheric Limb Scattering (Custom GLSL Fresnel Shader)
+    // Simulates authentic thin CO2 atmosphere with airborne iron-oxide dust aerosol scattering
+    const atmoGeo = new THREE.SphereGeometry(sphereRadius * 1.032, 64, 64);
+    const atmoShaderMat = new THREE.ShaderMaterial({
+      vertexShader: `
+        varying vec3 vNormal;
+        varying vec3 vViewPosition;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          vViewPosition = -mvPosition.xyz;
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vNormal;
+        varying vec3 vViewPosition;
+        void main() {
+          vec3 normal = normalize(vNormal);
+          vec3 viewDir = normalize(vViewPosition);
+          float fresnel = 1.0 - max(0.0, dot(normal, viewDir));
+          float intensity = pow(fresnel, 2.6);
+
+          // Mars Rayleigh & dust aerosol scattering:
+          // Warm salmon/terracotta dust hue near planetary limb, delicate high-altitude bluish-violet haze
+          vec3 dustColor = vec3(0.98, 0.46, 0.22);
+          vec3 hazeColor = vec3(0.42, 0.74, 0.98);
+          vec3 finalColor = mix(dustColor, hazeColor, pow(fresnel, 1.6) * 0.45);
+
+          gl_FragColor = vec4(finalColor, intensity * 0.72);
+        }
+      `,
+      blending: THREE.AdditiveBlending,
       side: THREE.BackSide,
-      blending: THREE.AdditiveBlending
+      transparent: true,
+      depthWrite: false
     });
-    const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
+    const atmoMesh = new THREE.Mesh(atmoGeo, atmoShaderMat);
     tiltGroup.add(atmoMesh);
 
-    // Outer faint atmospheric haze
-    const outerHazeGeo = new THREE.SphereGeometry(sphereRadius * 1.045, 48, 48);
-    const outerHazeMat = new THREE.MeshBasicMaterial({
-      color: 0xfb923c,
+    // Inner surface atmospheric haze sheen (simulates illuminated daylight limb)
+    const innerSheenGeo = new THREE.SphereGeometry(sphereRadius * 1.003, 64, 64);
+    const innerSheenMat = new THREE.ShaderMaterial({
+      vertexShader: `
+        varying vec3 vNormal;
+        varying vec3 vViewPosition;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          vViewPosition = -mvPosition.xyz;
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vNormal;
+        varying vec3 vViewPosition;
+        void main() {
+          vec3 normal = normalize(vNormal);
+          vec3 viewDir = normalize(vViewPosition);
+          float rim = 1.0 - max(0.0, dot(normal, viewDir));
+          float intensity = pow(rim, 3.4);
+          vec3 dustGlow = vec3(0.96, 0.50, 0.24);
+          gl_FragColor = vec4(dustGlow, intensity * 0.38);
+        }
+      `,
+      blending: THREE.AdditiveBlending,
+      side: THREE.FrontSide,
       transparent: true,
-      opacity: 0.04,
-      side: THREE.BackSide,
-      blending: THREE.AdditiveBlending
+      depthWrite: false
     });
-    const outerHazeMesh = new THREE.Mesh(outerHazeGeo, outerHazeMat);
-    tiltGroup.add(outerHazeMesh);
+    const innerSheenMesh = new THREE.Mesh(innerSheenGeo, innerSheenMat);
+    tiltGroup.add(innerSheenMesh);
 
     // 7. Authentic NASA Landmark Pinpoints & Concentric Radar Rings
     const createdRings: THREE.Mesh[] = [];
@@ -321,9 +371,9 @@ export default function RotatingMarsGlobe() {
       marsMaterial.dispose();
       marsTexture.dispose();
       atmoGeo.dispose();
-      atmoMat.dispose();
-      outerHazeGeo.dispose();
-      outerHazeMat.dispose();
+      atmoShaderMat.dispose();
+      innerSheenGeo.dispose();
+      innerSheenMat.dispose();
       renderer.dispose();
       if (domEl.parentNode) {
         domEl.parentNode.removeChild(domEl);

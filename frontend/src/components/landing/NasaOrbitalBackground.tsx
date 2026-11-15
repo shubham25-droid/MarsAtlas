@@ -10,11 +10,11 @@ interface NasaOrbitalBackgroundProps {
 /**
  * Clean & Harmonious NASA Space Apps Challenge Orbital Arc Watermark
  * Renders smooth, parallel concentric orbital trajectories sweeping gracefully
- * across light backgrounds, avoiding chaotic criss-crossing lines.
+ * across light backgrounds with crisp, scientific vector definition.
  */
 export default function NasaOrbitalBackground({
   className = "",
-  opacity = 0.4
+  opacity = 0.55
 }: NasaOrbitalBackgroundProps) {
   return (
     <div 
@@ -31,14 +31,14 @@ export default function NasaOrbitalBackground({
         <defs>
           {/* Subtle gradient fading smoothly into the background */}
           <linearGradient id="orbitalArcFade" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#94A3B8" stopOpacity="0.5" />
-            <stop offset="50%" stopColor="#CBD5E1" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#E2E8F0" stopOpacity="0.08" />
+            <stop offset="0%" stopColor="#64748B" stopOpacity="0.75" />
+            <stop offset="50%" stopColor="#94A3B8" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#CBD5E1" stopOpacity="0.2" />
           </linearGradient>
         </defs>
 
         {/* Single Cohesive Celestial Orbital Arc Cluster (Anchor: Off-screen Upper-Right) */}
-        <g stroke="url(#orbitalArcFade)" fill="none" strokeWidth="0.75">
+        <g stroke="url(#orbitalArcFade)" fill="none" strokeWidth="1.1">
           <circle cx="1280" cy="120" r="380" />
           <circle cx="1280" cy="120" r="620" />
           <circle cx="1280" cy="120" r="900" />
@@ -46,7 +46,7 @@ export default function NasaOrbitalBackground({
           <circle cx="1280" cy="120" r="1600" />
           <circle cx="1280" cy="120" r="2020" />
           {/* Subtle dashed interplanetary transfer window */}
-          <circle cx="1280" cy="120" r="1060" strokeDasharray="5 7" strokeWidth="0.75" />
+          <circle cx="1280" cy="120" r="1060" strokeDasharray="6 8" strokeWidth="1.1" />
         </g>
 
         {/* Faint single sweep arc across the lower horizon */}
@@ -54,14 +54,15 @@ export default function NasaOrbitalBackground({
           d="M -100 850 Q 600 550 1540 820"
           stroke="url(#orbitalArcFade)"
           fill="none"
-          strokeWidth="0.75"
-          opacity="0.6"
+          strokeWidth="1.1"
+          opacity="0.8"
         />
 
-        {/* Subtle astrometric crosshair node */}
-        <g stroke="#94A3B8" strokeWidth="0.5" opacity="0.4">
-          <line x1="840" y1="470" x2="840" y2="486" />
-          <line x1="832" y1="478" x2="848" y2="478" />
+        {/* Astrometric crosshair nodes and coordinate ticks */}
+        <g stroke="#64748B" strokeWidth="0.75" opacity="0.6">
+          <line x1="840" y1="468" x2="840" y2="488" />
+          <line x1="830" y1="478" x2="850" y2="478" />
+          <circle cx="840" cy="478" r="6" fill="none" strokeWidth="0.5" />
         </g>
       </svg>
     </div>

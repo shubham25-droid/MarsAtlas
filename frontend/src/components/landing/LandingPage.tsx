@@ -57,22 +57,91 @@ export default function LandingPage({
     <div className="w-full bg-[#04070D] text-[#F8FAFC] min-h-screen flex flex-col space-grid-bg selection:bg-[#FC3D21] selection:text-white font-sans">
       
       {/* 1. CINEMATIC MISSION HERO WITH TRANSLUCENT FROSTED GLASS COCKPIT & SCIENTIFIC CELESTIAL VISTA */}
-      <section className="relative w-full min-h-[92vh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 pt-10 pb-20">
+      <section className="relative w-full min-h-[95vh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 pt-10 pb-20">
         
         {/* Layer A: Pure Cosmic Deep-Space Backdrop */}
         <div className="absolute inset-0 bg-[#030712] pointer-events-none" />
 
-        {/* Layer B: Real-Time 3D Solar System Keplerian Orbits, Hohmann Trajectory & Starfield */}
+        {/* Layer B: Space Apps Challenge Cosmic Galaxy Backdrop (Image provided by user) */}
+        <div 
+          className="absolute inset-0 bg-cover bg-top pointer-events-none opacity-40 mix-blend-screen"
+          style={{ backgroundImage: "url('/assets/space_galaxy_bg.jpg')" }}
+        />
+
+        {/* Layer C: Deep Space Cosmic Nebula Radial Glows */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(56,189,248,0.24),transparent_70%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_35%,rgba(249,115,22,0.22),transparent_55%)] pointer-events-none" />
+
+        {/* Layer D: Real-Time 3D Solar System Keplerian Orbits, Hohmann Trajectory & Starfield */}
         <SolarSystemBackground />
 
-        {/* Layer C: Gentle Warm Planetary Horizon Arc (Atmospheric depth, clean & elegant) */}
-        <div className="absolute bottom-0 inset-x-0 h-[480px] bg-[radial-gradient(ellipse_at_50%_100%,rgba(243,108,61,0.18),transparent_70%)] pointer-events-none" />
+        {/* Layer E: Visible & Crisp NASA Orbital Trajectory Arcs (Watermark Lines) */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
+          <svg
+            className="w-full h-full"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1440 900"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            <defs>
+              <linearGradient id="heroOrbitCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.75" />
+                <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.45" />
+                <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.1" />
+              </linearGradient>
+              <linearGradient id="heroOrbitRust" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#F97316" stopOpacity="0.8" />
+                <stop offset="50%" stopColor="#EA580C" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#EA580C" stopOpacity="0.1" />
+              </linearGradient>
+              <linearGradient id="heroOrbitAmber" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FBBF24" stopOpacity="0.85" />
+                <stop offset="100%" stopColor="#FBBF24" stopOpacity="0.15" />
+              </linearGradient>
+            </defs>
+
+            {/* Earth & Mars Orbital Guides (Anchor: Upper-Right Sun Focal Center) */}
+            <g fill="none">
+              <ellipse cx="1260" cy="140" rx="420" ry="240" stroke="url(#heroOrbitCyan)" strokeWidth="1.2" transform="rotate(-18 1260 140)" />
+              <ellipse cx="1260" cy="140" rx="720" ry="410" stroke="url(#heroOrbitRust)" strokeWidth="1.4" transform="rotate(-18 1260 140)" />
+              <ellipse cx="1260" cy="140" rx="1080" ry="620" stroke="url(#heroOrbitCyan)" strokeWidth="1.0" opacity="0.6" transform="rotate(-18 1260 140)" />
+              <ellipse cx="1260" cy="140" rx="1480" ry="840" stroke="url(#heroOrbitRust)" strokeWidth="0.8" opacity="0.4" transform="rotate(-18 1260 140)" />
+
+              {/* Interplanetary Hohmann Transfer Trajectory Arc (Dashed Amber) */}
+              <path
+                d="M 120 780 C 420 480, 840 260, 1260 140"
+                stroke="url(#heroOrbitAmber)"
+                strokeWidth="1.5"
+                strokeDasharray="8 6"
+              />
+
+              {/* Astrometric Targeting Node Nodes */}
+              <circle cx="840" cy="360" r="4" fill="#38BDF8" />
+              <circle cx="840" cy="360" r="9" stroke="#38BDF8" strokeWidth="0.75" opacity="0.6" />
+              <circle cx="480" cy="560" r="4" fill="#F97316" />
+              <circle cx="480" cy="560" r="9" stroke="#F97316" strokeWidth="0.75" opacity="0.6" />
+
+              {/* Faint Astrometric Grid Coordinate Lines */}
+              <line x1="200" y1="0" x2="200" y2="900" stroke="#94A3B8" strokeWidth="0.5" opacity="0.12" strokeDasharray="4 8" />
+              <line x1="1240" y1="0" x2="1240" y2="900" stroke="#94A3B8" strokeWidth="0.5" opacity="0.12" strokeDasharray="4 8" />
+              <line x1="0" y1="450" x2="1440" y2="450" stroke="#94A3B8" strokeWidth="0.5" opacity="0.12" strokeDasharray="4 8" />
+            </g>
+          </svg>
+        </div>
+
+        {/* Layer F: Grand Martian Atmospheric Planetary Limb & Horizon Glow */}
+        <div className="absolute bottom-0 inset-x-0 h-[560px] pointer-events-none overflow-hidden">
+          {/* Sweeping Horizon Limb with Vibrant Orange Atmosphere */}
+          <div className="absolute -bottom-[430px] left-1/2 -translate-x-1/2 w-[1800px] h-[740px] rounded-[100%] border-t-2 border-[#F97316]/75 bg-gradient-to-t from-[#F97316]/25 via-[#EA580C]/12 to-transparent shadow-[0_-30px_110px_rgba(249,115,22,0.45)]" />
+          {/* Concentric Warm Planetary Ambient Diffusion */}
+          <div className="absolute bottom-0 inset-x-0 h-[360px] bg-[radial-gradient(ellipse_at_50%_100%,rgba(243,108,61,0.32),transparent_70%)]" />
+        </div>
 
         {/* Centered Hero Content Container */}
         <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center space-y-6 pt-2">
           
           {/* Institutional Mission Insignia Pill */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#050C1C]/85 border border-white/15 text-xs font-sans text-[#38BDF8] shadow-2xl backdrop-blur-md">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#050C1C]/85 border border-white/20 text-xs font-sans text-[#38BDF8] shadow-2xl backdrop-blur-md">
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#38BDF8] opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#38BDF8]" />
@@ -87,7 +156,7 @@ export default function LandingPage({
           </div>
 
           {/* Primary High-Impact Headline inside Translucent Aerospace Glass Container */}
-          <div className="w-full max-w-4xl bg-[#040A18]/35 backdrop-blur-md border border-white/10 rounded-3xl p-6 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.7)] space-y-5">
+          <div className="w-full max-w-4xl bg-[#040A18]/40 backdrop-blur-xl border border-white/15 rounded-3xl p-6 sm:p-10 shadow-[0_25px_70px_rgba(0,0,0,0.85)] space-y-5">
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white uppercase font-sans leading-[1.03] drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
               EXPLORE MARS. <br />
               <span className="text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
@@ -261,7 +330,7 @@ export default function LandingPage({
       {/* 3. THREE PILLARS (THE SCIENTIFIC PROBLEMS MARSATLAS SOLVES) */}
       <section id="overview" className="w-full py-20 px-4 sm:px-6 bg-slate-50 border-b border-slate-200 relative overflow-hidden">
         {/* Authentic NASA Space Apps Orbital Lines Background */}
-        <NasaOrbitalBackground opacity={0.35} />
+        <NasaOrbitalBackground opacity={0.55} />
 
         <div className="max-w-6xl mx-auto space-y-12 relative z-10">
           <div className="text-center space-y-3">
@@ -364,7 +433,7 @@ export default function LandingPage({
       {/* 4. DATA SOURCES & IMPLEMENTATION STATUS (HIGH-CONTRAST LIGHT THEME) */}
       <section className="w-full py-20 px-4 sm:px-6 bg-white border-b border-slate-200 relative overflow-hidden">
         {/* Authentic NASA Space Apps Orbital Lines Background */}
-        <NasaOrbitalBackground opacity={0.35} />
+        <NasaOrbitalBackground opacity={0.55} />
 
         <div className="max-w-6xl mx-auto space-y-10 relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -452,7 +521,7 @@ export default function LandingPage({
       {/* 5. DUAL STUDY SITES (JEZERO CRATER & GALE BOXWORK) */}
       <section className="w-full py-20 px-4 sm:px-6 bg-slate-50 border-b border-slate-200 relative overflow-hidden">
         {/* Authentic NASA Space Apps Orbital Lines Background */}
-        <NasaOrbitalBackground opacity={0.35} />
+        <NasaOrbitalBackground opacity={0.55} />
 
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
           <div className="w-full md:w-1/2 space-y-4">
@@ -528,7 +597,7 @@ export default function LandingPage({
       {/* 6. OFFICIAL MISSION INSIGNIA & PROJECT IDENTITY (DEDICATED SECTION) */}
       <section className="w-full py-20 px-4 sm:px-6 bg-white border-b border-slate-200 relative overflow-hidden">
         {/* Authentic NASA Space Apps Orbital Lines Background */}
-        <NasaOrbitalBackground opacity={0.35} />
+        <NasaOrbitalBackground opacity={0.55} />
 
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10 relative z-10">
           {/* Emblem Visual */}
@@ -599,7 +668,7 @@ export default function LandingPage({
       {/* 7. INSTITUTIONAL AGENCY FOOTER (CLEAN LIGHT THEME WITH ORBITAL ARCS) */}
       <footer className="w-full py-14 px-4 sm:px-6 bg-slate-100 border-t border-slate-200 text-xs text-slate-600 relative overflow-hidden">
         {/* Authentic NASA Space Apps Orbital Lines Background */}
-        <NasaOrbitalBackground opacity={0.3} />
+        <NasaOrbitalBackground opacity={0.5} />
 
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <div className="flex items-center gap-3.5">
