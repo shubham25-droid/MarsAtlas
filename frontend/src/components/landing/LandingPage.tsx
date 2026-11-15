@@ -26,7 +26,13 @@ import {
   AlertTriangle,
   Info
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import NasaMissionGallery from "@/components/landing/NasaMissionGallery";
+
+const RotatingMarsGlobe = dynamic(
+  () => import("@/components/landing/RotatingMarsGlobe"),
+  { ssr: false, loading: () => <div className="w-full max-w-[340px] sm:max-w-[400px] aspect-square rounded-3xl bg-[#030712]/70 border border-white/10 flex items-center justify-center text-xs font-mono text-slate-500 mx-auto">Loading 3D Mars Globe...</div> }
+);
 
 interface LandingPageProps {
   onEnterWorkspace: () => void;
@@ -47,17 +53,24 @@ export default function LandingPage({
       {/* 1. CINEMATIC MISSION HERO WITH TRANSLUCENT FROSTED GLASS HUD & VISIBLE VISTA */}
       <section className="relative w-full min-h-[92vh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 pt-10 pb-20">
         
-        {/* Layer A: Authentic Martian Background Vista (Richly visible with sharp details, NO heavy blur) */}
-        <div 
-          className="absolute inset-0 bg-center bg-no-repeat bg-cover pointer-events-none opacity-80"
-          style={{ backgroundImage: "url('/assets/hero-banner.jpg')" }} 
-        />
-
-        {/* Layer B: Gentle Vignette Gradient for Depth (Keeps Mars Centerpiece Vibrant) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#04070D]/40 via-transparent to-[#04070D]" />
+        {/* Layer A: Deep Space Celestial Canvas (NASA Space Apps Style, Clean & No baked text) */}
+        <div className="absolute inset-0 bg-[#04070D] pointer-events-none" />
         
-        {/* Layer C: Subtle Ambient Glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-[radial-gradient(ellipse,rgba(252,61,33,0.15),transparent_70%)] blur-3xl pointer-events-none" />
+        {/* Layer B: Subtle NASA Space Apps Orbital Geometry Rings & Coordinate Arcs */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none flex items-center justify-center overflow-hidden">
+          <svg className="w-full h-full max-w-7xl min-w-[800px]" viewBox="0 0 1000 1000" fill="none">
+            <circle cx="500" cy="500" r="460" stroke="#38BDF8" strokeWidth="0.75" strokeDasharray="4 8" />
+            <circle cx="500" cy="500" r="340" stroke="#FC3D21" strokeWidth="0.5" strokeOpacity="0.5" />
+            <circle cx="500" cy="500" r="220" stroke="#FBBF24" strokeWidth="0.5" strokeDasharray="2 6" strokeOpacity="0.4" />
+            <ellipse cx="500" cy="500" rx="490" ry="210" stroke="#38BDF8" strokeWidth="0.5" strokeOpacity="0.3" transform="rotate(-15 500 500)" />
+            <ellipse cx="500" cy="500" rx="430" ry="170" stroke="#FC3D21" strokeWidth="0.5" strokeOpacity="0.3" strokeDasharray="6 6" transform="rotate(25 500 500)" />
+            <line x1="100" y1="500" x2="900" y2="500" stroke="#38BDF8" strokeWidth="0.3" strokeOpacity="0.2" strokeDasharray="3 9" />
+            <line x1="500" y1="100" x2="500" y2="900" stroke="#38BDF8" strokeWidth="0.3" strokeOpacity="0.2" strokeDasharray="3 9" />
+          </svg>
+        </div>
+
+        {/* Layer C: Subtle Ambient Planetary Glow */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-[radial-gradient(ellipse,rgba(252,61,33,0.12),transparent_70%)] blur-3xl pointer-events-none" />
 
         {/* Centered Hero Content Container */}
         <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center space-y-6 pt-2">
@@ -157,20 +170,9 @@ export default function LandingPage({
             </div>
           </div>
 
-          {/* Centerpiece Mission Insignia Visual */}
-          <div className="relative group max-w-[280px] sm:max-w-xs mx-auto pt-3">
-            <div className="absolute -inset-1 bg-gradient-to-r from-[#FC3D21]/40 via-[#38BDF8]/30 to-[#A78BFA]/40 rounded-2xl blur-lg opacity-60 group-hover:opacity-90 transition duration-500" />
-            <div className="relative rounded-2xl overflow-hidden border border-white/20 bg-[#070B14] shadow-2xl">
-              <img
-                src="/marsatlas-brand.jpg"
-                alt="MarsAtlas Insignia"
-                className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-md bg-black/85 border border-white/10 text-[10px] font-mono text-[#38BDF8] backdrop-blur-md flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
-                <span>MISSION EMBLEM</span>
-              </div>
-            </div>
+          {/* Centerpiece Live Interactive Rotating Mars Globe */}
+          <div className="w-full pt-4">
+            <RotatingMarsGlobe />
           </div>
 
         </div>
