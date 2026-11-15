@@ -246,84 +246,84 @@ export default function LandingPage({
         </div>
       </section>
 
-      {/* 4. DATA SOURCES & IMPLEMENTATION STATUS */}
-      <section className="w-full py-20 px-4 sm:px-6 bg-[#04070D]">
+      {/* 4. DATA SOURCES & IMPLEMENTATION STATUS (HIGH-CONTRAST LIGHT THEME) */}
+      <section className="w-full py-20 px-4 sm:px-6 bg-slate-50 border-y border-slate-200">
         <div className="max-w-6xl mx-auto space-y-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-1.5">
-              <span className="text-xs font-mono font-bold text-[#FC3D21] tracking-widest uppercase">
+              <span className="text-xs font-mono font-bold text-[#C2410C] tracking-widest uppercase">
                 SCIENTIFIC RIGOR &amp; PROVENANCE
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight font-sans">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-sans">
                 Planetary Data and Scientific Context
               </h2>
             </div>
             <button
               onClick={onOpenProvenance}
-              className="px-4 py-2 bg-[#0C1220] hover:bg-[#162034] border border-[#38BDF8]/30 text-[#38BDF8] text-xs font-bold rounded-lg flex items-center gap-2 transition-all self-start md:self-auto"
+              className="px-4 py-2 bg-white hover:bg-slate-100 border border-slate-300 hover:border-slate-400 text-slate-800 hover:text-slate-900 text-xs font-bold rounded-lg flex items-center gap-2 transition-all shadow-sm hover:shadow self-start md:self-auto"
             >
-              <ShieldCheck className="w-4 h-4 text-[#38BDF8]" />
+              <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
               <span>Inspect Epistemic Matrix</span>
             </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs">
             {/* 1. Global Basemap */}
-            <div className="p-4 rounded-xl bg-[#0A0F1D] border border-white/10 space-y-2.5 shadow-lg">
-              <span className="text-[10px] font-mono text-[#38BDF8] font-bold uppercase tracking-wider block">Operational Base</span>
-              <h4 className="font-bold text-white text-sm">USGS Viking &amp; MOLA WMS</h4>
-              <p className="text-slate-300 text-[11px] leading-relaxed">
+            <div className="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-300 space-y-2.5 shadow-sm hover:shadow-md transition-all">
+              <span className="text-[10px] font-mono text-[#0369A1] bg-[#E0F2FE] px-2 py-0.5 rounded font-bold uppercase tracking-wider inline-block">Operational Base</span>
+              <h4 className="font-bold text-slate-900 text-sm font-sans">USGS Viking &amp; MOLA WMS</h4>
+              <p className="text-slate-600 text-[11px] leading-relaxed font-sans">
                 Global MDIM2.1 color mosaic and MOLA shaded relief streamed via USGS Astrogeology WMS.
               </p>
-              <div className="pt-2 border-t border-white/10 text-[10px] text-[#38BDF8] font-mono">
+              <div className="pt-2 border-t border-slate-100 text-[10px] text-[#0369A1] font-mono font-semibold">
                 EPSG:104905 Projection
               </div>
             </div>
 
             {/* 2. Topo Surrogate */}
-            <div className="p-4 rounded-xl bg-[#0A0F1D] border border-white/10 space-y-2.5 shadow-lg">
-              <span className="text-[10px] font-mono text-[#34D399] font-bold uppercase tracking-wider block">Terrain Model</span>
-              <h4 className="font-bold text-white text-sm">EVA Prototype Sector</h4>
-              <p className="text-slate-300 text-[11px] leading-relaxed">
+            <div className="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-300 space-y-2.5 shadow-sm hover:shadow-md transition-all">
+              <span className="text-[10px] font-mono text-[#15803D] bg-[#DCFCE7] px-2 py-0.5 rounded font-bold uppercase tracking-wider inline-block">Terrain Model</span>
+              <h4 className="font-bold text-slate-900 text-sm font-sans">EVA Prototype Sector</h4>
+              <p className="text-slate-600 text-[11px] leading-relaxed font-sans">
                 350 × 550 surrogate grid (11.3 m spacing) for prototype route comparison and slope evaluation.
               </p>
-              <div className="pt-2 border-t border-white/10 text-[10px] text-[#34D399] font-mono">
+              <div className="pt-2 border-t border-slate-100 text-[10px] text-[#15803D] font-mono font-semibold">
                 Surrogate Grid (.npz)
               </div>
             </div>
 
             {/* 3. Rover Telemetry */}
-            <div className="p-4 rounded-xl bg-[#0A0F1D] border border-white/10 space-y-2.5 shadow-lg">
-              <span className="text-[10px] font-mono text-[#FC3D21] font-bold uppercase tracking-wider block">Real Telemetry</span>
-              <h4 className="font-bold text-white text-sm">NASA-AMMOS MMGIS</h4>
-              <p className="text-slate-300 text-[11px] leading-relaxed">
+            <div className="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-300 space-y-2.5 shadow-sm hover:shadow-md transition-all">
+              <span className="text-[10px] font-mono text-[#C2410C] bg-[#FFEDD5] px-2 py-0.5 rounded font-bold uppercase tracking-wider inline-block">Real Telemetry</span>
+              <h4 className="font-bold text-slate-900 text-sm font-sans">NASA-AMMOS MMGIS</h4>
+              <p className="text-slate-600 text-[11px] leading-relaxed font-sans">
                 708 Perseverance waypoints and 559 traverse legs from landing through Sol 2022.
               </p>
-              <div className="pt-2 border-t border-white/10 text-[10px] text-[#FC3D21] font-mono">
+              <div className="pt-2 border-t border-slate-100 text-[10px] text-[#C2410C] font-mono font-semibold">
                 Real Spacecraft Data
               </div>
             </div>
 
             {/* 4. Geology Overlays */}
-            <div className="p-4 rounded-xl bg-[#0A0F1D] border border-white/10 space-y-2.5 shadow-lg">
-              <span className="text-[10px] font-mono text-[#A78BFA] font-bold uppercase tracking-wider block">Simplified Context</span>
-              <h4 className="font-bold text-white text-sm">USGS SIM 3464 Overlays</h4>
-              <p className="text-slate-300 text-[11px] leading-relaxed">
+            <div className="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-300 space-y-2.5 shadow-sm hover:shadow-md transition-all">
+              <span className="text-[10px] font-mono text-[#7C3AED] bg-[#F3E8FF] px-2 py-0.5 rounded font-bold uppercase tracking-wider inline-block">Simplified Context</span>
+              <h4 className="font-bold text-slate-900 text-sm font-sans">USGS SIM 3464 Overlays</h4>
+              <p className="text-slate-600 text-[11px] leading-relaxed font-sans">
                 5 hand-simplified polygon units after Sun &amp; Stack (2020) illustrating regional geological context.
               </p>
-              <div className="pt-2 border-t border-white/10 text-[10px] text-[#A78BFA] font-mono">
+              <div className="pt-2 border-t border-slate-100 text-[10px] text-[#7C3AED] font-mono font-semibold">
                 Simplified Polygon Layer
               </div>
             </div>
 
             {/* 5. Science Targets */}
-            <div className="p-4 rounded-xl bg-[#0A0F1D] border border-white/10 space-y-2.5 shadow-lg">
-              <span className="text-[10px] font-mono text-[#FBBF24] font-bold uppercase tracking-wider block">Authored Targets</span>
-              <h4 className="font-bold text-white text-sm">CRISM-Referenced Points</h4>
-              <p className="text-slate-300 text-[11px] leading-relaxed">
+            <div className="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-300 space-y-2.5 shadow-sm hover:shadow-md transition-all">
+              <span className="text-[10px] font-mono text-[#B45309] bg-[#FEF3C7] px-2 py-0.5 rounded font-bold uppercase tracking-wider inline-block">Authored Targets</span>
+              <h4 className="font-bold text-slate-900 text-sm font-sans">CRISM-Referenced Points</h4>
+              <p className="text-slate-600 text-[11px] leading-relaxed font-sans">
                 5 manually authored locations referencing published CRISM observations (no live spectral cube processing).
               </p>
-              <div className="pt-2 border-t border-white/10 text-[10px] text-[#FBBF24] font-mono">
+              <div className="pt-2 border-t border-slate-100 text-[10px] text-[#B45309] font-mono font-semibold">
                 Authored Reference Data
               </div>
             </div>
