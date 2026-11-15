@@ -204,16 +204,16 @@ export default function LandingPage({
                 </span>
               </div>
 
-              {/* Insignia Graphic Frame */}
-              <div className="relative group max-w-[320px] sm:max-w-[350px] w-full mx-auto my-auto">
-                <div className="absolute -inset-1 bg-gradient-to-r from-[#FC3D21]/40 via-[#F97316]/25 to-[#38BDF8]/40 rounded-2xl blur-lg opacity-70 group-hover:opacity-100 transition duration-500" />
-                <div className="relative rounded-2xl overflow-hidden border border-white/20 bg-[#070B14] shadow-2xl">
+              {/* Insignia Graphic Frame - Expanded Prominent Scale & High-Resolution Presentation */}
+              <div className="relative group w-full max-w-[440px] sm:max-w-[480px] mx-auto my-auto py-1.5">
+                <div className="absolute -inset-2 bg-gradient-to-r from-[#FC3D21]/50 via-[#F97316]/35 to-[#38BDF8]/45 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition duration-500" />
+                <div className="relative rounded-2xl overflow-hidden border border-white/25 bg-[#070B14] shadow-[0_16px_50px_rgba(0,0,0,0.85)] aspect-[3/2] flex items-center justify-center">
                   <img
-                    src="/marsatlas-brand.jpg"
+                    src="/assets/logo.png"
                     alt="MarsAtlas Official Mission Emblem"
-                    className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute bottom-2.5 right-2.5 px-3 py-1 rounded-lg bg-black/85 border border-white/15 text-xs font-semibold text-[#38BDF8] backdrop-blur-md flex items-center gap-1.5 font-sans">
+                  <div className="absolute bottom-3 right-3 px-3 py-1 rounded-lg bg-black/85 border border-white/20 text-xs font-semibold text-[#38BDF8] backdrop-blur-md flex items-center gap-1.5 font-sans shadow-lg">
                     <span className="w-2 h-2 rounded-full bg-[#38BDF8] animate-pulse" />
                     <span>MISSION EMBLEM</span>
                   </div>

@@ -98,9 +98,9 @@ export default function RotatingMarsGlobe() {
     // 1. Scene Setup
     const scene = new THREE.Scene();
 
-    // 2. Camera Setup
-    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
-    camera.position.set(0, 0, 6.4);
+    // 2. Camera Setup (Fine-tuned FOV and distance so Mars and its atmospheric halo fit completely with comfortable breathing room)
+    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
+    camera.position.set(0, 0, 6.6);
 
     // 3. WebGL Renderer with High-Precision ACES Filmic Tone Mapping
     let renderer: THREE.WebGLRenderer;
@@ -113,7 +113,7 @@ export default function RotatingMarsGlobe() {
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(width, height);
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.15;
+      renderer.toneMappingExposure = 1.18;
       container.appendChild(renderer.domElement);
     } catch (e) {
       console.error("WebGL initialization failed for RotatingMarsGlobe:", e);
@@ -125,8 +125,9 @@ export default function RotatingMarsGlobe() {
     tiltGroup.rotation.z = THREE.MathUtils.degToRad(-25.19);
     scene.add(tiltGroup);
 
-    // 5. High-Definition Mars Sphere Mesh with Procedural MOLA Relief Bump Mapping
-    const sphereRadius = 2.15;
+    // 5. High-Definition Mars Sphere Mesh with Procedural MOLA Relief Bump & Normal Mapping
+    // Perfectly proportioned sphere radius so the whole planet floats unobstructed inside viewport
+    const sphereRadius = 1.58;
     // 128x128 high-polygon tessellation for silky smooth silhouette and crater detail
     const sphereGeo = new THREE.SphereGeometry(sphereRadius, 128, 128);
 
@@ -139,13 +140,32 @@ export default function RotatingMarsGlobe() {
     );
     marsTexture.colorSpace = THREE.SRGBColorSpace;
 
-    // Physically-based material with high-contrast topographic bump mapping
+    // Authentic MOLA normal map for crisp 3D crater rims, scarps, and Mount Sharp / Olympus Mons relief
+    const marsNormalMap = textureLoader.load(
+      "/assets/mars_normal_2k.jpg",
+      () => {
+        renderer.render(scene, camera);
+      }
+    );
+
+    // Planetary roughness map distinguishing matte red dust from icy polar caps and scoured basalt
+    const marsRoughnessMap = textureLoader.load(
+      "/assets/mars_roughness_2k.jpg",
+      () => {
+        renderer.render(scene, camera);
+      }
+    );
+
+    // Physically-based material with high-contrast topographic normal and bump mapping
     const marsMaterial = new THREE.MeshStandardMaterial({
       map: marsTexture,
+      normalMap: marsNormalMap,
+      normalScale: new THREE.Vector2(0.85, 0.85),
+      roughnessMap: marsRoughnessMap,
+      roughness: 0.85,
+      metalness: 0.02,
       bumpMap: marsTexture,
-      bumpScale: 0.048, // Authentic crater rims and rift valley depth along the solar terminator
-      roughness: 0.84,
-      metalness: 0.03
+      bumpScale: 0.02
     });
 
     const marsMesh = new THREE.Mesh(sphereGeo, marsMaterial);
@@ -155,36 +175,61 @@ export default function RotatingMarsGlobe() {
     tiltGroup.add(marsMesh);
     marsMeshRef.current = marsMesh;
 
-    // 6. Ultra-Realistic Mars Atmospheric Limb Scattering (Custom GLSL Fresnel Shader)
+    // 6. Ultra-Realistic Mars Atmospheric Limb Scattering (Custom Light-Aware GLSL Rayleigh Shader)
     // Simulates authentic thin CO2 atmosphere with airborne iron-oxide dust aerosol scattering
-    const atmoGeo = new THREE.SphereGeometry(sphereRadius * 1.032, 64, 64);
+    const sunVector = new THREE.Vector3(7.5, 3.8, 5.2).normalize();
+
+    const atmoGeo = new THREE.SphereGeometry(sphereRadius * 1.035, 64, 64);
     const atmoShaderMat = new THREE.ShaderMaterial({
+      uniforms: {
+        uSunDirection: { value: sunVector.clone() },
+        uColorDust: { value: new THREE.Color(0xfc5a24) },   // Warm Martian iron-oxide dust
+        uColorHaze: { value: new THREE.Color(0x50a6ff) },   // High-altitude thin Rayleigh limb haze
+        uColorSunset: { value: new THREE.Color(0xff8c42) }  // Golden terminator dusk
+      },
       vertexShader: `
         varying vec3 vNormal;
         varying vec3 vViewPosition;
+        varying vec3 vWorldNormal;
         void main() {
           vNormal = normalize(normalMatrix * normal);
+          vWorldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
           vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
           vViewPosition = -mvPosition.xyz;
           gl_Position = projectionMatrix * mvPosition;
         }
       `,
       fragmentShader: `
+        uniform vec3 uSunDirection;
+        uniform vec3 uColorDust;
+        uniform vec3 uColorHaze;
+        uniform vec3 uColorSunset;
         varying vec3 vNormal;
         varying vec3 vViewPosition;
+        varying vec3 vWorldNormal;
+
         void main() {
           vec3 normal = normalize(vNormal);
           vec3 viewDir = normalize(vViewPosition);
+          
+          // Fresnel rim effect (peaks at planetary silhouette limb)
           float fresnel = 1.0 - max(0.0, dot(normal, viewDir));
-          float intensity = pow(fresnel, 2.6);
+          float intensity = pow(fresnel, 2.7);
 
-          // Mars Rayleigh & dust aerosol scattering:
-          // Warm salmon/terracotta dust hue near planetary limb, delicate high-altitude bluish-violet haze
-          vec3 dustColor = vec3(0.98, 0.46, 0.22);
-          vec3 hazeColor = vec3(0.42, 0.74, 0.98);
-          vec3 finalColor = mix(dustColor, hazeColor, pow(fresnel, 1.6) * 0.45);
+          // Sunlight alignment: realistic day/night terminator falloff
+          float sunDot = dot(normalize(vWorldNormal), normalize(uSunDirection));
+          float dayFactor = smoothstep(-0.25, 0.6, sunDot);
+          float twilightFactor = smoothstep(-0.2, 0.15, sunDot) * (1.0 - smoothstep(0.15, 0.55, sunDot));
 
-          gl_FragColor = vec4(finalColor, intensity * 0.72);
+          // Atmosphere color gradient: warm sunset on terminator, bluish high haze, terracotta dust
+          vec3 atmoColor = mix(uColorDust, uColorHaze, pow(fresnel, 1.8) * 0.55);
+          atmoColor = mix(atmoColor, uColorSunset, twilightFactor * 0.7);
+
+          // Subtle night-side ambient starlight rim
+          float nightGlow = 0.07 * pow(fresnel, 3.5);
+          float finalAlpha = (intensity * dayFactor * 0.85) + nightGlow;
+
+          gl_FragColor = vec4(atmoColor, finalAlpha);
         }
       `,
       blending: THREE.AdditiveBlending,
@@ -198,26 +243,39 @@ export default function RotatingMarsGlobe() {
     // Inner surface atmospheric haze sheen (simulates illuminated daylight limb)
     const innerSheenGeo = new THREE.SphereGeometry(sphereRadius * 1.003, 64, 64);
     const innerSheenMat = new THREE.ShaderMaterial({
+      uniforms: {
+        uSunDirection: { value: sunVector.clone() },
+        uDustGlow: { value: new THREE.Color(0xf97316) }
+      },
       vertexShader: `
         varying vec3 vNormal;
         varying vec3 vViewPosition;
+        varying vec3 vWorldNormal;
         void main() {
           vNormal = normalize(normalMatrix * normal);
+          vWorldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
           vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
           vViewPosition = -mvPosition.xyz;
           gl_Position = projectionMatrix * mvPosition;
         }
       `,
       fragmentShader: `
+        uniform vec3 uSunDirection;
+        uniform vec3 uDustGlow;
         varying vec3 vNormal;
         varying vec3 vViewPosition;
+        varying vec3 vWorldNormal;
+
         void main() {
           vec3 normal = normalize(vNormal);
           vec3 viewDir = normalize(vViewPosition);
           float rim = 1.0 - max(0.0, dot(normal, viewDir));
-          float intensity = pow(rim, 3.4);
-          vec3 dustGlow = vec3(0.96, 0.50, 0.24);
-          gl_FragColor = vec4(dustGlow, intensity * 0.38);
+          float intensity = pow(rim, 3.5);
+
+          float sunDot = dot(normalize(vWorldNormal), normalize(uSunDirection));
+          float dayFactor = smoothstep(-0.1, 0.5, sunDot);
+
+          gl_FragColor = vec4(uDustGlow, intensity * dayFactor * 0.40);
         }
       `,
       blending: THREE.AdditiveBlending,
@@ -231,17 +289,17 @@ export default function RotatingMarsGlobe() {
     // 7. Authentic NASA Landmark Pinpoints & Concentric Radar Rings
     const createdRings: THREE.Mesh[] = [];
     SITES.forEach((site) => {
-      const pos = latLonToVector3(site.lat, site.lon, sphereRadius + 0.015);
+      const pos = latLonToVector3(site.lat, site.lon, sphereRadius + 0.012);
 
       // Core landmark bead
-      const markerGeo = new THREE.SphereGeometry(0.04, 16, 16);
+      const markerGeo = new THREE.SphereGeometry(0.032, 16, 16);
       const markerMat = new THREE.MeshBasicMaterial({ color: site.color });
       const marker = new THREE.Mesh(markerGeo, markerMat);
       marker.position.copy(pos);
       marsMesh.add(marker);
 
       // Radar telemetry ring
-      const ringGeo = new THREE.RingGeometry(0.06, 0.088, 32);
+      const ringGeo = new THREE.RingGeometry(0.048, 0.072, 32);
       const ringMat = new THREE.MeshBasicMaterial({
         color: site.color,
         side: THREE.DoubleSide,
@@ -258,17 +316,17 @@ export default function RotatingMarsGlobe() {
 
     // 8. Authentic Sun Lighting (Solar constant at 1.524 AU = 590 W/m²)
     // Directional Sun light from upper-right
-    const sunLight = new THREE.DirectionalLight(0xfff8ee, 3.4);
-    sunLight.position.set(7, 3.5, 5);
+    const sunLight = new THREE.DirectionalLight(0xfff7ee, 4.0);
+    sunLight.position.set(7.5, 3.8, 5.2);
     scene.add(sunLight);
 
-    // Space ambient fill (Mars unlit side is dark but receives subtle cosmic background)
-    const spaceAmbient = new THREE.AmbientLight(0x1a1210, 1.1);
+    // Space ambient fill (Mars unlit side receives subtle cosmic starlight)
+    const spaceAmbient = new THREE.AmbientLight(0x0c0b14, 0.75);
     scene.add(spaceAmbient);
 
     // Subtle blue-tinted limb light from deep space
-    const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.35);
-    rimLight.position.set(-6, -2, -4);
+    const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.30);
+    rimLight.position.set(-6.0, -2.5, -4.0);
     scene.add(rimLight);
 
     // 9. Interactive Drag / Pointer Controls
@@ -370,6 +428,8 @@ export default function RotatingMarsGlobe() {
       sphereGeo.dispose();
       marsMaterial.dispose();
       marsTexture.dispose();
+      marsNormalMap.dispose();
+      marsRoughnessMap.dispose();
       atmoGeo.dispose();
       atmoShaderMat.dispose();
       innerSheenGeo.dispose();
@@ -395,24 +455,28 @@ export default function RotatingMarsGlobe() {
 
   return (
     <div 
-      className="relative w-full max-w-[360px] sm:max-w-[420px] mx-auto flex flex-col items-center select-none font-sans"
+      className="relative w-full max-w-[380px] sm:max-w-[420px] mx-auto flex flex-col items-center select-none font-sans"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Outer Atmospheric Glow Halo */}
-      <div className="absolute -inset-3 bg-gradient-to-r from-[#FC3D21]/20 via-[#F97316]/15 to-[#38BDF8]/15 rounded-full blur-2xl opacity-75 pointer-events-none" />
+      <div className="absolute -inset-4 bg-gradient-to-r from-[#FC3D21]/20 via-[#F97316]/15 to-[#38BDF8]/15 rounded-full blur-2xl opacity-75 pointer-events-none" />
 
       {/* Main Glass Sphere Viewport */}
-      <div className="relative w-full aspect-square rounded-3xl bg-[#030712]/75 backdrop-blur-md border border-white/15 overflow-hidden shadow-[0_16px_50px_rgba(0,0,0,0.85)] flex items-center justify-center cursor-grab active:cursor-grabbing">
+      <div className="relative w-full aspect-square rounded-3xl bg-[#030712]/80 backdrop-blur-md border border-white/15 overflow-hidden shadow-[0_16px_50px_rgba(0,0,0,0.85)] flex items-center justify-center cursor-grab active:cursor-grabbing">
         
+        {/* Subtle Cosmic Depth in Viewport */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_25%,rgba(56,189,248,0.08),transparent_60%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_75%,rgba(252,61,33,0.1),transparent_65%)] pointer-events-none" />
+
         {/* Top Planetary Telemetry Strip */}
-        <div className="absolute top-3 inset-x-3 z-10 flex items-center justify-between pointer-events-none text-xs font-sans">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/75 border border-white/15 backdrop-blur-md text-slate-200">
+        <div className="absolute top-3.5 inset-x-3.5 z-10 flex items-center justify-between pointer-events-none text-xs font-sans">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/80 border border-white/15 backdrop-blur-md text-slate-200 shadow-md">
             <span className="w-2 h-2 rounded-full bg-[#FC3D21] animate-ping" />
-            <span className="font-bold text-white uppercase tracking-wide">MARS (MOLA RELIEF)</span>
+            <span className="font-bold text-white uppercase tracking-wide text-[11px] sm:text-xs">MARS (MOLA RELIEF)</span>
           </div>
 
-          <div className="px-3 py-1.5 rounded-full bg-black/75 border border-white/15 backdrop-blur-md text-[#38BDF8] font-mono font-semibold">
+          <div className="px-3 py-1.5 rounded-full bg-black/80 border border-white/15 backdrop-blur-md text-[#38BDF8] font-mono font-semibold text-[11px] sm:text-xs shadow-md">
             <span>{facingLon}° E LON</span>
           </div>
         </div>
@@ -420,21 +484,21 @@ export default function RotatingMarsGlobe() {
         {/* Dedicated Three.js WebGL Canvas Mount */}
         <div ref={mountRef} className="w-full h-full" />
 
-        {/* Center Target Reticle on Hover */}
+        {/* Center Target Reticle on Hover - perfectly sized to encircle the floating Mars orb */}
         <div className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ${isHovered ? "opacity-35" : "opacity-0"}`}>
           <div className="w-full h-full flex items-center justify-center">
-            <div className="w-52 h-52 rounded-full border border-dashed border-[#FC3D21]/70 animate-[spin_60s_linear_infinite]" />
+            <div className="w-[260px] h-[260px] sm:w-[280px] sm:h-[280px] rounded-full border border-dashed border-[#FC3D21]/70 animate-[spin_60s_linear_infinite]" />
           </div>
         </div>
 
         {/* Bottom Interactive Prompt Strip */}
-        <div className="absolute bottom-3 inset-x-3 z-10 flex items-center justify-between pointer-events-none text-xs font-sans">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/80 border border-white/15 backdrop-blur-md text-slate-200">
+        <div className="absolute bottom-3.5 inset-x-3.5 z-10 flex items-center justify-between pointer-events-none text-xs font-sans">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/80 border border-white/15 backdrop-blur-md text-slate-200 shadow-md">
             <RotateCw className={`w-3.5 h-3.5 text-[#38BDF8] ${isInteracting ? "animate-spin" : ""}`} />
-            <span className="font-medium">{isInteracting ? "ORBITING..." : "DRAG TO ROTATE"}</span>
+            <span className="font-medium text-[11px] sm:text-xs">{isInteracting ? "ORBITING..." : "DRAG TO ROTATE"}</span>
           </div>
 
-          <div className="px-3 py-1.5 rounded-full bg-black/80 border border-white/15 backdrop-blur-md text-[#34D399] font-semibold">
+          <div className="px-3 py-1.5 rounded-full bg-black/80 border border-white/15 backdrop-blur-md text-[#34D399] font-semibold text-[11px] sm:text-xs shadow-md">
             <span>AXIAL TILT 25.19°</span>
           </div>
         </div>
