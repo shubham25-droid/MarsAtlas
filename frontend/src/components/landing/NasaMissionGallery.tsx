@@ -169,35 +169,32 @@ export default function NasaMissionGallery() {
     : GALLERY_ITEMS.filter((item) => item.category === selectedCategory);
 
   return (
-    <section className="w-full py-20 px-4 sm:px-6 bg-[#04070D] border-t border-white/[0.08] relative overflow-hidden">
-      {/* Background Radial Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#F36C3D]/10 rounded-full blur-3xl pointer-events-none" />
-
+    <section className="w-full py-20 px-4 sm:px-6 bg-white border-b border-slate-200 relative">
       <div className="max-w-7xl mx-auto space-y-7 relative z-10">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b border-white/[0.08]">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b border-slate-200">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#F36C3D] animate-pulse" />
-              <span className="text-xs font-sans font-bold text-[#F36C3D] tracking-widest uppercase">
+              <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse" />
+              <span className="text-xs font-sans font-bold text-[#EA580C] tracking-wider uppercase">
                 Scientific Data Provenance &amp; Mission Archives
               </span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight uppercase font-sans">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight uppercase font-sans">
               Planetary Surface &amp; Mission Observations
             </h2>
-            <p className="text-sm text-slate-300 max-w-2xl leading-relaxed font-sans">
+            <p className="text-base text-slate-600 max-w-2xl leading-relaxed font-sans">
               Authentic NASA &amp; USGS planetary observations and mission context. Explore in-situ rover imagery, reference orbital topography, and regional geologic maps providing scientific benchmarks for our prototype traverse decision-support engine.
             </p>
           </div>
 
           <div className="flex items-center gap-3 self-start md:self-auto">
-            <span className="text-xs font-sans font-bold text-white tracking-wide uppercase">Explore NASA Archives</span>
+            <span className="text-xs font-sans font-bold text-slate-700 tracking-wide uppercase">Explore NASA Archives</span>
             <a
               href="https://mars.nasa.gov/mars2020/multimedia/raw-images/"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-[#F36C3D] hover:bg-[#d9582d] flex items-center justify-center text-white transition-all shadow-lg shadow-[#F36C3D]/30 group"
+              className="w-10 h-10 rounded-full bg-[#EA580C] hover:bg-[#C2410C] flex items-center justify-center text-white transition-all shadow-md shadow-[#EA580C]/25 group"
               title="Open Official NASA Mars 2020 Raw Image Archive"
             >
               <ArrowRight className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" />
@@ -206,15 +203,15 @@ export default function NasaMissionGallery() {
         </div>
 
         {/* Epistemic Provenance Distinction Banner */}
-        <div className="p-3.5 rounded-xl bg-[#0C1220]/90 border border-white/[0.08] flex flex-col sm:flex-row sm:items-center gap-3 text-xs text-slate-300 font-sans">
+        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center gap-3 text-sm text-slate-700 font-sans shadow-sm">
           <div className="flex items-center gap-2 shrink-0">
-            <Info className="w-4 h-4 text-[#38BDF8]" />
-            <span className="px-2.5 py-0.5 rounded font-sans text-[10px] bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/30 font-bold uppercase tracking-wider">
+            <Info className="w-4 h-4 text-[#0284C7]" />
+            <span className="px-2.5 py-1 rounded-md font-sans text-xs bg-sky-100 text-[#0284C7] border border-sky-200 font-bold uppercase tracking-wide">
               Data Distinction
             </span>
           </div>
           <p className="leading-relaxed">
-            Items labeled <span className="text-[#34D399] font-semibold">Active Dataset</span> (e.g. MMGIS rover traverse telemetry, 550×350 surrogate cost grid) directly feed calculations. Items labeled <span className="text-[#A78BFA] font-semibold">Contextual Overlay</span> (e.g. simplified USGS SIM 3464 geologic polygons, authored CRISM-referenced points) provide spatial overlays. Items labeled <span className="text-[#38BDF8] font-semibold">Reference Context</span> (e.g. raw 1m HiRISE DTMs, Mastcam-Z mosaics, Ingenuity aerial photography) provide external planetary ground truth.
+            Items labeled <span className="text-[#15803D] font-bold">Active Dataset</span> (e.g. MMGIS rover traverse telemetry, 550×350 surrogate cost grid) directly feed calculations. Items labeled <span className="text-[#7C3AED] font-bold">Contextual Overlay</span> (e.g. simplified USGS SIM 3464 geologic polygons, authored CRISM-referenced points) provide spatial overlays. Items labeled <span className="text-[#0284C7] font-bold">Reference Context</span> (e.g. raw 1m HiRISE DTMs, Mastcam-Z mosaics, Ingenuity aerial photography) provide external planetary ground truth.
           </p>
         </div>
 
@@ -222,40 +219,40 @@ export default function NasaMissionGallery() {
         <div className="flex flex-wrap items-center gap-2 text-xs font-sans">
           <button
             onClick={() => setSelectedCategory("all")}
-            className={`px-4 py-2 rounded-full font-medium transition-all ${
+            className={`px-4 py-2 rounded-full font-semibold transition-all ${
               selectedCategory === "all"
-                ? "bg-white text-black font-bold shadow-md shadow-white/10"
-                : "bg-[#0C1220] text-slate-400 hover:text-white border border-white/[0.08]"
+                ? "bg-slate-900 text-white shadow-sm"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
             }`}
           >
             All Datasets ({GALLERY_ITEMS.length})
           </button>
           <button
             onClick={() => setSelectedCategory("jezero")}
-            className={`px-4 py-2 rounded-full font-medium transition-all ${
+            className={`px-4 py-2 rounded-full font-semibold transition-all ${
               selectedCategory === "jezero"
-                ? "bg-[#F36C3D] text-white font-bold shadow-md shadow-[#F36C3D]/25"
-                : "bg-[#0C1220] text-slate-400 hover:text-white border border-white/[0.08]"
+                ? "bg-[#EA580C] text-white shadow-sm shadow-[#EA580C]/25"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
             }`}
           >
             Site 01: Jezero Crater (Perseverance)
           </button>
           <button
             onClick={() => setSelectedCategory("gale")}
-            className={`px-4 py-2 rounded-full font-medium transition-all ${
+            className={`px-4 py-2 rounded-full font-semibold transition-all ${
               selectedCategory === "gale"
-                ? "bg-[#38BDF8] text-[#04070D] font-bold shadow-md shadow-[#38BDF8]/25"
-                : "bg-[#0C1220] text-slate-400 hover:text-white border border-white/[0.08]"
+                ? "bg-[#0284C7] text-white shadow-sm shadow-[#0284C7]/25"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
             }`}
           >
             Site 02: Mount Sharp Boxwork (Curiosity)
           </button>
           <button
             onClick={() => setSelectedCategory("orbital")}
-            className={`px-4 py-2 rounded-full font-medium transition-all ${
+            className={`px-4 py-2 rounded-full font-semibold transition-all ${
               selectedCategory === "orbital"
-                ? "bg-[#34D399] text-[#04070D] font-bold shadow-md shadow-[#34D399]/25"
-                : "bg-[#0C1220] text-slate-400 hover:text-white border border-white/[0.08]"
+                ? "bg-[#15803D] text-white shadow-sm shadow-[#15803D]/25"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
             }`}
           >
             Orbital DTM &amp; Geologic Maps (USGS / HiRISE)
@@ -268,7 +265,7 @@ export default function NasaMissionGallery() {
             <div
               key={item.id}
               onClick={() => setActiveItem(item)}
-              className="group relative h-[400px] rounded-2xl overflow-hidden cursor-pointer bg-[#0A0F1D] border border-white/[0.08] hover:border-white/[0.25] transition-all duration-300 shadow-xl hover:shadow-2xl flex flex-col justify-end p-6 select-none"
+              className="group relative h-[400px] rounded-2xl overflow-hidden cursor-pointer bg-slate-950 border border-slate-200 hover:border-slate-400 transition-all duration-300 shadow-md hover:shadow-xl flex flex-col justify-end p-6 select-none"
             >
               {/* Image Background */}
               <img
@@ -279,19 +276,19 @@ export default function NasaMissionGallery() {
               />
 
               {/* Scrim Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/10 group-hover:via-black/60 transition-colors" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent group-hover:via-black/55 transition-colors" />
 
               {/* Top Tag Badges: Region + Epistemic Tier */}
               <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between gap-2">
-                <span className="px-2.5 py-1 rounded-md text-[10px] font-sans font-semibold tracking-wider uppercase bg-black/75 text-white/90 border border-white/10 backdrop-blur-md">
+                <span className="px-2.5 py-1 rounded-md text-xs font-sans font-medium tracking-wide uppercase bg-black/75 text-white border border-white/10 backdrop-blur-sm">
                   {item.category === "jezero" ? "Jezero Crater" : item.category === "gale" ? "Mount Sharp" : "Orbital Reference"}
                 </span>
-                <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-sans font-semibold tracking-wider uppercase border backdrop-blur-md ${
+                <span className={`px-2.5 py-1 rounded-md text-xs font-sans font-semibold tracking-wide uppercase border backdrop-blur-sm ${
                   item.dataTier === "Active Dataset"
-                    ? "bg-[#34D399]/25 text-[#34D399] border-[#34D399]/40"
+                    ? "bg-[#15803D]/30 text-[#4ade80] border-[#4ade80]/40"
                     : item.dataTier === "Contextual Overlay"
-                    ? "bg-[#A78BFA]/25 text-[#A78BFA] border-[#A78BFA]/40"
-                    : "bg-[#38BDF8]/25 text-[#38BDF8] border-[#38BDF8]/40"
+                    ? "bg-[#7C3AED]/30 text-[#c084fc] border-[#c084fc]/40"
+                    : "bg-[#0284C7]/30 text-[#38bdf8] border-[#38bdf8]/40"
                 }`}>
                   {item.dataTier}
                 </span>
@@ -303,13 +300,13 @@ export default function NasaMissionGallery() {
                   <h3 className="text-lg font-bold text-white leading-tight font-sans tracking-tight drop-shadow-md">
                     {item.title}
                   </h3>
-                  <p className="text-xs text-slate-300 line-clamp-1 drop-shadow font-sans">
+                  <p className="text-xs text-slate-200 line-clamp-1 drop-shadow font-sans">
                     {item.mission}
                   </p>
                 </div>
 
                 {/* NASA Red/Orange Circle Action Button */}
-                <div className="w-8 h-8 rounded-full bg-[#F36C3D] group-hover:bg-[#d9582d] flex-shrink-0 flex items-center justify-center text-white transition-all shadow-md shadow-[#F36C3D]/30 transform group-hover:scale-110">
+                <div className="w-8 h-8 rounded-full bg-[#EA580C] group-hover:bg-[#C2410C] flex-shrink-0 flex items-center justify-center text-white transition-all shadow-md shadow-[#EA580C]/30 transform group-hover:scale-110">
                   <ArrowRight className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </div>
@@ -320,28 +317,28 @@ export default function NasaMissionGallery() {
 
       {/* Lightbox Detail Modal */}
       {activeItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 sm:p-6 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-4xl max-h-[92vh] bg-[#070B14] border border-white/[0.12] rounded-2xl flex flex-col overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.95)]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 sm:p-6 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-4xl max-h-[92vh] bg-white border border-slate-200 rounded-2xl flex flex-col overflow-hidden shadow-2xl">
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.08] bg-[#0A0F1D]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
               <div className="flex items-center gap-3">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#F36C3D]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#EA580C]" />
                 <div>
                   <div className="flex items-center gap-2.5">
-                    <h3 className="text-base font-bold text-white font-sans tracking-tight">
+                    <h3 className="text-base font-bold text-slate-900 font-sans tracking-tight">
                       {activeItem.title}
                     </h3>
-                    <span className={`px-2.5 py-0.5 rounded-full font-sans text-[10px] font-semibold uppercase border ${
+                    <span className={`px-2.5 py-0.5 rounded-full font-sans text-xs font-semibold uppercase border ${
                       activeItem.dataTier === "Active Dataset"
-                        ? "bg-[#34D399]/20 text-[#34D399] border-[#34D399]/30"
+                        ? "bg-[#DCFCE7] text-[#15803D] border-[#15803D]/30"
                         : activeItem.dataTier === "Contextual Overlay"
-                        ? "bg-[#A78BFA]/20 text-[#A78BFA] border-[#A78BFA]/30"
-                        : "bg-[#38BDF8]/20 text-[#38BDF8] border-[#38BDF8]/30"
+                        ? "bg-[#F3E8FF] text-[#7C3AED] border-[#7C3AED]/30"
+                        : "bg-[#E0F2FE] text-[#0369A1] border-[#0369A1]/30"
                     }`}>
                       {activeItem.dataTier}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 font-sans mt-0.5">
+                  <p className="text-xs text-slate-500 font-sans mt-0.5">
                     Product Reference: {activeItem.nasaId}
                   </p>
                 </div>
@@ -349,7 +346,7 @@ export default function NasaMissionGallery() {
 
               <button
                 onClick={() => setActiveItem(null)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-200/60 transition-colors"
                 title="Close Inspector"
               >
                 <X className="w-5 h-5" />
@@ -359,7 +356,7 @@ export default function NasaMissionGallery() {
             {/* Modal Body */}
             <div className="overflow-y-auto p-6 space-y-6">
               {/* Image Preview */}
-              <div className="w-full h-80 sm:h-96 rounded-xl overflow-hidden border border-white/[0.1] relative bg-black shadow-inner">
+              <div className="w-full h-80 sm:h-96 rounded-xl overflow-hidden border border-slate-200 relative bg-black shadow-inner">
                 <img
                   src={activeItem.imageSrc}
                   alt={activeItem.title}
@@ -369,26 +366,26 @@ export default function NasaMissionGallery() {
 
               {/* Metadata Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-sans">
-                <div className="p-3.5 rounded-xl bg-[#0C1220] border border-white/[0.06] space-y-1">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">Mission Source</span>
-                  <span className="text-white font-medium text-xs sm:text-[13px]">{activeItem.mission}</span>
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide block">Mission Source</span>
+                  <span className="text-slate-900 font-bold text-xs sm:text-sm">{activeItem.mission}</span>
                 </div>
-                <div className="p-3.5 rounded-xl bg-[#0C1220] border border-white/[0.06] space-y-1">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">Instrument Payload</span>
-                  <span className="text-[#38BDF8] font-medium text-xs sm:text-[13px]">{activeItem.instrument}</span>
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide block">Instrument Payload</span>
+                  <span className="text-[#0284C7] font-bold text-xs sm:text-sm">{activeItem.instrument}</span>
                 </div>
-                <div className="p-3.5 rounded-xl bg-[#0C1220] border border-white/[0.06] space-y-1">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">Target Feature</span>
-                  <span className="text-white font-medium text-xs sm:text-[13px]">{activeItem.target}</span>
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide block">Target Feature</span>
+                  <span className="text-slate-900 font-bold text-xs sm:text-sm">{activeItem.target}</span>
                 </div>
-                <div className="p-3.5 rounded-xl bg-[#0C1220] border border-white/[0.06] space-y-1">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">Data Role</span>
-                  <span className={`font-semibold text-xs sm:text-[13px] ${
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide block">Data Role</span>
+                  <span className={`font-bold text-xs sm:text-sm ${
                     activeItem.dataTier === "Active Dataset"
-                      ? "text-[#34D399]"
+                      ? "text-[#15803D]"
                       : activeItem.dataTier === "Contextual Overlay"
-                      ? "text-[#A78BFA]"
-                      : "text-[#38BDF8]"
+                      ? "text-[#7C3AED]"
+                      : "text-[#0284C7]"
                   }`}>
                     {activeItem.dataTier === "Active Dataset"
                       ? "Operational Input"
@@ -402,23 +399,23 @@ export default function NasaMissionGallery() {
               {/* Detailed Description */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Compass className="w-4 h-4 text-[#F36C3D]" />
-                  <h4 className="text-xs font-sans font-bold text-slate-200 uppercase tracking-wider">
+                  <Compass className="w-4 h-4 text-[#EA580C]" />
+                  <h4 className="text-xs font-sans font-bold text-slate-900 uppercase tracking-wider">
                     Scientific Observation Context
                   </h4>
                 </div>
-                <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed font-sans pl-6">
+                <p className="text-sm text-slate-700 leading-relaxed font-sans pl-6">
                   {activeItem.description}
                 </p>
               </div>
 
               {/* Direct Role in MarsAtlas */}
-              <div className="p-4 rounded-xl bg-[#0C1220] border border-[#38BDF8]/20 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-sans font-bold text-[#38BDF8]">
-                  <Layers className="w-4 h-4 text-[#38BDF8]" />
+              <div className="p-4 rounded-xl bg-sky-50 border border-sky-200 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-sans font-bold text-[#0284C7]">
+                  <Layers className="w-4 h-4 text-[#0284C7]" />
                   <span>Role in MarsAtlas Geospatial Engine</span>
                 </div>
-                <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed font-sans pl-6">
+                <p className="text-sm text-slate-800 leading-relaxed font-sans pl-6">
                   {activeItem.marsAtlasRole}
                 </p>
               </div>
@@ -429,7 +426,7 @@ export default function NasaMissionGallery() {
                   href={activeItem.officialUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 bg-[#F36C3D] hover:bg-[#db542a] text-white text-xs font-sans font-semibold rounded-xl flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
+                  className="px-5 py-2.5 bg-[#EA580C] hover:bg-[#C2410C] text-white text-xs font-sans font-semibold rounded-xl flex items-center gap-2 transition-all shadow-sm hover:shadow"
                 >
                   <span>{activeItem.linkText}</span>
                   <ExternalLink className="w-4 h-4" />
