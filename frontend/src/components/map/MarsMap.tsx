@@ -281,29 +281,35 @@ export default function MarsMap({
     });
     landmarksLayerRef.current = landmarksLayer;
 
-    // 8. Active EVA Trajectory Polyline Layer
+    // 8. Active EVA Trajectory Polyline Layer (High-Contrast Aerospace Corridors)
     const routeVectorSource = new VectorSource();
     const routeLayer = new VectorLayer({
       source: routeVectorSource,
       style: (feature) => {
         const mode = feature.get("mode") || "safe";
-        let color = "#34D399";
-        let width = 3.5;
+        let color = "#10B981"; // Lower-Slope: Emerald Green
+        let width = 5.0;
         let lineDash: number[] | undefined = undefined;
 
         if (mode === "balanced") {
-          color = "#38BDF8";
-          width = 3.0;
-          lineDash = [6, 4];
+          color = "#38BDF8"; // Balanced: Vivid Cyan
+          width = 5.0;
+          lineDash = [8, 5];
         } else if (mode === "science") {
-          color = "#C084FC";
-          width = 3.0;
-          lineDash = [2, 4];
+          color = "#C084FC"; // Science Priority: Vivid Purple
+          width = 5.0;
+          lineDash = [3, 5];
         }
 
-        return new Style({
-          stroke: new Stroke({ color: color, width: width, lineDash: lineDash })
-        });
+        // High-contrast dual stroke: dark halo underlayer + vibrant core path
+        return [
+          new Style({
+            stroke: new Stroke({ color: "rgba(4, 7, 13, 0.8)", width: width + 4.5 })
+          }),
+          new Style({
+            stroke: new Stroke({ color: color, width: width, lineDash: lineDash })
+          })
+        ];
       }
     });
     routeVectorLayerRef.current = routeLayer;

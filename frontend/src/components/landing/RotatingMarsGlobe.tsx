@@ -347,7 +347,7 @@ export default function RotatingMarsGlobe() {
       if (!isDragging || !marsMeshRef.current) return;
       const deltaX = e.clientX - previousPointerX;
       previousPointerX = e.clientX;
-      dragVelocity = deltaX * 0.0045;
+      dragVelocity = deltaX * 0.0095; // Fluid, responsive planetary swipe
       marsMeshRef.current.rotation.y += dragVelocity;
     };
 
@@ -376,10 +376,10 @@ export default function RotatingMarsGlobe() {
         } else if (isDragging) {
           // Handled in pointer move
         } else {
-          // Apply inertia or continuous sidereal rotation
+          // Apply realistic planetary inertia or continuous sidereal rotation
           if (Math.abs(dragVelocity) > 0.0001) {
             marsMeshRef.current.rotation.y += dragVelocity;
-            dragVelocity *= 0.92;
+            dragVelocity *= 0.965; // Extended smooth momentum glide
           } else {
             marsMeshRef.current.rotation.y += baseRotationSpeed;
           }
